@@ -1,8 +1,7 @@
 import { Outlet } from "react-router-dom";
 import avatar1 from "../assets/images/avatar/avatar-thumb-010.webp";
 import john from "../assets/images/avatar/avatar-thumb-001.webp";
-import fullLogo from "../assets/images/logo/logo-black.svg"
-// import shortlog from "../assets/images/logo/mobile-logo-light.svg"
+import mainLogo from "../assets/images/latty.png"
 import {
   Bell,
   ChevronDown,
@@ -23,10 +22,10 @@ function CandidateDashboard() {
         <aside className="app-sidebar sticky" id="sidebar">
           {/* <!-- start app-sidebar-header --> */}
           <div className="app-sidebar-header">
-            <a href="index.html" className="desktop-logo">
-              <img src={fullLogo} alt="image" />
+            <a href="#" className="desktop-logo">
+              <img src={mainLogo} alt="image" />
             </a>
-            <a href="index.html" className="desktop-dark">
+            <a href="#" className="desktop-dark">
               <img src="assets/images/logo/logo-white.svg" alt="image" />
             </a>
           </div>
@@ -58,7 +57,7 @@ function CandidateDashboard() {
                   </a>
                   <ul className="sidebar-menu child1">
                     <li className="slide">
-                      <a className="sidebar-menu-item" href="index.html">
+                      <a className="sidebar-menu-item" href="#">
                         Ecommerce
                       </a>
                     </li>
@@ -2000,13 +1999,13 @@ function CandidateDashboard() {
                   </div>
                   <div className="app-header-ls-logo">
                     {/* <!-- large screen logo --> */}
-                    <a className="app-header-ls-dark-logo" href="index.html">
+                    <a className="app-header-ls-dark-logo" href="#">
                       <img
                         src="../assets/images/logo/logo-black.svg"
                         alt="image"
                       />
                     </a>
-                    <a className="app-header-ls-light-logo" href="index.html">
+                    <a className="app-header-ls-light-logo" href="#">
                       <img
                         src="../assets/images/logo/logo-white.svg"
                         alt="image"
@@ -2014,13 +2013,13 @@ function CandidateDashboard() {
                     </a>
                   </div>
                   <div className="app-header-mobile-logo">
-                    <a className="app-header-dark-logo" href="index.html">
+                    <a className="app-header-dark-logo" href="#">
                       <img
                         src="../assets/images/logo/mobile-logo.svg"
                         alt="image"
                       />
                     </a>
-                    <a className="app-header-light-logo" href="index.html">
+                    <a className="app-header-light-logo" href="#">
                       <img
                         src="../assets/images/logo/mobile-logo-light.svg"
                         alt="image"
