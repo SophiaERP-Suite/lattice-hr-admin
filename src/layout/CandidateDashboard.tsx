@@ -42,92 +42,95 @@ function CandidateDashboard() {
             <nav className="app-sidebar-menu-wrapper nav flex-column sub-open">
               <div className="sidebar-left" id="sidebar-left"></div>
               <ul className="app-sidebar-main-menu mt-4">
+                <li className="sidebar-menu-category">
+                  <p>ADMIN PORTAL</p>
+                </li>
                 <li className="slide">
                   <NavLink to="/Dashboard" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px" }}>
-                      <LayoutDashboard style={{ color: "currentcolor"}} />
+                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
+                      <LayoutDashboard style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label">Dashboard</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Dashboard</span>
                   </NavLink>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px" }}>
-                      <BookUser style={{ color: "currentcolor"}} />
+                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
+                      <BookUser style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label">Client Management</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Client Management</span>
                   </a>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px" }}>
-                      <Briefcase style={{ color: "currentcolor"}} />
+                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
+                      <Briefcase style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label">Workers Management</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Workers Management</span>
                   </a>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px" }}>
-                      <ListChecks style={{ color: "currentcolor"}} />
+                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
+                      <ListChecks style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label">Compliance Management</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Compliance Management</span>
                   </a>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px" }}>
-                      <ClipboardClock style={{ color: "currentcolor"}} />
+                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
+                      <ClipboardClock style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label">Timesheet Management</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Timesheet Management</span>
                   </a>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px" }}>
-                      <BriefcaseBusiness style={{ color: "currentcolor"}} />
+                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
+                      <BriefcaseBusiness style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label">Jobs Management</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Jobs Management</span>
                   </a>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px" }}>
-                      <Blocks style={{ color: "currentcolor"}} />
+                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
+                      <Blocks style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label">Package & Contract</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Package & Contract</span>
                   </a>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px" }}>
-                      <CreditCard style={{ color: "currentcolor"}} />
+                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
+                      <CreditCard style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label">Finance Management</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Finance Management</span>
                   </a>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px" }}>
-                      <BadgeAlert style={{ color: "currentcolor"}} />
+                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
+                      <BadgeAlert style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label">Complaints</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Complaints</span>
                   </a>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px" }}>
-                      <FolderCog style={{ color: "currentcolor"}} />
+                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
+                      <FolderCog style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label">Role Management</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Role Management</span>
                   </a>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px" }}>
-                      <UserCog style={{ color: "currentcolor"}} />
+                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
+                      <UserCog style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label">User Management</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>User Management</span>
                   </a>
                 </li>
               </ul>
