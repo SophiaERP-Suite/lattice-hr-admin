@@ -4,6 +4,7 @@ import {
     Camera,
     ChevronRight,
     Eye,
+    FolderOpenDot,
     Gauge,
     Mail,
     PenLine,
@@ -296,7 +297,7 @@ export default function WorkersMgt() {
                 <div className="card">
                 <div className="card-body d-flex align-center gap-16">
                     <div className="avatar avatar-xl bg-success-transparent text-success">
-                    <Gauge size={42}/>
+                    <FolderOpenDot size={42}/>
                     </div>
                     <div className="card-content">
                         <span className="d-block fs-16 mb-5">Active Workers</span>
