@@ -41,7 +41,7 @@ export default function ComplianceMgt() {
         <div className="row">
           <div className="col-xl-12">
             <div className="page-title-box d-flex-between flex-wrap gap-15">
-              <h1 className="page-title fs-18 lh-1">Compliance</h1>
+              <h1 className="page-title fs-18 lh-1">Compliance Management</h1>
               <nav aria-label="breadcrumb">
                 <ol className="breadcrumb breadcrumb-example1 mb-0">
                   <li>
