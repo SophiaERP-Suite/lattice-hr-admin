@@ -9,7 +9,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/" element={<CandidateDashboard />}>
       
-        <Route index element={<CandidateDashboard />} />
+        <Route index element={<Dashboard />} />
         <Route path="Dashboard" element={<Dashboard />} />
         <Route path="ClientMgt" element={<ClientMgt />} />
         <Route path="WorkerMgt" element={<WorkersMgt />} />
