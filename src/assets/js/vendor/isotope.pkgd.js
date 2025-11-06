@@ -1340,7 +1340,6 @@ return Item;
         'ev-emitter/ev-emitter',
         'get-size/get-size',
         'fizzy-ui-utils/utils',
-        './item'
       ],
       function( EvEmitter, getSize, utils, Item ) {
         return factory( window, EvEmitter, getSize, utils, Item);
@@ -1352,8 +1351,7 @@ return Item;
       window,
       require('ev-emitter'),
       require('get-size'),
-      require('fizzy-ui-utils'),
-      require('./item')
+      require('fizzy-ui-utils')
     );
   } else {
     // browser global
