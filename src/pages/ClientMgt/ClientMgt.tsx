@@ -396,7 +396,7 @@ export default function ClientMgt() {
                     </div>
                     <div className="modal-footer">
                         <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" className="btn btn-primary">Save changes</button>
+                        <button type="button" className="btn btn-primary">Full Details</button>
                     </div>
                 </div>
             </div>
