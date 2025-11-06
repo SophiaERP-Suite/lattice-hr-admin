@@ -8,7 +8,6 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/" element={<CandidateDashboard />}>
-      
         <Route index element={<Dashboard />} />
         <Route path="Dashboard" element={<Dashboard />} />
         <Route path="ClientMgt" element={<ClientMgt />} />
