@@ -10,19 +10,4 @@ export default defineConfig({
       },
     }),
   ],
-  build: {
-    sourcemap: false
-  },
-  define: {
-    global: {},
-  },
-  resolve: {
-    alias: {
-      jquery: 'jquery/dist/jquery.js'
-    }
-  },
-  optimizeDeps: {
-    include: ['jquery']
-  },
-  base: '/'
 })
