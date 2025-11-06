@@ -4,6 +4,7 @@ import Dashboard from "../pages/Dashboard";
 import ClientMgt from "../pages/ClientMgt/ClientMgt";
 import WorkersMgt from "../pages/WorkersMgt/WorkersMgt";
 import ComplianceMgt from "../pages/ComplianceMgt/ComplianceMgt";
+import TimeSheet from "../pages/TimeSheet/Timesheet";
 
 function AppRoutes() {
   return (
@@ -15,6 +16,7 @@ function AppRoutes() {
         <Route path="ClientMgt" element={<ClientMgt />} />
         <Route path="WorkerMgt" element={<WorkersMgt />} />
         <Route path="ComplianceMgt" element={<ComplianceMgt />} />
+        <Route path="Timesheet" element={<TimeSheet />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

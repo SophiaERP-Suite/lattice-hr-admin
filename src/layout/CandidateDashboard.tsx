@@ -78,12 +78,12 @@ function CandidateDashboard() {
                   </NavLink>
                 </li>
                 <li className="slide">
-                  <a href="#" className="sidebar-menu-item">
+                  <NavLink to="/Timesheet" className="sidebar-menu-item">
                     <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
-                      <ClipboardClock style={{ color: "#000"}} />
+                       <ClipboardClock style={{ color: "#000"}} />
                     </div>
                     <span className="sidebar-menu-label" style={{ color: "#000" }}>Timesheet Management</span>
-                  </a>
+                  </NavLink>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
