@@ -11,8 +11,14 @@
   },
   "dependencies": {
     "apexcharts": "^5.3.6",
+    "desandro-matches-selector": "^2.0.2",
+    "ev-emitter": "^2.1.2",
+    "fizzy-ui-utils": "^3.0.0",
+    "get-size": "^3.0.0",
     "jquery": "^3.7.1",
     "lucide-react": "^0.552.0",
+    "masonry-layout": "^4.2.2",
+    "outlayer": "^2.1.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.5"

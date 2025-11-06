@@ -21,7 +21,6 @@ import "./assets/js/vendor/jquery-3.7.0.js";
 import "./assets/js/plugins/popper.min.js";
 import "./assets/js/plugins/simplebar.min.js";
 import "./assets/js/vendor/height-equal.js";
-import "./assets/js/vendor/isotope.pkgd.js";
 import "./assets/js/vendor/magnific-popup.min.js";
 import "./assets/js/vendor/backtotop.js";
 import "./assets/js/plugins/apexcharts.min.js";
