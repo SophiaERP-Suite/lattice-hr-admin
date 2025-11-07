@@ -1,4 +1,4 @@
-import { ChevronRight, Eye, Trash2 } from "lucide-react";
+import { ChevronRight, PenLine, Trash2 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import female from "../../assets/images/avatar/avatar-thumb-010.webp";
 import male from "../../assets/images/avatar/avatar-thumb-007.webp";
@@ -175,7 +175,7 @@ export default function TimeSheet() {
                                                                     <img src={data.image} alt="#" className="radius-100"/>
                                                                 </div>
                                                                 <div>
-                                                                    <h6><a href="hrm-employee-details.html">{data.employee}</a>
+                                                                    <h6><a href="#">{data.employee}</a>
                                                                     </h6>
                                                                 </div>
                                                             </div>
@@ -186,7 +186,7 @@ export default function TimeSheet() {
                                                         <td>
                                                             <div className="d-flex-items gap-10">
                                                                 <button className="btn-icon btn-info-light" type="button" data-bs-toggle="modal" data-bs-target="#editTimesheet">
-                                                                    <a><Eye /></a>
+                                                                    <a><PenLine /></a>
                                                                 </button>
                                                                 <button className="btn-icon btn-danger-light removeRow" type="button">
                                                                     <a><Trash2 /></a>

@@ -1,4 +1,3 @@
-// import avatar1 from "/assets/images/avatar/avatar-thumb-010.webp"
 import {
   ArrowDown,
   ArrowUp,
