@@ -117,12 +117,12 @@ function CandidateDashboard() {
                   </NavLink>
                 </li>
                 <li className="slide">
-                  <a href="#" className="sidebar-menu-item">
+                  <NavLink to="/ControlPanel" className="sidebar-menu-item">
                     <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
-                      <Cog style={{ color: "#000"}} />
+                       <Cog style={{ color: "#000"}} />
                     </div>
                     <span className="sidebar-menu-label" style={{ color: "#000" }}>Control Panel</span>
-                  </a>
+                  </NavLink>
                 </li>
               </ul>
               <div className="sidebar-right" id="sidebar-right"></div>

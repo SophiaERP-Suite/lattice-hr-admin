@@ -10,6 +10,7 @@ import FinanceMgt from "../pages/FinanceMgt/FinanceMgt";
 import JobDetails from "../pages/JobMgt/JobDetails";
 import Complaints from "../pages/Complaints/Complaints";
 import Packages from "../pages/Packages/Packages";
+import ControlPanel from "../pages/ControlPanel/ControlPanel";
 
 function AppRoutes() {
   return (
@@ -27,6 +28,7 @@ function AppRoutes() {
         <Route path="FinanceMgt" element={<FinanceMgt />} />
         <Route path="Complaints" element={<Complaints />} />
         <Route path="Packages" element={<Packages />} />
+        <Route path="ControlPanel" element={<ControlPanel />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
