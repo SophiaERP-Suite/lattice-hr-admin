@@ -138,7 +138,7 @@ const revenueOptions = {
         y: {
             formatter: function (y: number | undefined) {
                 if (typeof y !== "undefined") {
-                    return "USD " + y.toFixed(0) + ".0k";
+                    return "NGN " + y.toFixed(0) + ".0k";
                 }
                 return y;
             },
@@ -234,7 +234,7 @@ const disburseOptions = {
     tooltip: {
         y: {
             formatter: function (val: number) {
-                return "USD " +  val + ".0k"
+                return "NGN " +  val + ".0k"
             }
         }
     },
@@ -326,8 +326,8 @@ const paymentData = [
     company: "TechNova Inc.",
     paymentType: "Subscription Renewal",
     plan: "Pro Plan",
-    amount: 250.00,
-    currency: "USD",
+    amount: 250000.00,
+    currency: "NGN",
     transactionId: "TXN-984732",
     status: "Completed",
     paymentMethod: "Credit Card",
@@ -340,8 +340,8 @@ const paymentData = [
     company: "Skyline Technologies",
     paymentType: "Job Posting Credit",
     plan: "Standard",
-    amount: 45.00,
-    currency: "USD",
+    amount: 45000.00,
+    currency: "NGN",
     transactionId: "TXN-984733",
     status: "Completed",
     paymentMethod: "PayPal",
@@ -354,8 +354,8 @@ const paymentData = [
     company: "BrightHire Solutions",
     paymentType: "Featured Job Upgrade",
     plan: "Premium Boost",
-    amount: 120.00,
-    currency: "USD",
+    amount: 120000.00,
+    currency: "NGN",
     transactionId: "TXN-984734",
     status: "Pending",
     paymentMethod: "Credit Card",
@@ -368,8 +368,8 @@ const paymentData = [
     company: "Urban Workforce",
     paymentType: "Subscription Renewal",
     plan: "Enterprise",
-    amount: 850.00,
-    currency: "USD",
+    amount: 850000.00,
+    currency: "NGN",
     transactionId: "TXN-984735",
     status: "Completed",
     paymentMethod: "Bank Transfer",
@@ -382,8 +382,8 @@ const paymentData = [
     company: "Nordic Shipping AS",
     paymentType: "Additional Job Slots",
     plan: "Add-on Pack",
-    amount: 200.00,
-    currency: "USD",
+    amount: 200000.00,
+    currency: "NGN",
     transactionId: "TXN-984736",
     status: "Completed",
     paymentMethod: "Credit Card",
@@ -396,8 +396,8 @@ const paymentData = [
     company: "NextGen Labs",
     paymentType: "Subscription Renewal",
     plan: "Pro Plan",
-    amount: 250.00,
-    currency: "USD",
+    amount: 250000.00,
+    currency: "NGN",
     transactionId: "TXN-984737",
     status: "Failed",
     paymentMethod: "Credit Card",
@@ -410,8 +410,8 @@ const paymentData = [
     company: "EliteRecruit",
     paymentType: "Premium Listing",
     plan: "Gold Tier",
-    amount: 300.00,
-    currency: "USD",
+    amount: 300000.00,
+    currency: "NGN",
     transactionId: "TXN-984738",
     status: "Completed",
     paymentMethod: "PayPal",
@@ -424,8 +424,8 @@ const paymentData = [
     company: "Workify HR",
     paymentType: "Resume Access Credits",
     plan: "Talent Access",
-    amount: 180.00,
-    currency: "USD",
+    amount: 180000.00,
+    currency: "NGN",
     transactionId: "TXN-984739",
     status: "Completed",
     paymentMethod: "Credit Card",
@@ -438,8 +438,8 @@ const paymentData = [
     company: "TalentLink Africa",
     paymentType: "Subscription Renewal",
     plan: "Standard",
-    amount: 100.00,
-    currency: "USD",
+    amount: 100000.00,
+    currency: "NGN",
     transactionId: "TXN-984740",
     status: "Pending",
     paymentMethod: "Bank Transfer",
@@ -452,8 +452,8 @@ const paymentData = [
     company: "InnovaHire Ltd",
     paymentType: "API Integration Fee",
     plan: "Developer Access",
-    amount: 60.00,
-    currency: "USD",
+    amount: 60000.00,
+    currency: "NGN",
     transactionId: "TXN-984741",
     status: "Completed",
     paymentMethod: "Credit Card",
@@ -466,8 +466,8 @@ const paymentData = [
     company: "TechNova Inc.",
     paymentType: "Candidate Promotion",
     plan: "Talent Boost",
-    amount: 75.00,
-    currency: "USD",
+    amount: 75000.00,
+    currency: "NGN",
     transactionId: "TXN-984742",
     status: "Refunded",
     paymentMethod: "PayPal",
@@ -480,8 +480,8 @@ const paymentData = [
     company: "BrightHire Solutions",
     paymentType: "Subscription Renewal",
     plan: "Pro Plan",
-    amount: 250.00,
-    currency: "USD",
+    amount: 250000.00,
+    currency: "NGN",
     transactionId: "TXN-984743",
     status: "Completed",
     paymentMethod: "Credit Card",
@@ -494,8 +494,8 @@ const paymentData = [
     company: "Urban Workforce",
     paymentType: "Advertisement Placement",
     plan: "Homepage Banner",
-    amount: 400.00,
-    currency: "USD",
+    amount: 400000.00,
+    currency: "NGN",
     transactionId: "TXN-984744",
     status: "Completed",
     paymentMethod: "Bank Transfer",
@@ -508,8 +508,8 @@ const paymentData = [
     company: "Workify HR",
     paymentType: "Subscription Renewal",
     plan: "Enterprise",
-    amount: 850.00,
-    currency: "USD",
+    amount: 850000.00,
+    currency: "NGN",
     transactionId: "TXN-984745",
     status: "Completed",
     paymentMethod: "Credit Card",
@@ -522,8 +522,8 @@ const paymentData = [
     company: "TalentLink Africa",
     paymentType: "Job Boost Credit",
     plan: "Boost Pack",
-    amount: 50.00,
-    currency: "USD",
+    amount: 50000.00,
+    currency: "NGN",
     transactionId: "TXN-984746",
     status: "Completed",
     paymentMethod: "Credit Card",
@@ -602,7 +602,7 @@ export default function FinanceMgt() {
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Total Revenue</span>
-                                <h2 className="mb-5">$8.6k</h2>
+                                <h2 className="mb-5">#8,600,000</h2>
                                 <span className="text-success">+2.05% <ArrowUp className="ml-5 d-inline-block" size={15} /></span>
                                 <span className="fs-12 text-muted ml-5">This week</span>
                             </div>
@@ -617,7 +617,7 @@ export default function FinanceMgt() {
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Total Payment</span>
-                                <h2 className="mb-5">$4.5k</h2>
+                                <h2 className="mb-5">#4,500,000</h2>
                                 <span className="text-success">+12.5%<ArrowUp className="ml-5 d-inline-block" size={15} /></span>
                                 <span className="fs-12 text-muted ml-5">This week</span>
                             </div>
@@ -632,7 +632,7 @@ export default function FinanceMgt() {
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Total Profits</span>
-                                <h2 className="mb-5">$1.2k</h2>
+                                <h2 className="mb-5">#1,200,000</h2>
                                 <span className="text-success">+0.87%<ArrowUp className="ml-5 d-inline-block" size={15} /></span>
                                 <span className="fs-12 text-muted ml-5">This week</span>
                             </div>
@@ -714,28 +714,28 @@ export default function FinanceMgt() {
                                         <span className="bullet bg-success"></span>
                                         <span className="fs-14">Healthcare</span>
                                     </div>
-                                    <span className="fw-500">$10.3K <span className="text-muted">(40%)</span></span>
+                                    <span className="fw-500">#1,030,000 <span className="text-muted">(40%)</span></span>
                                 </div>
                                 <div className="d-flex justify-between align-center mb-8">
                                     <div className="d-flex align-center gap-10">
                                         <span className="bullet bg-primary"></span>
                                         <span className="fs-14">Information Technology</span>
                                     </div>
-                                    <span className="fw-500">$7.4K <span className="text-muted">(25%)</span></span>
+                                    <span className="fw-500">#7,400,000 <span className="text-muted">(25%)</span></span>
                                 </div>
                                 <div className="d-flex justify-between align-center mb-8">
                                     <div className="d-flex align-center gap-10">
                                         <span className="bullet bg-info"></span>
                                         <span className="fs-14">Finance</span>
                                     </div>
-                                    <span className="fw-500">$6.7K <span className="text-muted">(20%)</span></span>
+                                    <span className="fw-500">#6,700,000 <span className="text-muted">(20%)</span></span>
                                 </div>
                                 <div className="d-flex justify-between align-center mb-8">
                                     <div className="d-flex align-center gap-10">
                                         <span className="bullet bg-warning"></span>
                                         <span className="fs-14">Engineering</span>
                                     </div>
-                                    <span className="fw-500">$6.1K <span className="text-muted">(15%)</span></span>
+                                    <span className="fw-500">#6,100,000 <span className="text-muted">(15%)</span></span>
                                 </div>
                                 
                             </div>
@@ -791,7 +791,7 @@ export default function FinanceMgt() {
                                                         </td>
                                                         <td>{ data.paymentType}</td>
                                                         <td>{ data.plan }</td>
-                                                        <td>{ `USD ${data.amount}` }</td>
+                                                        <td>{ `NGN ${data.amount}` }</td>
                                                         <td>{ data.transactionId }</td>
                                                         <td>
                                                             <span className={`badge 

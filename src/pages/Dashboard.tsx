@@ -1,14 +1,11 @@
 import {
-  User,
   ArrowUp,
-  Gauge,
   FolderOpenDot,
   Briefcase,
   UserPlus,
   ClockCheck,
-  GraduationCap,
-  UserStar,
-  ChevronDown
+  ChevronDown,
+  BanknoteArrowUp
 } from "lucide-react";
 import ApexCharts from "apexcharts";
 import { useEffect } from "react";
@@ -30,20 +27,20 @@ const options = {
         {
             name: 'Subscriptions',
             type: 'area',
-            data: [35, 65, 50, 70, 55, 60, 45, 43, 75, 55, 63, 68],
+            data: [35000, 65000, 50000, 70000, 55000, 60000, 45000, 43000, 75000, 55000, 63000, 68000],
             color: "#FEBB7B"
         },
         {
             name: 'Earnings',
             type: 'column',
-            data: [90, 100, 70, 110, 80, 85, 60, 30, 95, 40, 85, 35],
+            data: [90000, 100000, 70000, 110000, 80000, 85000, 60000, 30000, 95000, 40000, 85000, 35000],
 
             color: "#4F46E5",
         },
         {
             name: 'Refunds',
             type: 'line',
-            data: [10, 15, 12, 20, 18, 10, 5, 8, 10, 25, 14, 20],
+            data: [10000, 15000, 12000, 20000, 18000, 10000, 5000, 8000, 10000, 25000, 14000, 20000],
             color: "var(--color-success)",
             stroke: {
                 dashArray: 5,
@@ -101,7 +98,7 @@ const options = {
         intersect: false,
         y: {
             formatter: function (val: string) {
-                return "$" + val;
+                return "#" + val;
             }
         },
     },
@@ -665,14 +662,14 @@ function Dashboard() {
   return (
     <div className="container-fluid">
       <div className="row">
-        <div className="col-12 col-lg-3 col-md-6 col-12">
+        <div className="col-12 col-lg-4 col-md-6 col-12">
           <div className="card">
-            <div className="card-body mini-card-body d-flex align-center gap-16">
+            <div className="card-body d-flex align-center gap-16">
               <div className="avatar avatar-xl bg-primary-transparent text-primary">
-                <User size={42}/>
+                <FolderOpenDot size={42}/>
               </div>
               <div className="card-content">
-                <span className="d-block fs-16 mb-5">Total Employees</span>
+                <span className="d-block fs-16 mb-5">Total Qty</span>
                 <h2 className="mb-5">1,250</h2>
                 <span className="text-success">
                   +5% <ArrowUp size={12} className="ri-arrow-up-line"/>
@@ -682,29 +679,28 @@ function Dashboard() {
             </div>
           </div>
         </div>
-        <div className="col-12 col-lg-3 col-md-6">
+        <div className="col-12 col-lg-4 col-md-6">
           <div className="card">
-            <div className="card-body mini-card-body d-flex align-center gap-16">
+            <div className="card-body d-flex align-center gap-16">
               <div className="avatar avatar-xl bg-warning-transparent text-warning">
-                <Gauge size={42}/>
+                <BanknoteArrowUp size={42}/>
               </div>
               <div className="card-content">
-                <span className="d-block fs-16 mb-5">On Leave Today</span>
-                <h2 className="mb-5">42</h2>
-                <span className="fs-12 text-muted">Sick/Annual Leave</span>
+                <span className="d-block fs-16 mb-5">Total Revenue</span>
+                <h2 className="mb-5">#4,208,000</h2>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-12 col-lg-3 col-md-6">
+        <div className="col-12 col-lg-4 col-md-6">
           <div className="card">
-            <div className="card-body mini-card-body d-flex align-center gap-16">
+            <div className="card-body d-flex align-center gap-16">
               <div className="avatar avatar-xl bg-info-transparent text-info">
                 <FolderOpenDot size={42}/>
               </div>
               <div className="card-content">
-                <span className="d-block fs-16 mb-5">Active Projects</span>
-                <h2 className="mb-5">28</h2>
+                <span className="d-block fs-16 mb-5">New Contracts</span>
+                <h2 className="mb-5">12</h2>
                 <span className="text-success">
                   +3 New
                   <ArrowUp size={12} className="ri-arrow-up-line"/>
@@ -714,41 +710,44 @@ function Dashboard() {
             </div>
           </div>
         </div>
-        <div className="col-12 col-lg-3 col-md-6">
+        <div className="col-12 col-lg-4 col-md-6">
           <div className="card">
-            <div className="card-body mini-card-body d-flex align-center gap-16">
+            <div className="card-body d-flex align-center gap-16">
               <div className="avatar avatar-xl bg-purple-transparent text-purple">
                 <Briefcase size={42}/>
               </div>
               <div className="card-content">
-                <span className="d-block fs-16 mb-5">Job Applicants</span>
-                <h2 className="mb-5">156</h2>
-                <span className="fs-12 text-muted">30-day pipeline</span>
+                <span className="d-block fs-16 mb-5">Total Employers</span>
+                <h2 className="mb-5">568</h2>
+                <span className="text-success">
+                  +5% <ArrowUp size={12} className="ri-arrow-up-line"/>
+                </span>
+                <span className="fs-12 text-muted ml-5">vs. last month</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-12 col-lg-3 col-md-6">
+        <div className="col-12 col-lg-4 col-md-6">
           <div className="card">
-            <div className="card-body mini-card-body d-flex align-center gap-16">
+            <div className="card-body d-flex align-center gap-16">
               <div className="avatar avatar-xl bg-success-transparent text-success">
                 <UserPlus size={42}/>
               </div>
               <div className="card-content">
-                <span className="d-block fs-16 mb-5">New Hires (MTD)</span>
-                <h2 className="mb-5">15</h2>
+                <span className="d-block fs-16 mb-5">Total Candidates</span>
+                <h2 className="mb-5">2432</h2>
                 <span className="text-success">
                   +10%
                   <ArrowUp size={12} className="ri-arrow-up-line" />
                 </span>
-                <span className="fs-12 text-muted ml-5">YoY</span>
+                <span className="fs-12 text-muted ml-5">vs. last month</span>
               </div>
             </div>
           </div>
         </div>
-        <div className="col-12 col-lg-3 col-md-6">
+        <div className="col-12 col-lg-4 col-md-6">
           <div className="card">
-            <div className="card-body mini-card-body d-flex align-center gap-16">
+            <div className="card-body d-flex align-center gap-16">
               <div className="avatar avatar-xl bg-slateblue-transparent text-slateblue">
                 <ClockCheck size={42}/>
               </div>
@@ -756,37 +755,6 @@ function Dashboard() {
                 <span className="d-block fs-16 mb-5">Attendance Rate</span>
                 <h2 className="mb-5">94%</h2>
                 <span className="fs-12 text-muted">This week</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-12 col-lg-3 col-md-6">
-          <div className="card">
-            <div className="card-body mini-card-body d-flex align-center gap-16">
-              <div className="avatar avatar-xl bg-teal-transparent text-teal">
-                <GraduationCap size={42}/>
-              </div>
-              <div className="card-content">
-                <span className="d-block fs-16 mb-5">Training Completed</span>
-                <h2 className="mb-5">120 hrs</h2>
-                <span className="text-success">
-                  +25%<ArrowUp size={12} className="ri-arrow-up-line" />
-                </span>
-                <span className="fs-12 text-muted ml-5">QoQ</span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-12 col-lg-3 col-md-6">
-          <div className="card">
-            <div className="card-body mini-card-body d-flex align-center gap-16">
-              <div className="avatar avatar-xl bg-pink-transparent text-pink">
-                <UserStar size={42}/>
-              </div>
-              <div className="card-content">
-                <span className="d-block fs-16 mb-5">Employee eNPS</span>
-                <h2 className="mb-5">72</h2>
-                <span className="fs-12 text-muted">Engagement Score</span>
               </div>
             </div>
           </div>
@@ -859,7 +827,7 @@ function Dashboard() {
                     <div className="vendor-content mb-10">
                         <span className="d-block mb-5">Monthly Revenue</span>
                         <div className="d-flex flex-wrap gap-10">
-                            <h3>$8,750</h3>
+                            <h3>#850,000</h3>
                             <div>
                                 <span className="text-success">+3.2%<ArrowUp size={12} className="ri-arrow-up-line"/></span>
                                 <span className="fs-12 text-muted ml-5">This month</span>
@@ -899,7 +867,7 @@ function Dashboard() {
                       <div className="vendor-content mb-10">
                           <span className="d-block mb-5">Monthly Revenue</span>
                           <div className="d-flex flex-wrap gap-10">
-                              <h3>$12,300</h3>
+                              <h3>#922,300</h3>
                               <div>
                                   <span className="text-success">+5.1%<ArrowUp size={12} className="ri-arrow-up-line"/></span>
                                   <span className="fs-12 text-muted ml-5">This month</span>
@@ -939,7 +907,7 @@ function Dashboard() {
                       <div className="vendor-content mb-10">
                           <span className="d-block mb-5">Monthly Revenue</span>
                           <div className="d-flex flex-wrap gap-10">
-                              <h3>$6,450</h3>
+                              <h3>#612,450</h3>
                               <div>
                                   <span className="text-success">+2.8%<ArrowUp size={12} className="ri-arrow-up-line"/></span>
                                   <span className="fs-12 text-muted ml-5">This month</span>
@@ -979,7 +947,7 @@ function Dashboard() {
                       <div className="vendor-content mb-10">
                           <span className="d-block mb-5">Monthly Revenue</span>
                           <div className="d-flex flex-wrap gap-10">
-                              <h3>$4,920</h3>
+                              <h3>#492,920</h3>
                               <div>
                                   <span className="text-success">+1.9%<ArrowUp size={12} className="ri-arrow-up-line"/></span>
                                   <span className="fs-12 text-muted ml-5">This month</span>
@@ -1019,7 +987,7 @@ function Dashboard() {
                       <div className="vendor-content mb-10">
                           <span className="d-block mb-5">Monthly Revenue</span>
                           <div className="d-flex flex-wrap gap-10">
-                              <h3>$15,680</h3>
+                              <h3>#295,680</h3>
                               <div>
                                   <span className="text-success">+7.3%<ArrowUp size={12} className="ri-arrow-up-line"/></span>
                                   <span className="fs-12 text-muted ml-5">This month</span>
