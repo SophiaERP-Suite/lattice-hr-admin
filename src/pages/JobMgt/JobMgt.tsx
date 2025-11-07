@@ -350,7 +350,15 @@ export default function JobMgt() {
                                                         <td>{ data.department }</td>
                                                         <td>{ data.location }</td>
                                                         <td>
-                                                            <span className="badge bg-label-warning">{ data.jobType }</span>
+                                                            <span className={`badge 
+                                                                ${data.jobType === 'Full-time' ? 'bg-label-success' : ''}
+                                                                ${data.jobType === 'Internship' ? 'bg-label-danger' : ''}
+                                                                ${data.jobType === 'Remote' ? 'bg-label-warning' : ''}
+                                                                ${data.jobType === 'Contract' ? 'bg-label-purple' : ''}
+                                                                ${data.jobType === 'Part-time' ? 'bg-label-info' : ''}
+                                                                ${data.jobType === 'Internship' ? 'bg-label-action' : ''}`}>
+                                                                {data.jobType}
+                                                            </span>
                                                         </td>
                                                         <td>
                                                             <span className="fw-medium">{ data.applications }</span>
@@ -363,7 +371,15 @@ export default function JobMgt() {
                                                             <span className="text-danger fw-medium">{ data.closing }</span>
                                                         </td>
                                                         <td>
-                                                            <span className="badge bg-label-info">{ data.status }</span>
+                                                            <span className={`badge 
+                                                                ${data.status === 'active' ? 'bg-label-success' : ''}
+                                                                ${data.status === 'expired' ? 'bg-label-danger' : ''}
+                                                                ${data.status === 'pending' ? 'bg-label-warning' : ''}
+                                                                ${data.status === 'closed' ? 'bg-label-purple' : ''}
+                                                                ${data.status === 'draft' ? 'bg-label-info' : ''}
+                                                                ${data.status === 'on hold' ? 'bg-label-pink' : ''}`}>
+                                                                {data.status}
+                                                            </span>
                                                         </td>
                                                         <td>
                                                             <div className="d-flex-items gap-5">
