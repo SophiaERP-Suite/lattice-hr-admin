@@ -43,19 +43,19 @@ export default function ComplianceMgt() {
               <h1 className="page-title fs-18 lh-1">Compliance Management</h1>
               <nav aria-label="breadcrumb">
                 <ol className="breadcrumb breadcrumb-example1 mb-0">
-                  <li>
-                    <NavLink to="/Dashboard">
-                        Dashboard
-                    </NavLink>
-                  </li>
-                  <li className="mb-2">
-                    <ChevronRight size={15} />
-                  </li>
                   <li className="active" aria-current="page">
                     <NavLink to="/ComplianceMgt">
                         Compliance Management
                     </NavLink>
                   </li>
+                  <li className="mb-2">
+                    <ChevronRight size={15} />
+                  </li>
+                  <li>
+                      <NavLink to="/Dashboard">
+                          Dashboard
+                      </NavLink>
+                    </li>
                 </ol>
               </nav>
             </div>
@@ -138,7 +138,7 @@ export default function ComplianceMgt() {
               Compliance Records
             </div>
             <div className="table-responsive">
-              <table className="table table-hover align-middle mb-0">
+              <table className="table table-hover align-middle mb-0 text-start">
                 <thead className="table-light">
                   <tr>
                     <th>Worker</th>

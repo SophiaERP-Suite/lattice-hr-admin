@@ -577,19 +577,19 @@ export default function FinanceMgt() {
                         <h1 className="page-title fs-18 lh-1">Finance Management</h1>
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb breadcrumb-example1 mb-0">
-                            <li>
-                                <NavLink to="/Dashboard">
-                                    Dashboard
-                                </NavLink>
-                            </li>
-                            <li className="mb-2">
-                                <ChevronRight size={15} />
-                            </li>
-                            <li className="active" aria-current="page">
-                                <NavLink to="/FinanceMgt">
-                                    Finance Management
-                                </NavLink>
-                            </li>
+                                <li className="active" aria-current="page">
+                                    <NavLink to="/FinanceMgt">
+                                        Finance Management
+                                    </NavLink>
+                                </li>
+                                <li className="mb-2">
+                                    <ChevronRight size={15} />
+                                </li>
+                                <li>
+                                    <NavLink to="/Dashboard">
+                                        Dashboard
+                                    </NavLink>
+                                </li>
                             </ol>
                         </nav>
                     </div>
@@ -640,7 +640,7 @@ export default function FinanceMgt() {
                     </div>
                 </div>
 
-                <div className="col-xxl-6 col-xl-12">
+                <div className="col-12">
                     <div className="card">
                         <div className="card-header justify-between">
                             <h4 className="">Revenue & Profit</h4>
@@ -663,7 +663,7 @@ export default function FinanceMgt() {
                         </div>
                     </div>
                 </div>
-                <div className="col-xxl-6 col-xl-12">
+                <div className="col-12">
                     <div className="card">
                         <div className="card-header justify-between">
                             <h4 className="">Payments Analytics</h4>
@@ -688,7 +688,7 @@ export default function FinanceMgt() {
                 </div>
                 
 
-                <div className="col-xxl-6 col-xl-12">
+                <div className="col-12">
                     <div className="card">
                         <div className="card-header justify-between">
                             <h4 className="">Top Subscribed Industries</h4>
@@ -762,7 +762,7 @@ export default function FinanceMgt() {
                         </div>
                         <div className="card-body pt-15">
                             <div className="table-responsive table--card">
-                                <table className="table table-bordered text-nowrap">
+                                <table className="table table-bordered text-nowrap text-start">
                                     <thead>
                                         <tr>
                                             <th>Client</th>

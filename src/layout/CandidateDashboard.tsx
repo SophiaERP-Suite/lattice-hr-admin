@@ -295,7 +295,7 @@ function CandidateDashboard() {
                         <div className="author-thumb">
                           <img src={john} alt="user" />
                         </div>
-                        <h6 className="author-name lh-1">John Fernandez</h6>
+                        <h6 className="author-name lh-1">John Ogunsakin</h6>
                       </div>
                     </a>
                     <ul className="dropdown-menu">
