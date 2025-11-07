@@ -93,12 +93,12 @@ function CandidateDashboard() {
                   </NavLink>
                 </li>
                 <li className="slide">
-                  <a href="#" className="sidebar-menu-item">
+                  <NavLink to="/Packages" className="sidebar-menu-item">
                     <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
-                      <Blocks style={{ color: "#000"}} />
+                       <Blocks style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Package & Contract</span>
-                  </a>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Packages & Contracts</span>
+                  </NavLink>
                 </li>
                 <li className="slide">
                   <NavLink to="/FinanceMgt" className="sidebar-menu-item">

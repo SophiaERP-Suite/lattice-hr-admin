@@ -1,4 +1,4 @@
-import { ChevronRight, PenLine, Trash2 } from "lucide-react";
+import { Calendar, ChevronRight, PenLine, Trash2 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import female from "../../assets/images/avatar/avatar-thumb-010.webp";
 import male from "../../assets/images/avatar/avatar-thumb-007.webp";
@@ -229,7 +229,7 @@ export default function TimeSheet() {
                                     <label htmlFor="timesheetDate" className="form-label">Date</label>
                                     <div className="input-group">
                                         <div className="input-group-text text-muted">
-                                            <i className="ri-calendar-line"></i>
+                                            <Calendar />
                                         </div>
                                         <input type="text" className="form-control flatpickr-input" id="timesheetDate" placeholder="Select work date" readOnly={true}/>
                                     </div>
@@ -285,7 +285,7 @@ export default function TimeSheet() {
                                     <label htmlFor="scheduleDate" className="form-label">Date</label>
                                     <div className="input-group">
                                         <div className="input-group-text text-muted">
-                                            <i className="ri-calendar-line"></i>
+                                            <Calendar />
                                         </div>
                                         <input type="text" className="form-control flatpickr-input" id="scheduleDate" value="2023-05-06" readOnly={true}/>
                                     </div>
