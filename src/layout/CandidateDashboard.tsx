@@ -18,8 +18,7 @@ import {
   BriefcaseBusiness,
   Blocks,
   BadgeAlert,
-  FolderCog,
-  UserCog,
+  Cog,
 } from "lucide-react";
 
 function CandidateDashboard() {
@@ -110,27 +109,19 @@ function CandidateDashboard() {
                   </NavLink>
                 </li>
                 <li className="slide">
-                  <a href="#" className="sidebar-menu-item">
+                  <NavLink to="/Complaints" className="sidebar-menu-item">
                     <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
-                      <BadgeAlert style={{ color: "#000"}} />
+                       <BadgeAlert style={{ color: "#000"}} />
                     </div>
                     <span className="sidebar-menu-label" style={{ color: "#000" }}>Complaints</span>
-                  </a>
+                  </NavLink>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">
                     <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
-                      <FolderCog style={{ color: "#000"}} />
+                      <Cog style={{ color: "#000"}} />
                     </div>
-                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Role Management</span>
-                  </a>
-                </li>
-                <li className="slide">
-                  <a href="#" className="sidebar-menu-item">
-                    <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
-                      <UserCog style={{ color: "#000"}} />
-                    </div>
-                    <span className="sidebar-menu-label" style={{ color: "#000" }}>User Management</span>
+                    <span className="sidebar-menu-label" style={{ color: "#000" }}>Control Panel</span>
                   </a>
                 </li>
               </ul>
