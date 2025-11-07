@@ -102,12 +102,12 @@ function CandidateDashboard() {
                   </a>
                 </li>
                 <li className="slide">
-                  <a href="#" className="sidebar-menu-item">
+                  <NavLink to="/FinanceMgt" className="sidebar-menu-item">
                     <div style={{ marginInlineEnd: "10px", color: "#000 !important" }}>
-                      <CreditCard style={{ color: "#000"}} />
+                       <CreditCard style={{ color: "#000"}} />
                     </div>
                     <span className="sidebar-menu-label" style={{ color: "#000" }}>Finance Management</span>
-                  </a>
+                  </NavLink>
                 </li>
                 <li className="slide">
                   <a href="#" className="sidebar-menu-item">

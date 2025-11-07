@@ -367,9 +367,9 @@ export default function JobMgt() {
                                                         </td>
                                                         <td>
                                                             <div className="d-flex-items gap-5">
-                                                                <a className="btn-icon btn-success-light" href="#">
+                                                                <NavLink className="btn-icon btn-success-light" to="/JobMgt/JobDetails">
                                                                     <a><Eye /></a>
-                                                                </a>
+                                                                </NavLink>
                                                                 <a className="btn-icon btn-info-light" href="javascript:void(0);">
                                                                     <a><PencilLine /></a>
                                                                 </a>
