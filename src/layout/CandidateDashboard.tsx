@@ -2,6 +2,7 @@ import { NavLink, Outlet } from "react-router-dom";
 import avatar1 from "../assets/images/avatar/avatar-thumb-010.webp";
 import john from "../assets/images/avatar/avatar-thumb-001.webp";
 import mainLogo from "../assets/images/latty.png"
+import miniLogo from "../assets/images/latty_mini.png"
 import {
   Bell,
   CircleQuestionMark,
@@ -139,6 +140,34 @@ function CandidateDashboard() {
             <div className="app-header-inner">
               <div className="app-header-left">
                 <div className="d-flex align-center gap-15">
+                  <div className="app-header-ls-logo">
+                    <a className="app-header-ls-dark-logo" href="#">
+                      <img
+                        src={miniLogo}
+                        alt="image"
+                      />
+                    </a>
+                    <a className="app-header-ls-light-logo" href="#">
+                      <img
+                        src={miniLogo}
+                        alt="image"
+                      />
+                    </a>
+                  </div>
+                  <div className="app-header-mobile-logo">
+                    <a className="app-header-dark-logo" href="#">
+                      <img
+                        src={miniLogo}
+                        alt="image"
+                      />
+                    </a>
+                    <a className="app-header-light-logo" href="#">
+                      <img
+                        src={miniLogo}
+                        alt="image"
+                      />
+                    </a>
+                  </div>
                   <div className="app-header-element">
                     <a
                       className="sidebar-toggle-bar"
@@ -152,34 +181,7 @@ function CandidateDashboard() {
                       </div>
                     </a>
                   </div>
-                  <div className="app-header-ls-logo">
-                    <a className="app-header-ls-dark-logo" href="#">
-                      <img
-                        src={mainLogo}
-                        alt="image"
-                      />
-                    </a>
-                    <a className="app-header-ls-light-logo" href="#">
-                      <img
-                        src={mainLogo}
-                        alt="image"
-                      />
-                    </a>
-                  </div>
-                  <div className="app-header-mobile-logo">
-                    <a className="app-header-dark-logo" href="#">
-                      <img
-                        src={mainLogo}
-                        alt="image"
-                      />
-                    </a>
-                    <a className="app-header-light-logo" href="#">
-                      <img
-                        src={mainLogo}
-                        alt="image"
-                      />
-                    </a>
-                  </div>
+                  
                 </div>
                 <div className="app-header-search d-none d-lg-block">
                   <form action="#">
