@@ -259,7 +259,7 @@ export default function WorkersMgt() {
                     <h1 className="page-title fs-18 lh-1">Worker Management</h1>
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb breadcrumb-example1 mb-0">
-                            <li className="active" aria-current="page">
+                            <li className="active breadcrumb-item" aria-current="page">
                                 <NavLink to="/WorkerMgt">
                                     Worker Management
                                 </NavLink>
@@ -267,7 +267,7 @@ export default function WorkersMgt() {
                             <li className="mb-2">
                                 <ChevronRight size={15} />
                             </li>
-                            <li>
+                            <li className="breadcrumb-item">
                                 <NavLink to="/Dashboard">
                                     Dashboard
                                 </NavLink>

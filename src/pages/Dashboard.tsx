@@ -15,6 +15,7 @@ import homeCare from "../assets/images/home_care.jpg";
 import hospital from "../assets/images/hospital.jpg";
 import elderlyCare from "../assets/images/elderly_care.png";
 import new_care from "../assets/images/new_care.png"
+import { NavLink } from "react-router-dom";
 
 const options = {
     chart: {
@@ -662,6 +663,20 @@ function Dashboard() {
   return (
     <div className="container-fluid">
       <div className="row">
+        <div className="col-xl-12">
+          <div className="page-title-box d-flex-between flex-wrap gap-15">
+              <h1 className="page-title fs-18 lh-1">Dashboard</h1>
+              <nav aria-label="breadcrumb">
+                <ol className="breadcrumb breadcrumb-example1 mb-0">
+                  <li className="breadcrumb-item">
+                    <NavLink to="/Dashboard">
+                        Dashboard
+                    </NavLink>
+                  </li>
+                </ol>
+              </nav>
+          </div>
+        </div>
         <div className="col-12 col-lg-4 col-md-6 col-12">
           <div className="card">
             <div className="card-body d-flex align-center gap-16">

@@ -11,7 +11,7 @@ export default function JobDetails() {
                         <h1 className="page-title fs-18 lh-1">Job Details</h1>
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb breadcrumb-example1 mb-0">
-                                <li className="active" aria-current="page">
+                                <li className="active breadcrumb-item" aria-current="page">
                                     <NavLink to="/JobMgt/JobDetails">
                                         Job Details
                                     </NavLink>
@@ -19,7 +19,7 @@ export default function JobDetails() {
                                  <li className="mb-2">
                                     <ChevronRight size={15} />
                                 </li>
-                                <li className="active" aria-current="page">
+                                <li className="active breadcrumb-item" aria-current="page">
                                     <NavLink to="/JobMgt">
                                         Job Management
                                     </NavLink>
@@ -27,7 +27,7 @@ export default function JobDetails() {
                                 <li className="mb-2">
                                     <ChevronRight size={15} />
                                 </li>
-                                <li>
+                                <li className="breadcrumb-item">
                                     <NavLink to="/Dashboard">
                                         Dashboard
                                     </NavLink>

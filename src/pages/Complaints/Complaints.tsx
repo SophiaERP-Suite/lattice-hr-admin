@@ -136,9 +136,7 @@ export default function Complaints() {
                         <h1 className="page-title fs-18 lh-1">Complaints</h1>
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb breadcrumb-example1 mb-0">
-                                
-                                
-                                <li className="active" aria-current="page">
+                                <li className="active breadcrumb-item" aria-current="page">
                                     <NavLink to="/Complaints">
                                         Complaints
                                     </NavLink>
@@ -146,7 +144,7 @@ export default function Complaints() {
                                 <li className="mb-2">
                                     <ChevronRight size={15} />
                                 </li>
-                                <li>
+                                <li className="breadcrumb-item">
                                     <NavLink to="/Dashboard">
                                         Dashboard
                                     </NavLink>

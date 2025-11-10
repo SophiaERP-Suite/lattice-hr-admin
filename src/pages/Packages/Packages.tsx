@@ -167,7 +167,7 @@ export default function Packages() {
                         <h1 className="page-title fs-18 lh-1">Packages & Contracts</h1>
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb breadcrumb-example1 mb-0">
-                                <li className="active" aria-current="page">
+                                <li className="active breadcrumb-item" aria-current="page">
                                     <NavLink to="/Packages">
                                         Packages & Contracts
                                     </NavLink>
@@ -175,7 +175,7 @@ export default function Packages() {
                                 <li className="mb-2">
                                     <ChevronRight size={15} />
                                 </li>
-                                <li>
+                                <li className="breadcrumb-item">
                                     <NavLink to="/Dashboard">
                                         Dashboard
                                     </NavLink>
