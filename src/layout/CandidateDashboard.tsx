@@ -343,7 +343,9 @@ function CandidateDashboard() {
 
         {/* <!-- app-content-area-start --> */}
         <div className="app-content-area">
-          <Outlet />
+          <div className="app-content-wrap">
+            <Outlet />
+          </div>
         </div>
         {/* <!-- app-content-area-end --> */}
 
