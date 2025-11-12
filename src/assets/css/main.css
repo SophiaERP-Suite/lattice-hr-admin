@@ -312,6 +312,10 @@ html {
   font-size: 10px;
 }
 
+.sidebar-collapsed {
+  width: 70px;
+}
+
 /* Typography css start  */
 body {
   color: var(--color-body);
@@ -341,6 +345,7 @@ h6,
   font-weight: var(--fw-medium);
   word-break: break-word;
   font-family: var(--ff-title);
+  /* text-align: left; */
 }
 
 h1,
@@ -478,6 +483,83 @@ textarea {
 textarea:focus {
   border-color: var(--color-primary);
 }
+
+      .apexcharts-flip-y {
+        SVGTransform: scaleY(-1) translateY(-100%);
+        transform-origin: top;
+        transform-box: fill-box;
+      }
+      .apexcharts-flip-x {
+        SVGTransform: scaleX(-1);
+        transform-origin: center;
+        transform-box: fill-box;
+      }
+      .apexcharts-legend {
+        display: flex;
+        overflow: auto;
+        padding: 0 10px;
+      }
+      .apexcharts-legend.apexcharts-legend-group-horizontal {
+        flex-direction: column;
+      }
+      .apexcharts-legend-group {
+        display: flex;
+      }
+      .apexcharts-legend-group-vertical {
+        flex-direction: column-reverse;
+      }
+      .apexcharts-legend.apx-legend-position-bottom, .apexcharts-legend.apx-legend-position-top {
+        flex-wrap: wrap
+      }
+      .apexcharts-legend.apx-legend-position-right, .apexcharts-legend.apx-legend-position-left {
+        flex-direction: column;
+        bottom: 0;
+      }
+      .apexcharts-legend.apx-legend-position-bottom.apexcharts-align-left, .apexcharts-legend.apx-legend-position-top.apexcharts-align-left, .apexcharts-legend.apx-legend-position-right, .apexcharts-legend.apx-legend-position-left {
+        justify-content: flex-start;
+        align-items: flex-start;
+      }
+      .apexcharts-legend.apx-legend-position-bottom.apexcharts-align-center, .apexcharts-legend.apx-legend-position-top.apexcharts-align-center {
+        justify-content: center;
+        align-items: center;
+      }
+      .apexcharts-legend.apx-legend-position-bottom.apexcharts-align-right, .apexcharts-legend.apx-legend-position-top.apexcharts-align-right {
+        justify-content: flex-end;
+        align-items: flex-end;
+      }
+      .apexcharts-legend-series {
+        cursor: pointer;
+        line-height: normal;
+        display: flex;
+        align-items: center;
+      }
+      .apexcharts-legend-text {
+        position: relative;
+        font-size: 14px;
+      }
+      .apexcharts-legend-text *, .apexcharts-legend-marker * {
+        pointer-events: none;
+      }
+      .apexcharts-legend-marker {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        margin-right: 1px;
+      }
+
+      .apexcharts-legend-series.apexcharts-no-click {
+        cursor: auto;
+      }
+      .apexcharts-legend .apexcharts-hidden-zero-series, .apexcharts-legend .apexcharts-hidden-null-series {
+        display: none !important;
+      }
+      .apexcharts-inactive-legend {
+        opacity: 0.45;
+      }
+
+  
 
 *::-moz-selection {
   background: var(--color-primary);
@@ -883,9 +965,10 @@ textarea:focus {
   top: 50%;
   transform: translateY(-50%);
   background-image: none !important;
-  display: inline-flex;
+  /* display: inline-flex; */
   justify-content: center;
   align-items: center;
+  display: none;
 }
 .accordion-button:not(.collapsed)::after {
   content: "\ea78";
@@ -2698,6 +2781,7 @@ textarea:focus {
   z-index: 1;
   -webkit-transition: all 200ms linear;
   transition: all 200ms linear;
+  display: none
 }
 @media only screen and (min-width: 576px) and (max-width: 767px), (max-width: 575px) {
   .progress-wrap::after {
@@ -9589,7 +9673,7 @@ div.dataTables_wrapper div.dataTables_filter input {
 /*  3.2 app footer css
 /*----------------------------------------*/
 .app-footer-area {
-  background-color: var(--color-card-bg);
+  /* background-color: var(--color-card-bg); */
   padding: 15px 0px;
   width: 100%;
   text-align: center;
@@ -9616,16 +9700,31 @@ div.dataTables_wrapper div.dataTables_filter input {
 /*  3.3 app header css
 /*----------------------------------------*/
 .app-content-area {
+  position: relative;
+  top: 0;
+  left: 0;
   padding-inline-start: 260px;
   min-height: calc(100vh - 146px);
   margin-top: 93px;
   transition: all 0.3s ease-in-out;
 }
+
+.app-content-area2 {
+  position: relative;
+  top: 0;
+  left: 0;
+  padding-inline-start: 70px;
+  min-height: calc(100vh - 146px);
+  margin-top: 93px;
+  transition: all 0.3s ease-in-out;
+}
+
 @media only screen and (min-width: 992px) and (max-width: 1199px), only screen and (min-width: 768px) and (max-width: 991px), only screen and (min-width: 576px) and (max-width: 767px) {
   .app-content-area {
     padding-inline-start: 0;
   }
 }
+
 @media (max-width: 575px) {
   .app-content-area {
     padding-inline-start: 0;
@@ -9652,6 +9751,18 @@ div.dataTables_wrapper div.dataTables_filter input {
   z-index: 19;
   width: 100%;
   padding-inline-start: 260px;
+}
+
+.app-header-area2 {
+  background-color: var(--color-card-bg);
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1), 0px 1px 3px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  transition: all 0.3s ease-in-out;
+  top: 0;
+  left: 0;
+  z-index: 19;
+  width: 100%;
+  padding-inline-start: 70px;
 }
 @media only screen and (min-width: 992px) and (max-width: 1199px), only screen and (min-width: 768px) and (max-width: 991px), only screen and (min-width: 576px) and (max-width: 767px), (max-width: 575px) {
   .app-header-area {
@@ -9953,6 +10064,7 @@ div.dataTables_wrapper div.dataTables_filter input {
   width: 100%;
 }
 
+
 @media only screen and (min-width: 992px) and (max-width: 1199px), only screen and (min-width: 768px) and (max-width: 991px), only screen and (min-width: 576px) and (max-width: 767px), (max-width: 575px) {
   .app-offcanvas-overlay.overlay-open {
     background: rgba(0, 0, 0, 0.6);
@@ -10157,7 +10269,7 @@ div.dataTables_wrapper div.dataTables_filter input {
   align-items: center;
   text-decoration: none;
   font-size: 14px;
-  color: var(--color-menu);
+  color: #000;
   font-weight: 500;
   transition: all 0.3s ease-in-out;
   border-radius: 4px;
@@ -10249,7 +10361,8 @@ div.dataTables_wrapper div.dataTables_filter input {
   font-family: var(--ff-remixicon);
   font-size: 12px;
   inset-inline-start: -10px;
-  opacity: 0.8;
+  /* opacity: 0.8; */
+  opacity: 0
 }
 [dir=rtl] .app-sidebar .sidebar-menu.child1 .sidebar-menu-item:before, [dir=rtl] .app-sidebar .sidebar-menu.child2 .sidebar-menu-item:before, [dir=rtl] .app-sidebar .sidebar-menu.child3 .sidebar-menu-item:before {
   content: "\f5d5";
@@ -10271,7 +10384,7 @@ div.dataTables_wrapper div.dataTables_filter input {
   white-space: nowrap;
   position: relative;
   font-size: 14px;
-  color: var(--color-menu);
+  color: #000;
   font-weight: var(--fw-regular);
   line-height: 1;
   display: -moz-box;
@@ -10283,7 +10396,7 @@ div.dataTables_wrapper div.dataTables_filter input {
   text-transform: capitalize;
 }
 [data-theme-mode=dark] .app-sidebar .sidebar-menu-label {
-  color: var(--color-heading);
+  color: #000;
 }
 .app-sidebar .side-menu-icon {
   margin-inline-end: 10px;
@@ -10299,7 +10412,12 @@ div.dataTables_wrapper div.dataTables_filter input {
   height: 18px;
 }
 .app-sidebar .side-menu-icon svg * {
-  fill: var(--color-menu);
+  /* fill: #000; */
+  color: #000;
+  transition: all 0.3s ease-in-out;
+}
+.app-sidebar .side-menu-icon {
+  fill: #000;
   transition: all 0.3s ease-in-out;
 }
 [data-theme-mode=dark] .app-sidebar .side-menu-icon svg * {
@@ -10363,9 +10481,10 @@ div.dataTables_wrapper div.dataTables_filter input {
 
 .app-sidebar-main-menu > .slide.active .sidebar-menu .sidebar-menu-item:hover .side-menu-angle, .app-sidebar-main-menu > .slide:hover .sidebar-menu .sidebar-menu-item:hover .side-menu-angle {
   color: var(--color-primary);
+  cursor: pointer
 }
 [data-theme-mode=dark] .app-sidebar-main-menu > .slide.active .sidebar-menu .sidebar-menu-item:hover .side-menu-angle, [data-theme-mode=dark] .app-sidebar-main-menu > .slide:hover .sidebar-menu .sidebar-menu-item:hover .side-menu-angle {
-  color: var(--color-black);
+  color: #000;
 }
 
 @media only screen and (min-width: 992px) and (max-width: 1199px), only screen and (min-width: 768px) and (max-width: 991px), only screen and (min-width: 576px) and (max-width: 767px), (max-width: 575px) {
@@ -12196,6 +12315,47 @@ div.dataTables_wrapper div.dataTables_filter input {
   align-content: center;
   cursor: pointer;
 }
+
+ #sidebarToggle2 {
+    display: none
+  }
+
+@media (max-width: 1200px) {
+  .app-sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%; 
+    height: 100%;
+    z-index: 999;
+    width: 250px;
+    transition: left 0.3s ease;
+  }
+
+  #sidebarToggle {
+display: none;
+  }
+
+  #sidebarToggle2 {
+    display: block
+  }
+
+  .app-sidebar.mobile-open {
+    left: 0; 
+  }
+
+  /* Optionally overlay */
+  body.mobile-sidebar-open::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+  }
+}
+
 @media only screen and (min-width: 1700px) and (max-width: 1800px), only screen and (min-width: 1600px) and (max-width: 1700px), only screen and (min-width: 1400px) and (max-width: 1599px), only screen and (min-width: 1200px) and (max-width: 1399px), only screen and (min-width: 992px) and (max-width: 1199px), only screen and (min-width: 768px) and (max-width: 991px), only screen and (min-width: 576px) and (max-width: 767px), (max-width: 575px) {
   .email-intro {
     flex-direction: column;
@@ -12321,6 +12481,11 @@ div.dataTables_wrapper div.dataTables_filter input {
 .inner-sidebar-toggle {
   display: none;
 }
+
+.sidebar-mini {
+  width: 70px;
+}
+
 @media only screen and (max-width: 991px) {
   .inner-sidebar-toggle {
     display: block;
@@ -16443,3 +16608,8 @@ input.error {
 .tagify__input::before {
   color: var(--color-body) !important;
 }
+
+/*----------------------------------------*/
+/*  tagify css end
+/*----------------------------------------*/
+/*# sourceMappingURL=../maps/main.css.map */
