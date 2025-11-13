@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate } from "react-router-dom";
-import CandidateDashboard from "../layout/CandidateDashboard";
+import CandidateDashboard from "../layout/AdminDashboard";
 import Dashboard from "../pages/Dashboard";
 import ClientMgt from "../pages/ClientMgt/ClientMgt";
 import WorkersMgt from "../pages/WorkersMgt/WorkersMgt";
