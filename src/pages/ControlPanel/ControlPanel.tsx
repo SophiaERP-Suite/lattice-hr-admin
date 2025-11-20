@@ -27,7 +27,7 @@ export default function ControlPanel() {
                         </nav>
                     </div>
                 </div>
-                <div className="col-12 col-lg-4 col-md-6 col-12">
+                <NavLink to="/ControlPanel/RoleMgt" className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-info-transparent text-info">
@@ -38,7 +38,7 @@ export default function ControlPanel() {
                             </div>
                         </div>
                     </div>
-                </div>
+                </NavLink>
                 <div className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
