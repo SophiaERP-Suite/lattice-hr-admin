@@ -11,7 +11,7 @@ import { NavLink } from "react-router-dom";
 import company from "../../assets/images/company.png";
 import avatar from "../../assets/images/company/company-thumb-008.png";
 
-const companyData = [
+const industryData = [
     {
         industry: "Manufacturing",
         totalClients: 2,
@@ -154,7 +154,7 @@ export default function IndustryMgt() {
                                 </thead>
                                 <tbody>
                                     {
-                                        companyData.map(data => {
+                                        industryData.map(data => {
                                             return (
                                                 <tr>
                                                     <td><input className="form-check-input" type="checkbox" aria-label="Select company"/>

@@ -63,6 +63,18 @@ export default function ControlPanel() {
                         </div>
                     </div>
                 </NavLink>
+                <NavLink to="/ControlPanel/CurrencyMgt" className="col-12 col-lg-4 col-md-6 col-12">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-warning-transparent text-warning">
+                                <Receipt size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Currency Management</span>
+                            </div>
+                        </div>
+                    </div>
+                </NavLink>
                 <div className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
@@ -83,18 +95,6 @@ export default function ControlPanel() {
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Permission Management</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div className="col-12 col-lg-4 col-md-6 col-12">
-                    <div className="card">
-                        <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-warning-transparent text-warning">
-                                <Receipt size={42}/>
-                            </div>
-                            <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Currency Management</span>
                             </div>
                         </div>
                     </div>

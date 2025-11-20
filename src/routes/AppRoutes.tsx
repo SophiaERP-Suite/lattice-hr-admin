@@ -14,6 +14,7 @@ import ControlPanel from "../pages/ControlPanel/ControlPanel";
 import RoleMgt from "../pages/ControlPanel/RoleMgt";
 import UserMgt from "../pages/ControlPanel/UserMgt";
 import IndustryMgt from "../pages/ControlPanel/IndustryMgt";
+import CurrencyMgt from "../pages/ControlPanel/CurrencyMgt";
 
 function AppRoutes() {
   return (
@@ -35,6 +36,7 @@ function AppRoutes() {
         <Route path="ControlPanel/RoleMgt" element={<RoleMgt />} />
         <Route path="ControlPanel/UserMgt" element={<UserMgt />} />
         <Route path="ControlPanel/IndustryMgt" element={<IndustryMgt />} />
+        <Route path="ControlPanel/CurrencyMgt" element={<CurrencyMgt />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
