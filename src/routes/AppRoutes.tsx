@@ -12,6 +12,7 @@ import Complaints from "../pages/Complaints/Complaints";
 import Packages from "../pages/Packages/Packages";
 import ControlPanel from "../pages/ControlPanel/ControlPanel";
 import RoleMgt from "../pages/ControlPanel/RoleMgt";
+import UserMgt from "../pages/ControlPanel/UserMgt";
 
 function AppRoutes() {
   return (
@@ -31,6 +32,7 @@ function AppRoutes() {
         <Route path="Packages" element={<Packages />} />
         <Route path="ControlPanel" element={<ControlPanel />} />
         <Route path="ControlPanel/RoleMgt" element={<RoleMgt />} />
+        <Route path="ControlPanel/UserMgt" element={<UserMgt />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
