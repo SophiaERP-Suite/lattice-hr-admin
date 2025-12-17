@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "/Admin/",
+  base: "/one/lhr_adm/",
   plugins: [
     react({
       babel: {

@@ -6,7 +6,7 @@ import AppRoutes from "./routes/AppRoutes";
 
 function App() {
   return (
-    <BrowserRouter basename="/Admin">
+    <BrowserRouter basename="/one/lhr_adm">
       <AppRoutes />
     </BrowserRouter>
   );
