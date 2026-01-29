@@ -1,166 +1,658 @@
-import { ArrowDown, ArrowUp, BadgeDollarSign, Calendar, ChevronRight, FolderOpenDot, PenLine, ReceiptText, ShieldCheck, ShieldX, Trash2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  CheckCheck,
+  ChevronRight,
+  FolderOpenDot,
+  PenLine,
+  Plus,
+  ReceiptText,
+  ShieldCheck,
+  ShieldX,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast, ToastContainer } from 'react-toastify';
 import { NavLink } from "react-router-dom";
+import RichTextEditor from "../../layout/RichTextEditor";
+import { useForm, Controller } from "react-hook-form";
+import { addFeatureToPackage, createPackage, fetchAllPackages, UpdatePackage } from "../../utils/PackageRequests";
+import { handleCreateEmployee } from "../../utils/EmployeeResponse";
+import HtmlRenderer from "../../layout/HTMLRenderer";
+import Modal from 'react-modal';
+import Tippy from "@tippyjs/react";
+import { fetchAllServiceTypes } from "../../utils/ServiceTypesRequests";
 
-const packageData = [
-  {
-    packageName: "Premium Employer Plan",
-    type: "Subscription",
-    description: "Up to 20 job posts, featured listings, and analytics dashboard.",
-    price: "NGN 120,000",
-    duration: "Quarterly",
-    activeClients: 12,
-    status: "Active",
-    createdBy: "Admin John"
-  },
-  {
-    packageName: "Basic Starter",
-    type: "Subscription",
-    description: "3 job posts per month and access to candidate search.",
-    price: "NGN 25,000",
-    duration: "Monthly",
-    activeClients: 47,
-    status: "Active",
-    createdBy: "Admin Grace"
-  },
-  {
-    packageName: "Corporate Contract - NovaTech",
-    type: "Custom Contract",
-    description: "Dedicated recruitment support and screening services.",
-    price: "NGN 95,000",
-    duration: "Yearly",
-    startDate: "2025-01-10",
-    endDate: "2025-12-31",
-    status: "Ongoing",
-    createdBy: "Admin Louis"
-  },
-  {
-    packageName: "Executive Recruit Pro",
-    type: "Subscription",
-    description: "Unlimited job posts, priority candidate access, and analytics.",
-    price: "NGN 30,000",
-    duration: "Quarterly",
-    activeClients: 9,
-    status: "Active",
-    createdBy: "Admin Mary"
-  },
-  {
-    packageName: "Job Posting Boost",
-    type: "One-Time Service",
-    description: "Feature your job listing at the top of the search results.",
-    price: "NGN 10,000",
-    duration: "One-Time",
-    activeClients: 25,
-    status: "Active",
-    createdBy: "Admin Steve"
-  },
-  {
-    packageName: "SME Recruit Pack",
-    type: "Subscription",
-    description: "Affordable plan for small businesses with 5 job slots.",
-    price: "NGN 15,000",
-    duration: "Monthly",
-    activeClients: 33,
-    status: "Pending",
-    createdBy: "Admin Grace"
-  },
-  {
-    packageName: "Enterprise Contract - Zenith Holdings",
-    type: "Custom Contract",
-    description: "Dedicated account manager, 50 hires, and screening tools.",
-    price: "NGN 1,200,000",
-    duration: "Yearly",
-    startDate: "2025-02-01",
-    endDate: "2026-02-01",
-    status: "Ongoing",
-    createdBy: "Admin Louis"
-  },
-  {
-    packageName: "Candidate Verification Add-On",
-    type: "One-Time Service",
-    description: "Full background and identity verification per applicant.",
-    price: "NGN 50,000",
-    duration: "Per Candidate",
-    activeClients: 67,
-    status: "Active",
-    createdBy: "Admin Jane"
-  },
-  {
-    packageName: "Startup Hiring Boost",
-    type: "Subscription",
-    description: "Special discounted plan for startups with up to 10 roles.",
-    price: "NGN 45,000",
-    duration: "Quarterly",
-    activeClients: 18,
-    status: "Active",
-    createdBy: "Admin Felix"
-  },
-  {
-    packageName: "Talent Search Access",
-    type: "Subscription",
-    description: "Access to advanced candidate search tools and filters.",
-    price: "NGN 30,000",
-    duration: "Monthly",
-    activeClients: 28,
-    status: "Expired",
-    createdBy: "Admin Sarah"
-  },
-  {
-    packageName: "Recruitment Outsource - BluePeak Ltd",
-    type: "Custom Contract",
-    description: "Full recruitment management and candidate evaluation service.",
-    price: "NGN 78,000",
-    duration: "6 Months",
-    startDate: "2025-01-15",
-    endDate: "2025-07-15",
-    status: "Ongoing",
-    createdBy: "Admin Louis"
-  },
-  {
-    packageName: "Enterprise Recruit Suite",
-    type: "Subscription",
-    description: "Corporate hiring tools with team collaboration features.",
-    price: "NGN 25,000",
-    duration: "Quarterly",
-    activeClients: 10,
-    status: "Closed",
-    createdBy: "Admin John"
-  },
-  {
-    packageName: "Professional Plan",
-    type: "Subscription",
-    description: "Ideal for agencies with mid-level hiring needs.",
-    price: "NGN 80,000",
-    duration: "Monthly",
-    activeClients: 20,
-    status: "Active",
-    createdBy: "Admin Mary"
-  },
-  {
-    packageName: "Bulk Candidate Screening",
-    type: "One-Time Service",
-    description: "Comprehensive screening of up to 100 candidates.",
-    price: "NGN 150,000",
-    duration: "One-Time",
-    activeClients: 4,
-    status: "Completed",
-    createdBy: "Admin Jane"
-  },
-  {
-    packageName: "Corporate Retainer - Axis Bank",
-    type: "Custom Contract",
-    description: "Year-round candidate management for high-volume roles.",
-    price: "NGN 2,000,000",
-    duration: "Yearly",
-    startDate: "2025-01-01",
-    endDate: "2025-12-31",
-    status: "Ongoing",
-    createdBy: "Admin Felix"
-  }
-]
+interface PackageData {
+  packageId: number;
+  packageName: string;
+  packageDescription: string;
+  duration: number;
+  durationUnit: string;
+  amount: number;
+  currency: string;
+  totalFeatures: number;
+  totalEmployers: number;
+  dateCreated: string;
+  isActive: boolean;
+}
+
+interface PackageFormData {
+  PackageName: string;
+  PackageDescription: string;
+  Duration: number;
+  DurationUnit: string;
+  Amount: number;
+  Currency: string;
+  IsActive: string;
+}
+
+interface FeatureFormData {
+  Description: string;
+  ServiceTypeId: string;
+  Quantity: number;
+}
+
+interface ServiceTypes {
+    serviceTypeId: string;
+    serviceName: string;
+}
+
 
 export default function Packages() {
+    const [packages, setPackages] = useState<PackageData[]>([]);
+    const [serviceTypes, setServiceTypes] = useState<ServiceTypes[]>([]);
+    const { register, reset, handleSubmit, formState, control } = useForm<PackageFormData>();
+    const [pageNumber, setPageNumber] = useState(1);
+    const [totalPackages, setTotalPackages] = useState(0);
+    const limit = 10;
+    const { errors } = formState;
+    const {
+        register: regEdit,
+        reset: resetEdit,
+        handleSubmit: submitEdit,
+        formState: editFormState,
+        control: editControl,
+        setValue,
+    } = useForm<PackageFormData>();
+    const { errors: editErrors } = editFormState;
+    const {
+        register: regFeat,
+        reset: resetFeat,
+        handleSubmit: submitFeature,
+        formState: featFormState,
+        control: featControl,
+    } = useForm<FeatureFormData>();
+    const { errors: featErrors } = featFormState;
+    const [packageEdit, setPackageEdit] = useState<PackageData | null>(null);
+    const [addModalState, setAddModalState] = useState(false);
+    const [editModalState, setEditModalState] = useState(false);
+    const [featureModalState, setFeatureModalState] = useState(false);
+
+    useEffect(() => {
+        fetchAllPackages({ pageNumber, limit })
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                console.log(data);
+                setPackages(data.data.packages);
+                setTotalPackages(data.data.totalCount);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
+        })
+    }, [pageNumber, limit]);
+
+    useEffect(() => {
+        fetchAllServiceTypes()
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                console.log(data);
+                setServiceTypes(data.data);
+            })
+        } else {
+            res.text()
+            .then(data => {
+                console.log(JSON.parse(data));
+            })
+        }
+        })
+    }, []);
+    
+    useEffect(() => {
+        if (packageEdit) {
+            setValue('PackageName', packageEdit.packageName);
+            setValue('Duration', packageEdit.duration);
+            setValue('PackageDescription', packageEdit.packageDescription);
+            setValue('Currency', packageEdit.currency);
+            setValue('Duration', packageEdit.duration);
+            setValue('DurationUnit', packageEdit.durationUnit);
+            setValue('Amount', packageEdit.amount);
+        }
+    }, [packageEdit, setValue]);
+
+    const refetchPackages = async () => {
+        try {
+        const res = await fetchAllPackages({ pageNumber, limit });
+        if (res.status === 200) {
+            const data = await res.json()
+            console.log(data);
+            setPackages(data.data.packages);
+            setTotalPackages(data.data.totalCount);
+        } else {
+            const resText = await res.text();
+            console.log(JSON.parse(resText));
+        }
+        
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
+    const submitPackage = async (data: PackageFormData) => {
+        if (!errors.PackageName && !errors.PackageDescription &&
+            !errors.Duration && !errors.DurationUnit && 
+            !errors.Amount && !errors.Currency
+        ) {
+            const loader = document.getElementById('query-loader');
+            const text = document.getElementById('query-text');
+            if (loader) {
+                loader.style.display = 'flex';
+            }
+            if (text) {
+                text.style.display = 'none';
+            }
+            const formData = new FormData();
+            formData.append("PackageName", data.PackageName);
+            formData.append("Duration", String(data.Duration));
+            formData.append("DurationUnit", data.DurationUnit);
+            formData.append("PackageDescription", data.PackageDescription);
+            formData.append("Amount", String(data.Amount));
+            formData.append("Currency", data.Currency);
+            const res = await createPackage(formData);
+            handleCreateEmployee(res, loader, text, { toast }, reset)
+            .finally(async () => {
+                await refetchPackages();
+                setAddModalState(false);
+            });
+        }
+    }
+
+    const submitNewFeature = async (data: FeatureFormData) => {
+        if (!featErrors.ServiceTypeId && !featErrors.Description &&
+            !featErrors.Quantity && packageEdit
+        ) {
+            const loader = document.getElementById('query-loader-2');
+            const text = document.getElementById('query-text-2');
+            if (loader) {
+                loader.style.display = 'flex';
+            }
+            if (text) {
+                text.style.display = 'none';
+            }
+            const formData = new FormData();
+            formData.append("Description", data.Description);
+            formData.append("ServiceTypeId", String(data.ServiceTypeId));
+            formData.append("Quantity", String(data.Quantity));
+            const res = await addFeatureToPackage(packageEdit.packageId, formData);
+            handleCreateEmployee(res, loader, text, { toast }, resetFeat)
+            .finally(async () => {
+                await refetchPackages();
+                setFeatureModalState(false);
+            });
+        }
+    }
+
+    const editPakage = async (data: PackageFormData) => {
+        if (packageEdit && !errors.PackageName && !errors.PackageDescription &&
+            !errors.Duration && !errors.DurationUnit && 
+            !errors.Amount && !errors.Currency
+        ) {
+            const loader = document.getElementById('query-loader-1');
+            const text = document.getElementById('query-text-1');
+            if (loader) {
+                loader.style.display = 'flex';
+            }
+            if (text) {
+                text.style.display = 'none';
+            }
+            const formData = new FormData();
+            formData.append("PackageName", data.PackageName);
+            formData.append("Duration", String(data.Duration));
+            formData.append("DurationUnit", data.DurationUnit);
+            formData.append("PackageDescription", data.PackageDescription);
+            formData.append("Amount", String(data.Amount));
+            formData.append("Currency", data.Currency);
+            const res = await UpdatePackage(packageEdit.packageId, formData);
+            handleCreateEmployee(res, loader, text, { toast }, resetEdit)
+            .finally(async () => {
+                await refetchPackages();
+                setEditModalState(false);
+            });
+        }
+    }
+
+    const updatePackageStatus = async (packageId: number, status: boolean) => {
+        const formData = new FormData();
+        formData.append("IsActive", String(status));
+        const res = await UpdatePackage(packageId, formData);
+        handleCreateEmployee(res, null, null, { toast }, resetEdit)
+        .finally(async () => {
+            await refetchPackages();
+        });
+    }
     return (
         <div className="container-fluid">
+            <ToastContainer />
+            <Modal isOpen={addModalState} onRequestClose={() => { setAddModalState(false); }}
+                style={{
+                content: {
+                width: 'fit-content',
+                height: 'fit-content',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                backgroundColor: 'rgb(255 255 255)',
+                borderRadius: '0.5rem',
+                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                },
+                overlay: {
+                backgroundColor: 'rgba(255, 255, 255, 0.7)'
+                }
+            }}
+            >
+                
+                <div className="h-fit w-100 overflow-auto" style={{ maxHeight: '70vh' }}>
+                    <form noValidate onSubmit={handleSubmit(submitPackage)}>
+                        <div className="d-flex justify-content-between border-bottom">
+                            <h1 className="modal-title fs-16" id="addNewTimeSheetLabel">Create New Package</h1>
+                            <button type="button" className="btn-close"  onClick={() => setAddModalState(false)}></button>
+                        </div>
+                        <div className="mt-4">
+                            <div className="row gy-15 text-start">
+                                <div className="col-xl-12">
+                                    <label className="form-label">Package Name</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Package Name"
+                                        {
+                                            ...register('PackageName',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        }
+                                    />
+                                    <p className='error-msg'>{errors.PackageName?.message}</p>
+                                </div>
+                                
+                                <div className="col-xl-6">
+                                    <label className="form-label">Duration</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="Duration"
+                                        {
+                                            ...register('Duration',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        } />
+                                    <p className='error-msg'>{errors.Duration?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
+                                    <label htmlFor="duration" className="form-label">Duration Unit</label>
+                                    <select
+                                        className="form-select"
+                                        id="duration"
+                                        {
+                                            ...register('DurationUnit',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        }>
+                                        <option value="">Select Duration</option>
+                                        <option value="Days">Days</option>
+                                        <option value="Weeks">Weeks</option>
+                                        <option value="Months">Months</option>
+                                    </select>
+                                    <p className='error-msg'>{errors.DurationUnit?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
+                                    <label className="form-label">Package Price</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="Amount"
+                                        {
+                                            ...register('Amount',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        } />
+                                    <p className='error-msg'>{errors.Amount?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
+                                    <label className="form-label">Currency</label>
+                                    <select
+                                        className="form-select"
+                                        {
+                                            ...register('Currency',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        }>
+                                        <option value="">Select Currency</option>
+                                        <option value="NGN">NGN</option>
+                                        <option value="CAD">CAD</option>
+                                        <option value="USD">USD</option>
+                                    </select>
+                                    <p className='error-msg'>{errors.Currency?.message}</p>
+                                </div>
+                                <div className="col-xl-12">
+                                    <label className="form-label">Package Description</label>
+                                    <Controller
+                                        name="PackageDescription"
+                                        control={control}
+                                        rules={{ required: 'Required' }}
+                                        render={({ field }) => (
+                                        <RichTextEditor
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                        />
+                                        )}
+                                    />
+                                    <p className='error-msg'>{errors.PackageDescription?.message}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <div className="d-flex justify-content-end gap-10 mt-20">
+                                <button type="button" className="btn btn-danger" onClick={() => setAddModalState(false)}>
+                                    <X size={18} className="mr-2" /> Cancel
+                                </button>
+                                <button type="submit" className="btn btn-success">
+                                    <div className="dots hidden" id="query-loader">
+                                        <div className="dot"></div>
+                                        <div className="dot"></div>
+                                        <div className="dot"></div>
+                                    </div>
+                                    <span id="query-text">
+                                        <CheckCheck size={18} className="mr-2" />
+                                        Add Package
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
+            <Modal isOpen={editModalState} onRequestClose={() => { setEditModalState(false); }}
+                style={{
+                content: {
+                width: 'fit-content',
+                height: 'fit-content',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                backgroundColor: 'rgb(255 255 255)',
+                borderRadius: '0.5rem',
+                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                },
+                overlay: {
+                backgroundColor: 'rgba(255, 255, 255, 0.7)'
+                }
+            }}
+            >
+                
+                <div  className="h-fit w-100 overflow-auto" style={{ maxHeight: '70vh' }}>
+                    {
+                        packageEdit && (
+                            <form noValidate onSubmit={submitEdit(editPakage)}>
+                                <div  className="d-flex justify-content-between border-bottom">
+                                    <h1 className="modal-title fs-16 font-bold" id="addNewTimeSheetLabel">Update Package</h1>
+                                    <button type="button" className="btn-close"  onClick={() => setEditModalState(false)}></button>
+                                </div>
+                                <div className="mt-4">
+                                    <div className="row gy-15 text-start">
+                                        <div className="col-xl-12">
+                                            <label className="form-label">Package Name</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                placeholder="Package Name"
+                                                {
+                                                    ...regEdit('PackageName',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                }
+                                            />
+                                            <p className='error-msg'>{editErrors.PackageName?.message}</p>
+                                        </div>
+                                        
+                                        <div className="col-xl-6">
+                                            <label className="form-label">Duration</label>
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                placeholder="Duration"
+                                                {
+                                                    ...regEdit('Duration',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                } />
+                                            <p className='error-msg'>{editErrors.Duration?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6">
+                                            <label htmlFor="duration" className="form-label">Duration Unit</label>
+                                            <select
+                                                className="form-select"
+                                                id="duration"
+                                                {
+                                                    ...regEdit('DurationUnit',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                }>
+                                                <option value="">Select Duration</option>
+                                                <option value="Days">Days</option>
+                                                <option value="Weeks">Weeks</option>
+                                                <option value="Months">Months</option>
+                                            </select>
+                                            <p className='error-msg'>{editErrors.DurationUnit?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6">
+                                            <label className="form-label">Package Price</label>
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                placeholder="Amount"
+                                                {
+                                                    ...regEdit('Amount',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                } />
+                                            <p className='error-msg'>{editErrors.Amount?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6">
+                                            <label className="form-label">Currency</label>
+                                            <select
+                                                className="form-select"
+                                                {
+                                                    ...regEdit('Currency',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                }>
+                                                <option value="">Select Currency</option>
+                                                <option value="NGN">NGN</option>
+                                                <option value="CAD">CAD</option>
+                                                <option value="USD">USD</option>
+                                            </select>
+                                            <p className='error-msg'>{editErrors.Currency?.message}</p>
+                                        </div>
+                                        <div className="col-xl-12">
+                                            <label className="form-label">Package Description</label>
+                                            <Controller
+                                                name="PackageDescription"
+                                                control={editControl}
+                                                rules={{ required: 'Required' }}
+                                                render={({ field }) => (
+                                                <RichTextEditor
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                />
+                                                )}
+                                            />
+                                            <p className='error-msg'>{editErrors.PackageDescription?.message}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <div className="d-flex justify-content-end gap-10 mt-20">
+                                        <button type="button" className="btn btn-danger" onClick={() => setEditModalState(false)}>
+                                            <X size={18} className="mr-2" /> Cancel
+                                        </button>
+                                        <button type="submit" className="btn btn-warning">
+                                            <div className="dots hidden" id="query-loader-1">
+                                                <div className="dot"></div>
+                                                <div className="dot"></div>
+                                                <div className="dot"></div>
+                                            </div>
+                                            <span id="query-text-1">
+                                                <PenLine size={18} className="mr-2" /> Update Package
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        )
+                    }
+                </div>
+            </Modal>
+            <Modal isOpen={featureModalState} onRequestClose={() => { setFeatureModalState(false); }}
+                style={{
+                content: {
+                width: 'fit-content',
+                height: 'fit-content',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                backgroundColor: 'rgb(255 255 255)',
+                borderRadius: '0.5rem',
+                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                },
+                overlay: {
+                backgroundColor: 'rgba(255, 255, 255, 0.7)'
+                }
+            }}
+            >
+                
+                <div  className="h-fit w-100 overflow-auto" style={{ maxHeight: '70vh' }}>
+                    {
+                        packageEdit && (
+                            <form noValidate onSubmit={submitFeature(submitNewFeature)}>
+                                <div  className="d-flex justify-content-between border-bottom">
+                                    <h1 className="modal-title fs-16 font-bold" id="addNewTimeSheetLabel">Add Feature To { packageEdit.packageName }</h1>
+                                    <button type="button" className="btn-close"  onClick={() => setFeatureModalState(false)}></button>
+                                </div>
+                                <div className="mt-4">
+                                    <div className="row gy-15 text-start">
+                                        <div className="col-xl-6">
+                                            <label htmlFor="duration" className="form-label">Service Type</label>
+                                            <select
+                                                className="form-select"
+                                                id="duration"
+                                                {
+                                                    ...regFeat('ServiceTypeId',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                }>
+                                                <option value="">Select Service Type</option>
+                                                {
+                                                    serviceTypes.map((data, index) => (
+                                                        <option key={index} value={data.serviceTypeId}>{data.serviceName}</option>
+                                                    ))
+                                                }
+                                            </select>
+                                            <p className='error-msg'>{featErrors.ServiceTypeId?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6">
+                                            <label className="form-label">Quantity</label>
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                placeholder="Quantity"
+                                                {
+                                                    ...regFeat('Quantity',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                } />
+                                            <p className='error-msg'>{featErrors.Quantity?.message}</p>
+                                        </div>
+                                        <div className="col-xl-12">
+                                            <label className="form-label">Description</label>
+                                            <Controller
+                                                name="Description"
+                                                control={featControl}
+                                                rules={{ required: 'Required' }}
+                                                render={({ field }) => (
+                                                <RichTextEditor
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                />
+                                                )}
+                                            />
+                                            <p className='error-msg'>{featErrors.Description?.message}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="modal-footer">
+                                    <div className="d-flex justify-content-end gap-10 mt-20">
+                                        <button type="button" className="btn btn-danger" onClick={() => setFeatureModalState(false)}>
+                                            <X size={18} className="mr-2" /> Cancel
+                                        </button>
+                                        <button type="submit" className="btn btn-success">
+                                            <div className="dots hidden" id="query-loader-2">
+                                                <div className="dot"></div>
+                                                <div className="dot"></div>
+                                                <div className="dot"></div>
+                                            </div>
+                                            <span id="query-text-2">
+                                                <CheckCheck size={18} className="mr-2" /> Add Feature
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        )
+                    }
+                </div>
+            </Modal>
             <div className="row">
                 <div className="col-xl-12">
                     <div className="page-title-box d-flex-between flex-wrap gap-15">
@@ -192,9 +684,9 @@ export default function Packages() {
                         </div>
                         <div className="card-content">
                             <span className="d-block fs-16 mb-5">Active Packages</span>
-                            <h2 className="mb-5">12</h2>
+                            <h2 className="mb-5">0</h2>
                             <span className="text-info">
-                            +5% <ArrowUp size={12} className="ri-arrow-up-line"/>
+                            +0% <ArrowUp size={12} className="ri-arrow-up-line"/>
                             </span>
                             <span className="fs-12 text-muted ml-5">vs. last month</span>
                         </div>
@@ -209,9 +701,9 @@ export default function Packages() {
                     </div>
                     <div className="card-content">
                         <span className="d-block fs-16 mb-5">Ongoing Contracts</span>
-                        <h2 className="mb-5">42</h2>
+                        <h2 className="mb-5">0</h2>
                         <span className="text-success">
-                        +5% <ArrowDown size={12} className="ri-arrow-up-line"/>
+                        +0% <ArrowDown size={12} className="ri-arrow-up-line"/>
                         </span>
                         <span className="fs-12 text-muted ml-5">vs. last month</span>
                     </div>
@@ -226,9 +718,8 @@ export default function Packages() {
                     </div>
                     <div className="card-content">
                         <span className="d-block fs-16 mb-5">Total Revenue</span>
-                        <h2 className="mb-5"># 4.2M</h2>
+                        <h2 className="mb-5">0</h2>
                         <span className="text-warning">
-                        +3 New
                         <ArrowUp size={12} className="ri-arrow-up-line"/>
                         </span>
                         <span className="fs-12 text-muted ml-5">this week</span>
@@ -244,9 +735,8 @@ export default function Packages() {
                     </div>
                     <div className="card-content">
                         <span className="d-block fs-16 mb-5">Expired / Inactive</span>
-                        <h2 className="mb-5">4</h2>
+                        <h2 className="mb-5">0</h2>
                         <span className="text-danger">
-                        +3 New
                         <ArrowUp size={12} className="ri-arrow-up-line"/>
                         </span>
                         <span className="fs-12 text-muted ml-5">this week</span>
@@ -260,20 +750,11 @@ export default function Packages() {
                         <div className="card-header justify-between">
                             <h4 className="d-flex-items gap-10">Packages</h4>
                             <div className="d-flex flex-wrap gap-15">
-                                <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewTimeSheet">
-                                    Add New Package
+                                <button type="button" className="btn btn-success" onClick={() => setAddModalState(true)}>
+                                    <Plus size={18} className="mr-2" /> Add New Package
                                 </button>
-                                <a className="btn btn-success text-white" href="javascript:void(0);">Export As
+                                <a className="btn btn-info text-white" href="javascript:void(0);">Export As
                                     CSV</a>
-                                <div className="">
-                                    <select className="form-select sorting-dropdown">
-                                        <option value="">Sort by</option>
-                                        <option selected value="date_desc">Newest First</option>
-                                        <option value="status">Attendance Status</option>
-                                        <option value="checkin_desc">Latest Arrivals</option>
-                                        <option value="hours_desc">Longest Days</option>
-                                    </select>
-                                </div>
                             </div>
                         </div>
                         <div className="card-body pt-15">
@@ -282,54 +763,53 @@ export default function Packages() {
                                     <thead>
                                         <tr>
                                             <th>Name</th>
-                                            <th>Type</th>
-                                            <th>Status</th>
                                             <th>Description</th>
-                                            <th>Price</th>
                                             <th>Duration</th>
-                                            <th>Active Clients</th>
-                                            <th>Start Date</th>
-                                            <th>End Date / Renewal</th>
+                                            <th>Amount</th>
+                                            <th>Active</th>
+                                            <th>Total Features</th>
+                                            <th>Total Subscribers</th>
+                                            <th>Date Created</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
-                                            packageData.map(data => {
+                                            packages.map((data, index) => {
                                                 return (
-                                                    <tr>
+                                                    <tr key={data.packageId ?? index}>
                                                         <td>
                                                             <div className="d-flex-items gap-10">
                                                                 <h6><a href="#">{data.packageName}</a>
                                                                 </h6>
                                                             </div>
                                                         </td>
-                                                        <td>{data.type}</td>
+                                                        <td><HtmlRenderer html={data.packageDescription} /></td>
+                                                        <td>{ `${data.duration} ${data.durationUnit}`}</td>
+                                                        <td>{ `${data.currency} ${data.amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2})}` }</td>
                                                         <td>
-                                                            <span className={`badge 
-                                                                ${data.status === 'Active' ? 'bg-label-success' : ''}
-                                                                ${data.status === 'Expired' ? 'bg-label-danger' : ''}
-                                                                ${data.status === 'Pending' ? 'bg-label-warning' : ''}
-                                                                ${data.status === 'Closed' ? 'bg-label-purple' : ''}
-                                                                ${data.status === 'Ongoing' ? 'bg-label-info' : ''}
-                                                                ${data.status === 'Completed' ? 'bg-label-pink' : ''}`}>
-                                                                {data.status}
-                                                            </span>
+                                                            <div
+                                                                className={`toggle-switch ${data.isActive ? 'on' : ''}`}
+                                                                onClick={() => updatePackageStatus(data.packageId, !data.isActive)}
+                                                                >
+                                                                <div className="toggle-knob" />
+                                                            </div>
                                                         </td>
-                                                        <td>{data.description}</td>
-                                                        <td>{data.price}</td>
-                                                        <td>{data.duration}</td>
-                                                        <td>{data.activeClients}</td>
-                                                        <td>{data.startDate}</td>
-                                                        <td>{data.endDate}</td>
+                                                        <td>{`${data.totalFeatures} Features`}</td>
+                                                        <td>{ `${data.totalEmployers} Subscribers`}</td>
+                                                        <td>{(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                                                         <td>
                                                             <div className="d-flex-items gap-10">
-                                                                <button className="btn-icon btn-info-light" type="button" data-bs-toggle="modal" data-bs-target="#editTimesheet">
-                                                                    <a><PenLine /></a>
-                                                                </button>
-                                                                <button className="btn-icon btn-danger-light removeRow" type="button">
-                                                                    <a><Trash2 /></a>
-                                                                </button>
+                                                                <Tippy content="Edit Package">
+                                                                    <button className="btn-icon btn-warning-light" type="button" onClick={() => { setPackageEdit(data); setEditModalState(true); }}>
+                                                                        <a><PenLine /></a>
+                                                                    </button>
+                                                                </Tippy>
+                                                                <Tippy content="Add Feature">
+                                                                    <button className="btn-icon btn-info-light" type="button" onClick={() => { setPackageEdit(data); setFeatureModalState(true); }}>
+                                                                        <a><Plus /></a>
+                                                                    </button>
+                                                                </Tippy>
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -338,193 +818,47 @@ export default function Packages() {
                                         }
                                     </tbody>
                                 </table>
+                                {
+                                    packages.length === 0 ?
+                                        <div className="py-4 whitespace-nowrap w-full">
+                                        <span className="px-6 py-4 text-left font-medium text-black">There hasn't been any packages added</span>
+                                        </div> : <></>
+                                }
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div className="modal fade" id="addNewTimeSheet" tabIndex={-1} aria-labelledby="addNewTimeSheetLabel" aria-hidden="true">
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h1 className="modal-title fs-16" id="addNewTimeSheetLabel">Create New Package/Contract</h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            <div className="row gy-15 text-start">
-                                <div className="col-xl-12 text-start">
-                                    <label htmlFor="packageTitle" className="form-label">Package Title</label>
-                                    <input type="text" className="form-control" id="packageTitle" placeholder="Package Title"/>
+                            <div className="d-flex justify-content-between mt-4">
+                                <div className="flex justify-content-center align-items-center mb-1">
+                                    <p className="text-black">
+                                        Showing { packages.length > 0 ? ((pageNumber * limit) - limit) + 1 : 0 } to { packages.length > 0 ? (((pageNumber * limit) - limit) + 1) + (packages.length - 1) : 0 } of { totalPackages } entries
+                                    </p>
                                 </div>
-                                <div className="col-xl-6">
-                                    <div>
-                                        <label htmlFor="type" className="form-label">Type</label>
-                                        <select className="form-select" id="type">
-                                            <option value="">Select Type</option>
-                                            <option value="Subscription">Subscription</option>
-                                            <option value="Custom Contract">Custom Contract</option>
-                                            <option value="Subscription">Subscription</option>
-                                            <option value="One-Time Service">One-Time Service</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="col-xl-6">
-                                    <label htmlFor="status" className="form-label">Status</label>
-                                    <select className="form-select" id="status">
-                                        <option value="">Select Status</option>
-                                        <option value="Active">Active</option>
-                                        <option value="Ongoing">Ongoing</option>
-                                        <option value="Pending">Pending</option>
-                                        <option value="Closed">Closed</option>
-                                        <option value="Completed">Completed</option>
-                                        <option value="Expired">Expired</option>
-                                    </select>
-                                </div>
-                                <div className="col-xl-6">
-                                    <label htmlFor="packagePrice" className="form-label">Price</label>
-                                    <div className="input-group">
-                                        <div className="input-group-text text-muted">
-                                            <BadgeDollarSign />
-                                        </div>
-                                        <input type="text" className="form-control flatpickr-input" id="packagePrice" placeholder="Add Package Price" readOnly={true}/>
-                                    </div>
-                                </div>
-                                <div className="col-xl-6">
-                                    <label htmlFor="duration" className="form-label">Duration</label>
-                                    <select className="form-select" id="duration">
-                                        <option value="">Select Duration</option>
-                                        <option value="One-Time">One-Time</option>
-                                        <option value="Monthly">Monthly</option>
-                                        <option value="Quarterly">Quarterly</option>
-                                        <option value="6 Months">6 Months</option>
-                                        <option value="Yearly">Yearly</option>
-                                        <option value="Per Candidate">Per Candidate</option>
-                                    </select>
-                                </div>
-                                <div className="col-xl-6">
-                                    <label htmlFor="startDate" className="form-label">Start Date</label>
-                                    <div className="input-group">
-                                        <div className="input-group-text text-muted">
-                                            <Calendar />
-                                        </div>
-                                        <input type="date" className="form-control flatpickr-input" id="startDate" placeholder="Add Start Date" readOnly={true}/>
-                                    </div>
-                                </div>
-                                <div className="col-xl-6">
-                                    <label htmlFor="endDate" className="form-label">End Date</label>
-                                    <div className="input-group">
-                                        <div className="input-group-text text-muted">
-                                            <Calendar />
-                                        </div>
-                                        <input type="date" className="form-control flatpickr-input" id="endDate" placeholder="Add End Date" readOnly={true}/>
-                                    </div>
-                                </div>
-                                <div className="col-xl-12">
-                                    <label className="form-label">Package Description</label>
-                                    <textarea className="form-control" rows={3} placeholder="Enter Package Description"></textarea>
+                                <div className="d-inline-flex flex-wrap">
+                                    {
+                                        pageNumber > 1 && <a
+                                            href="#"
+                                            onClick={() => { if (pageNumber > 1) {setPageNumber(pageNumber - 1);} }}
+                                            className="border-top border-bottom border-start text-primary border-secondary px-2 py-1 rounded-start"
+                                        >
+                                            Previous
+                                        </a>
+                                    }
+                                    <a
+                                        href="#"
+                                        className="border border-secondary text-white bg-primary px-4 py-1 cursor-pointer"
+                                    >
+                                        { pageNumber }
+                                    </a>
+                                    {
+                                        (pageNumber * limit) < totalPackages && <a
+                                        href="#"
+                                        onClick={() => { setPageNumber(pageNumber + 1); }}
+                                        className="border-end border-top border-bottom text-primary border-secondary px-4 py-1 rounded-end"
+                                        >
+                                            Next
+                                        </a>
+                                    }
+                                    
                                 </div>
                             </div>
-                        </div>
-                        <div className="modal-footer">
-                            <div className="d-flex justify-content-end gap-10 mt-20">
-                                <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
-                                    Cancel
-                                </button>
-                                <button type="submit" className="btn btn-primary">
-                                    Save Package/Contract
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div className="modal fade" id="editTimesheet" tabIndex={-1} aria-labelledby="editTimesheetLabel" aria-hidden="true">
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h1 className="modal-title fs-16" id="editTimesheetLabel">Edit Package/Contract</h1>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            <div className="row gy-15 text-start">
-                                <div className="col-xl-12 text-start">
-                                    <label htmlFor="packageTitle" className="form-label">Package Title</label>
-                                    <input type="text" className="form-control" id="packageTitle" placeholder="Package Title" value="Premium Employer Plan"/>
-                                </div>
-                                <div className="col-xl-6">
-                                    <div>
-                                        <label htmlFor="type" className="form-label">Type</label>
-                                        <select className="form-select" id="type">
-                                            <option value="">Select Type</option>
-                                            <option value="Subscription" selected>Subscription</option>
-                                            <option value="Custom Contract">Custom Contract</option>
-                                            <option value="Subscription">Subscription</option>
-                                            <option value="One-Time Service">One-Time Service</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div className="col-xl-6">
-                                    <label htmlFor="status" className="form-label">Status</label>
-                                    <select className="form-select" id="status">
-                                        <option value="">Select Status</option>
-                                        <option value="Active" selected>Active</option>
-                                        <option value="Ongoing">Ongoing</option>
-                                        <option value="Pending">Pending</option>
-                                        <option value="Closed">Closed</option>
-                                        <option value="Completed">Completed</option>
-                                        <option value="Expired">Expired</option>
-                                    </select>
-                                </div>
-                                <div className="col-xl-6">
-                                    <label htmlFor="packagePrice" className="form-label">Price</label>
-                                    <div className="input-group">
-                                        <div className="input-group-text text-muted">
-                                            <BadgeDollarSign />
-                                        </div>
-                                        <input type="text" className="form-control flatpickr-input" id="packagePrice" placeholder="Add Package Price" readOnly={true} value="1200"/>
-                                    </div>
-                                </div>
-                                <div className="col-xl-6">
-                                    <label htmlFor="duration" className="form-label">Duration</label>
-                                    <select className="form-select" id="duration">
-                                        <option value="">Select Duration</option>
-                                        <option value="One-Time">One-Time</option>
-                                        <option value="Monthly">Monthly</option>
-                                        <option value="Quarterly" selected>Quarterly</option>
-                                        <option value="6 Months">6 Months</option>
-                                        <option value="Yearly">Yearly</option>
-                                        <option value="Per Candidate">Per Candidate</option>
-                                    </select>
-                                </div>
-                                <div className="col-xl-6">
-                                    <label htmlFor="startDate" className="form-label">Start Date</label>
-                                    <div className="input-group">
-                                        <div className="input-group-text text-muted">
-                                            <Calendar />
-                                        </div>
-                                        <input type="date" className="form-control flatpickr-input" id="startDate" placeholder="Add Start Date" readOnly={true}/>
-                                    </div>
-                                </div>
-                                <div className="col-xl-6">
-                                    <label htmlFor="endDate" className="form-label">End Date</label>
-                                    <div className="input-group">
-                                        <div className="input-group-text text-muted">
-                                            <Calendar />
-                                        </div>
-                                        <input type="date" className="form-control flatpickr-input" id="endDate" placeholder="Add End Date" readOnly={true}/>
-                                    </div>
-                                </div>
-                                <div className="col-xl-12">
-                                    <label className="form-label">Package Description</label>
-                                    <textarea className="form-control" rows={3} placeholder="Enter Package Description" value="Up to 20 job posts, featured listings, and analytics dashboard."></textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                            <button type="button" className="btn btn-primary">Save changes</button>
                         </div>
                     </div>
                 </div>

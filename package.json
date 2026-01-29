@@ -10,8 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tippyjs/react": "^4.2.6",
+    "@tiptap/extension-placeholder": "^3.18.0",
+    "@tiptap/extension-underline": "^3.18.0",
+    "@tiptap/react": "^3.18.0",
+    "@tiptap/starter-kit": "^3.18.0",
     "apexcharts": "^5.3.6",
     "desandro-matches-selector": "^2.0.2",
+    "dompurify": "^3.3.1",
     "ev-emitter": "^2.1.2",
     "fizzy-ui-utils": "^3.0.0",
     "get-size": "^3.0.0",
@@ -23,7 +29,10 @@
     "outlayer": "^2.1.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router-dom": "^7.9.5"
+    "react-hook-form": "^7.71.1",
+    "react-modal": "^3.16.3",
+    "react-router-dom": "^7.9.5",
+    "react-toastify": "^11.0.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
@@ -31,6 +40,7 @@
     "@types/node": "^24.6.0",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
+    "@types/react-modal": "^3.16.3",
     "@vitejs/plugin-react": "^5.0.4",
     "babel-plugin-react-compiler": "^19.1.0-rc.3",
     "eslint": "^9.36.0",
