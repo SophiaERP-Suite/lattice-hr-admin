@@ -1,6 +1,4 @@
 import {
-  ArrowDown,
-  ArrowUp,
   CheckCheck,
   ChevronRight,
   FolderOpenDot,
@@ -64,6 +62,8 @@ export default function Packages() {
     const [serviceTypes, setServiceTypes] = useState<ServiceTypes[]>([]);
     const { register, reset, handleSubmit, formState, control } = useForm<PackageFormData>();
     const [pageNumber, setPageNumber] = useState(1);
+    const [totalActive, setTotalActive] = useState(0);
+    const [totalInactive, setTotalInactive] = useState(0);
     const [totalPackages, setTotalPackages] = useState(0);
     const limit = 10;
     const { errors } = formState;
@@ -98,6 +98,8 @@ export default function Packages() {
                 console.log(data);
                 setPackages(data.data.packages);
                 setTotalPackages(data.data.totalCount);
+                setTotalActive(data.data.totalActive ?? 0);
+                setTotalInactive(data.data.totalInActive ?? 0);
             })
         } else {
             res.text()
@@ -146,6 +148,8 @@ export default function Packages() {
             console.log(data);
             setPackages(data.data.packages);
             setTotalPackages(data.data.totalCount);
+            setTotalActive(data.data.totalActive ?? 0);
+            setTotalInactive(data.data.totalInActive ?? 0);
         } else {
             const resText = await res.text();
             console.log(JSON.parse(resText));
@@ -684,11 +688,7 @@ export default function Packages() {
                         </div>
                         <div className="card-content">
                             <span className="d-block fs-16 mb-5">Active Packages</span>
-                            <h2 className="mb-5">0</h2>
-                            <span className="text-info">
-                            +0% <ArrowUp size={12} className="ri-arrow-up-line"/>
-                            </span>
-                            <span className="fs-12 text-muted ml-5">vs. last month</span>
+                            <h2 className="mb-5">{totalActive}</h2>
                         </div>
                         </div>
                     </div>
@@ -702,10 +702,6 @@ export default function Packages() {
                     <div className="card-content">
                         <span className="d-block fs-16 mb-5">Ongoing Contracts</span>
                         <h2 className="mb-5">0</h2>
-                        <span className="text-success">
-                        +0% <ArrowDown size={12} className="ri-arrow-up-line"/>
-                        </span>
-                        <span className="fs-12 text-muted ml-5">vs. last month</span>
                     </div>
                     </div>
                 </div>
@@ -719,10 +715,6 @@ export default function Packages() {
                     <div className="card-content">
                         <span className="d-block fs-16 mb-5">Total Revenue</span>
                         <h2 className="mb-5">0</h2>
-                        <span className="text-warning">
-                        <ArrowUp size={12} className="ri-arrow-up-line"/>
-                        </span>
-                        <span className="fs-12 text-muted ml-5">this week</span>
                     </div>
                     </div>
                 </div>
@@ -735,11 +727,7 @@ export default function Packages() {
                     </div>
                     <div className="card-content">
                         <span className="d-block fs-16 mb-5">Expired / Inactive</span>
-                        <h2 className="mb-5">0</h2>
-                        <span className="text-danger">
-                        <ArrowUp size={12} className="ri-arrow-up-line"/>
-                        </span>
-                        <span className="fs-12 text-muted ml-5">this week</span>
+                        <h2 className="mb-5">{totalInactive}</h2>
                     </div>
                     </div>
                 </div>

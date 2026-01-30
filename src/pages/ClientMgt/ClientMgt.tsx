@@ -1,114 +1,228 @@
 import {
-    ArrowDown,
-    ArrowUp,
     BookUser,
     Camera,
+    CheckCheck,
     ChevronRight,
-    Eye,
     FolderOpenDot,
+    FolderOutput,
     Gauge,
     Mail,
-    PenLine,
     Phone,
     PhoneOutgoing,
-    Trash2
+    Plus,
+    X,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import company from "../../assets/images/company.png";
 import avatar from "../../assets/images/company/company-thumb-008.png";
+import { useEffect, useState } from "react";
+import { fetchAllEmployers } from "../../utils/EmployerRequests";
+import { fetchJobSectors } from "../../utils/JobSetorRequests";
+import { useForm, useWatch } from "react-hook-form";
+import { fetchCitiesByStateId, fetchCountries, fetchStatesByCountryId } from "../../utils/LocationRequests";
 
-const companyData = [
-    {
-        client: "Acme Corporation",
-        email: "contact@acme-corporation.com",
-        phone: "(555) 123-4567",
-        industry: "Manufacturing",
-        location: "New York, USA",
-        jobsPosted: "20"
-    },
-    {
-        client: "Skyline Technologies",
-        email: "info@skylinetech.co.uk",
-        phone: "+44 20 7946 5568",
-        industry: "Information Technology",
-        location: "London, United Kingdom",
-        jobsPosted: "35"
-    },
-    {
-        client: "Nordic Shipping AS",
-        email: "support@nordicshipping.no",
-        phone: "+47 22 118 904",
-        industry: "Logistics & Transportation",
-        location: "Oslo, Norway",
-        jobsPosted: "12"
-    },
-    {
-        client: "Zenith Health Group",
-        email: "hr@zenithhealthgroup.com",
-        phone: "+1 (312) 458-9902",
-        industry: "Healthcare",
-        location: "Chicago, USA",
-        jobsPosted: "28"
-    },
-    {
-        client: "Maplewood Engineering Ltd.",
-        email: "info@maplewoodeng.ca",
-        phone: "+1 (416) 879-3312",
-        industry: "Engineering & Construction",
-        location: "Toronto, Canada",
-        jobsPosted: "18"
-    },
-    {
-        client: "Pacific Digital Media",
-        email: "hello@pacificdigitalmedia.com.au",
-        phone: "+61 2 9188 2045",
-        industry: "Media & Entertainment",
-        location: "Sydney, Australia",
-        jobsPosted: "25"
-    },
-    {
-        client: "Aurelia Finance Partners",
-        email: "contact@aureliafinance.eu",
-        phone: "+49 30 8899 1234",
-        industry: "Financial Services",
-        location: "Berlin, Germany",
-        jobsPosted: "14"
-    },
-    {
-        client: "Kentech Energy Solutions",
-        email: "info@kentechenergy.com.ng",
-        phone: "+234 809 112 5634",
-        industry: "Energy & Utilities",
-        location: "Lagos, Nigeria",
-        jobsPosted: "22"
-    },
-    {
-        client: "BluePeak Consulting",
-        email: "careers@bluepeakconsulting.in",
-        phone: "+91 22 4098 7732",
-        industry: "Business Consulting",
-        location: "Mumbai, India",
-        jobsPosted: "30"
-    },
-    {
-        client: "Nova Robotics Inc.",
-        email: "contact@novarobotics.co.jp",
-        phone: "+81 3 3289 4412",
-        industry: "Robotics & Automation",
-        location: "Tokyo, Japan",
-        jobsPosted: "16"
-    },
-    {
-        client: "Terra Verde Foods",
-        email: "sales@terraverdefoods.com.br",
-        phone: "+55 11 3759 2901",
-        industry: "Food & Agriculture",
-        location: "São Paulo, Brazil",
-        jobsPosted: "19"
-    }
-]
+interface EmployerData {
+  employerId: number;
+  businessName: string;
+  jobSectorId: string;
+  jobSector: string;
+  companySize: string;
+  registrationNo: string;
+  websiteUrl: string;
+  employerLogo: string;
+  countryId: string;
+  country: string;
+  packageId: string;
+  package: string;
+  packageItemReference: string;
+  stateId: string;
+  state: string;
+  cityId: string;
+  city: string;
+  address: string;
+  postCode: string;
+  dateCreated: string;
+  officers: string;
+}
+
+interface JobSectorData {
+  jobSectorId: number;
+  name: string;
+}
+
+interface EmployerFilter {
+    jobSectorId: string;
+    businessName: string;
+}
+
+interface CountryData {
+  countryId: number;
+  name: string;
+  code: string;
+}
+
+interface StateData {
+  stateId: number;
+  name: string;
+  code: string;
+}
+
+interface CityData {
+  cityId: number;
+  name: string;
+  code: string;
+}
+
+interface EmployerRegister{
+  BusinessName: string;
+  JobSectorId: string;
+  CompanySize: string;
+  RegistrationNo: string;
+  WebsiteUrl: string;
+  CountryId: string;
+  StateId: string;
+  CityId: string;
+  Address: string;
+  PostCode: string;
+  Email: string;
+  FirstName: string;
+  LastName: string;
+  Phone: string;
+  Position: string;
+  Password: string;
+  ConfirmPassword: string;
+  Gender: string;
+  DateOfBirth: string;
+  EmployerLogo: string;
+  ProfilePhoto: string;
+  Terms: boolean;
+  Declaration: boolean;
+}
 
 export default function ClientMgt() {
+    const [employers, setEmployers] = useState<EmployerData[]>([]);
+    const [totalEmployers, setTotalEmployers] = useState(0);
+    const [pageNumber, setPageNumber] = useState(1);
+    const limit = 10;
+    const [jobSectors, setJobSectors] = useState<JobSectorData[]>([]);
+    const { register, control } = useForm<EmployerFilter>();
+    const filters = useWatch({ control });
+    const [countries, setCountries] = useState<CountryData[]>([]);
+    const { setValue, control: regControl, register: empRegister } = useForm<EmployerRegister>()
+    const [states, setStates] = useState<StateData[]>([]);
+    const [cities, setCities] = useState<CityData[]>([]);
+    const selectedCountry = useWatch({
+        control: regControl,
+        name: 'CountryId',
+    });
+    const selectedState = useWatch({
+        control: regControl,
+        name: 'StateId',
+    });
+
+    useEffect(() => {
+        fetchAllEmployers({ pageNumber, limit, ...filters })
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                console.log(data);
+                setEmployers(data.data.employers);
+                setTotalEmployers(data.data.totalCount);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
+        })
+    }, [pageNumber, limit, filters]);
+
+    useEffect(() => {
+        fetchJobSectors()
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+            setJobSectors(data.data);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
+        })
+        .catch((err) => console.log(err))
+    }, []);
+
+    useEffect(() => {
+        fetchCountries()
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                setCountries(data.data);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
+        })
+        .catch((err) => console.log(err))
+    }, []);
+
+  useEffect(() => {
+    if (!selectedCountry || selectedCountry == '') {
+      setStates([]);
+      setValue('StateId', '');
+      setValue('CityId', '')
+      return;
+    }
+    fetchStatesByCountryId(Number(selectedCountry))
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+          setStates(data.data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+    .catch((err) => console.log(err))
+  }, [selectedCountry, setValue]);
+
+  useEffect(() => {
+    if (!selectedState || selectedState == '') {
+      setCities([]);
+      setValue('CityId', '')
+      return;
+    }
+    fetchCitiesByStateId(Number(selectedState))
+    .then(res => {
+      if (res.status === 200) {
+        res.json()
+        .then(data => {
+           console.log(data)
+          setCities(data.data);
+        })
+      } else {
+        res.text()
+        .then(data => {
+          console.log(JSON.parse(data));
+        })
+      }
+    })
+    .catch((err) => console.log(err))
+  }, [selectedState, setValue]);
+
     return <div className="container-fluid">
         <div className="row">
             <div className="col-xl-12">
@@ -141,11 +255,7 @@ export default function ClientMgt() {
                     </div>
                     <div className="card-content">
                         <span className="d-block fs-16 mb-5">Total Clients</span>
-                        <h2 className="mb-5">82</h2>
-                        <span className="text-success">
-                            +5% <ArrowUp size={12} className="ri-arrow-up-line"/>
-                        </span>
-                        <span className="fs-12 text-muted ml-5">vs. last month</span>
+                        <h2 className="mb-5">{totalEmployers}</h2>
                     </div>
                 </div>
                 </div>
@@ -158,11 +268,7 @@ export default function ClientMgt() {
                     </div>
                     <div className="card-content">
                         <span className="d-block fs-16 mb-5">Avg. Jobs/Clients</span>
-                        <h2 className="mb-5">3.8%</h2>
-                        <span className="text-warning">
-                            -2% <ArrowDown size={12} className="ri-arrow-up-line"/>
-                        </span>
-                        <span className="fs-12 text-muted ml-5">vs. last month</span>
+                        <h2 className="mb-5">0%</h2>
                     </div>
                 </div>
                 </div>
@@ -174,13 +280,8 @@ export default function ClientMgt() {
                     <FolderOpenDot size={42}/>
                     </div>
                     <div className="card-content">
-                    <span className="d-block fs-16 mb-5">Inactive Clients</span>
-                    <h2 className="mb-5">20</h2>
-                    <span className="text-danger">
-                        +3 New
-                        <ArrowUp size={12} className="ri-arrow-up-line"/>
-                    </span>
-                    <span className="fs-12 text-muted ml-5">this week</span>
+                        <span className="d-block fs-16 mb-5">Inactive Clients</span>
+                        <h2 className="mb-5">0</h2>
                     </div>
                 </div>
                 </div>
@@ -188,25 +289,31 @@ export default function ClientMgt() {
             <div className="col-xl-12">
                 <div className="card">
                     <div className="card-header justify-between">
-                        <h4 className="d-flex-items gap-10">Clients<span className="badge bg-label-primary">82</span></h4>
+                        <h4 className="d-flex-items gap-10">Clients<span className="badge bg-label-primary">{ totalEmployers }</span></h4>
                         <div className="d-flex flex-wrap gap-15">
-                            <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addNewCompanies">
-                                New Client
-                            </button>
-                            <a className="btn btn-success text-white" href="javascript:void(0);">Export As CSV</a>
                             <div className="dataTables-sorting-control ">
-                                <select className="form-select sorting-dropdown">
-                                    <option value="">Sort by:</option>
-                                    <option value="1_asc">ID (Low to High)</option>
-                                    <option value="1_desc">ID (High to Low)</option>
-                                    <option value="2_asc">Name (A-Z)</option>
-                                    <option value="2_desc">Name (Z-A)</option>
-                                    <option value="5_asc">Company (A-Z)</option>
-                                    <option value="5_desc">Company (Z-A)</option>
-                                    <option value="8_asc">Status (Active First)</option>
-                                    <option value="8_desc">Status (Inactive First)</option>
+                                <input type="text" className="form-control" placeholder="Search by Name" {
+                                    ...register('businessName')
+                                } />
+                            </div>
+                            <div className="dataTables-sorting-control ">
+                                <select className="form-select sorting-dropdown"{
+                                    ...register('jobSectorId')
+                                }>
+                                    <option value="">All Job Sectors</option>
+                                    {
+                                        jobSectors.map((data, index) => (
+                                            <option key={index} value={data.jobSectorId}>{data.name}</option>
+                                        ))
+                                    }
                                 </select>
                             </div>
+                            <button type="button" className="btn btn-success" data-bs-toggle="modal" data-bs-target="#addNewCompanies">
+                                <Plus /> New Client
+                            </button>
+                            <a className="btn btn-info text-white" href="javascript:void(0);">
+                                <FolderOutput /> Export As CSV
+                            </a>
                         </div>
                     </div>
                     <div className="card-body pt-15">
@@ -214,57 +321,87 @@ export default function ClientMgt() {
                             <table id="companiesDataTable" className="table text-nowrap text-start w-100">
                                 <thead>
                                     <tr>
-                                        <th scope="col">
-                                            <input className="form-check-input" type="checkbox" id="checkboxNoLabel" value="" aria-label="..."/>
-                                        </th>
+                                        <th scope="col">S/N</th>
                                         <th scope="col">Client</th>
-                                        <th scope="col">Email</th>
-                                        <th scope="col">Phone</th>
-                                        <th scope="col">Industry</th>
+                                        <th scope="col">Package</th>
+                                        <th scope="col">Job Sector</th>
                                         <th scope="col">Location</th>
+                                        <th scope="col">Total RO's</th>
                                         <th scope="col">Posted Jobs</th>
-                                        <th scope="col">Actions</th>
+                                        <th scope="col">Date Joined</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {
-                                        companyData.map(data => {
+                                        employers.map((data, index) => {
                                             return (
-                                                <tr>
-                                                    <td><input className="form-check-input" type="checkbox" aria-label="Select company"/>
+                                                <tr key={index}>
+                                                    <td>
+                                                        { index + 1}
                                                     </td>
                                                     <td>
                                                         <div className="d-flex-items gap-10">
-                                                            <div className="avatar avatar-xs radius-100">
-                                                                <img className="radius-100" src={company} alt="image not found"/>
+                                                            <div className="avatar avatar-md radius-100">
+                                                                <img className="radius-100" src={data.employerLogo} alt="image not found"/>
                                                             </div>
-                                                            <h6 className="cursor-pointer" data-bs-toggle="modal" data-bs-target="#viewCompanies">{ data.client }</h6>
+                                                            <h6 className="cursor-pointer" data-bs-toggle="modal" data-bs-target="#viewCompanies">{ data.businessName }</h6>
                                                         </div>
                                                     </td>
-                                                    <td><a href={`mailto:${data.email}`} className="text-start" data-cfemail="bad9d5d4cedbd9cefadbd9d7df94d9d5d7">{ data.email }</a></td>
-                                                    <td>{ data.phone }</td>
-                                                    <td>{ data.industry }</td>
-                                                    <td>{ data.location }</td>
-                                                    <td>{ data.jobsPosted }</td>
+                                                    <td>{ data.package ?? 'None Subscribed' }</td>
+                                                    <td>{ data.jobSector }</td>
                                                     <td>
-                                                        <div className="d-flex-items gap-10">
-                                                            <button className="btn-icon btn-success-light" type="button" data-bs-toggle="modal" data-bs-target="#viewCompanies">
-                                                                <a><Eye /></a>
-                                                            </button>
-                                                            <button className="btn-icon btn-info-light" type="button" data-bs-toggle="modal" data-bs-target="#editCompanies">
-                                                                <a><PenLine /></a>
-                                                            </button>
-                                                            <button className="btn-icon btn-danger-light removeRow fs-16" type="button">
-                                                                <a><Trash2 /></a>
-                                                            </button>
-                                                        </div>
+                                                        <p>{data.address}</p>
+                                                        <p>{ `${data.city} ${data.city && ','} ${data.state} ${data.state && ','} ${data.country}`}</p>
                                                     </td>
+                                                    <td>{data.officers}</td>
+                                                    <td>0</td>
+                                                    <td>{ new Date(data.dateCreated).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'})}</td>
                                                 </tr>
                                             )
                                         })
                                     }
                                 </tbody>
                             </table>
+                            {
+                                employers.length === 0 ?
+                                    <div className="py-4 whitespace-nowrap w-full">
+                                    <span className="px-6 py-4 text-left font-medium text-black">There hasn't been any registered client</span>
+                                    </div> : <></>
+                            }
+                        </div>
+                        <div className="d-flex justify-content-between mt-4">
+                            <div className="flex justify-content-center align-items-center mb-1">
+                                <p className="text-black">
+                                    Showing { employers.length > 0 ? ((pageNumber * limit) - limit) + 1 : 0 } to { employers.length > 0 ? (((pageNumber * limit) - limit) + 1) + (employers.length - 1) : 0 } of { totalEmployers } entries
+                                </p>
+                            </div>
+                            <div className="d-inline-flex flex-wrap">
+                                {
+                                    pageNumber > 1 && <a
+                                        href="#"
+                                        onClick={() => { if (pageNumber > 1) {setPageNumber(pageNumber - 1);} }}
+                                        className="border-top border-bottom border-start text-primary border-secondary px-2 py-1 rounded-start"
+                                    >
+                                        Previous
+                                    </a>
+                                }
+                                <a
+                                    href="#"
+                                    className="border border-secondary text-white bg-primary px-4 py-1 cursor-pointer"
+                                >
+                                    { pageNumber }
+                                </a>
+                                {
+                                    (pageNumber * limit) < totalEmployers && <a
+                                    href="#"
+                                    onClick={() => { setPageNumber(pageNumber + 1); }}
+                                    className="border-end border-top border-bottom text-primary border-secondary px-4 py-1 rounded-end"
+                                    >
+                                        Next
+                                    </a>
+                                }
+                                
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -274,61 +411,117 @@ export default function ClientMgt() {
             <div className="modal-dialog modal-dialog-centered modal-lg">
                 <div className="modal-content">
                     <div className="modal-header">
-                        <h1 className="modal-title fs-16" id="addNewCompaniesLabel">Add New Companies</h1>
+                        <h1 className="modal-title fs-16" id="addNewCompaniesLabel">Add New Client</h1>
                         <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
                         <div className="row gy-15">
-                            <div className="col-xl-12">
-                                <div className="text-center">
-                                    <div className="avatar avatar-xxl radius-100">
-                                        <img src={avatar} alt="image not found" id="profileImage" className="radius-100"/>
-                                        <span className="badge rounded-pill bg-primary avatar-badge">
-                                            <input type="file" name="photo"
-                                                className="p-absolute z-3 cursor-pointer w-100 h-100 op-0 pl-0 pr-0"
-                                                id="profileImageChange" />
-                                            <a><Camera className="p-relative z-1" size={15} /></a>
-                                        </span>
-                                    </div>
-                                    <span className="d-block fw-5 text-black">Company Logo</span>
-                                </div>
-                            </div>
 
-                            <div className="col-xl-12 text-start">
-                                <label htmlFor="fullName" className="form-label">Company Name</label>
-                                <input type="text" className="form-control" id="fullName" placeholder="Company Full Name"/>
+                            <div className="col-xl-6 text-start">
+                                <label htmlFor="fullName" className="form-label">Business Name</label>
+                                <input type="text" className="form-control" id="fullName" placeholder="Business Name"/>
                             </div>
                             <div className="col-xl-6 text-start">
-                                <label htmlFor="phoneNumber" className="form-label">Phone Number</label>
-                                <input type="text" className="form-control" id="phoneNumber" placeholder="Phone Number"/>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <label htmlFor="email" className="form-label">Email</label>
-                                <input type="text" className="form-control" id="email" placeholder="Email"/>
+                                <label htmlFor="logo" className="form-label">Business Logo</label>
+                                <input type="file" className="form-control" id="logo" placeholder="Business Logo"/>
                             </div>
                             <div className="col-xl-6 text-start">
                                 <div>
-                                    <label htmlFor="industry_type-field" className="form-label">Industry Type</label>
-                                    <select className="form-select" id="industry_type-field">
-                                        <option value="">Select industry type</option>
-                                        <option value="Manufacturing">Manufacturing</option>
-                                        <option value="Information Technology">Information Technology</option>
-                                        <option value="Transportation">Transportation</option>
-                                        <option value="Healthcare">Healthcare</option>
-                                        <option value="Energy">Energy
-                                        </option>
+                                    <label htmlFor="jobSector" className="form-label">Job Sector</label>
+                                    <select className="form-select" id="jobSector">
+                                        <option value="">Select Job Sector</option>
+                                        {
+                                            jobSectors.map((data, index) => (
+                                                <option key={index} value={data.jobSectorId}>{ data.name }</option>
+                                            ))
+                                        }
                                     </select>
                                 </div>
                             </div>
                             <div className="col-xl-6 text-start">
-                                <label htmlFor="location" className="form-label">Location</label>
-                                <input type="text" className="form-control" id="location" placeholder="Location"/>
+                                <div>
+                                    <label htmlFor="companySize" className="form-label">Company Size</label>
+                                    <select className="form-select" id="companySize">
+                                        <option value="">Select Company Size</option>
+                                        <option value="small">1 - 50 employees (Small)</option>
+                                        <option value="medium">51 - 250 employees (Medium)</option>
+                                        <option value="large">250+ employees (Large)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="col-xl-6 text-start">
+                                <label htmlFor="regsitrationNo" className="form-label">Registration No</label>
+                                <input type="text" className="form-control" id="regsitrationNo" placeholder="Regsitration No"/>
+                            </div>
+                            
+                            <div className="col-xl-6 text-start">
+                                <label htmlFor="website" className="form-label">Website</label>
+                                <input type="text" className="form-control" id="website" placeholder="Website URL"/>
+                            </div>
+                            <div className="col-xl-6 text-start">
+                                <div>
+                                    <label htmlFor="country" className="form-label">Country</label>
+                                    <select className="form-select" id="country"
+                                        {
+                                            ...empRegister('CountryId')
+                                        }
+                                    >
+                                        <option value="">Select Country</option>
+                                        {
+                                            countries.map((data, index) => (
+                                                <option key={index} value={data.countryId}>{ data.name }</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="col-xl-6 text-start">
+                                <div>
+                                    <label htmlFor="state" className="form-label">State</label>
+                                    <select className="form-select" id="state" disabled={states.length === 0}
+                                        {
+                                            ...empRegister('StateId')
+                                        }
+                                    >
+                                        <option value="">Select State</option>
+                                        {
+                                            states.map((data, index) => (
+                                                <option key={index} value={data.stateId}>{ data.name }</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="col-xl-6 text-start">
+                                <div>
+                                    <label htmlFor="city" className="form-label">City</label>
+                                    <select className="form-select" id="city" disabled={cities.length === 0}
+                                        {
+                                            ...empRegister('CityId')
+                                        }
+                                    >
+                                        <option value="">Select City</option>
+                                        {
+                                            cities.map((data, index) => (
+                                                <option key={index} value={data.cityId}>{ data.name }</option>
+                                            ))
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="col-xl-6 text-start">
+                                <label htmlFor="postcode" className="form-label">PostCode</label>
+                                <input type="text" className="form-control" id="postcode" placeholder="PostCode"/>
                             </div>
                         </div>
                     </div>
                     <div className="modal-footer">
-                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" className="btn btn-primary">Save changes</button>
+                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
+                            <X /> Cancel
+                        </button>
+                        <button type="button" className="btn btn-success">
+                            <CheckCheck /> Add Client
+                        </button>
                     </div>
                 </div>
             </div>
