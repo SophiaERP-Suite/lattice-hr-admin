@@ -326,8 +326,7 @@ export default function ClientMgt() {
                                         <th scope="col">Package</th>
                                         <th scope="col">Job Sector</th>
                                         <th scope="col">Location</th>
-                                        <th scope="col">Total RO's</th>
-                                        <th scope="col">Posted Jobs</th>
+                                        <th scope="col">Jobs Posted</th>
                                         <th scope="col">Date Joined</th>
                                     </tr>
                                 </thead>
@@ -349,11 +348,10 @@ export default function ClientMgt() {
                                                     </td>
                                                     <td>{ data.package ?? 'None Subscribed' }</td>
                                                     <td>{ data.jobSector }</td>
-                                                    <td>
-                                                        <p>{data.address}</p>
+                                                    <td style={{ maxWidth: '200px', textWrap: 'wrap'}}>
+                                                        <p style={{ marginBottom: '0px' }}>{data.address}</p>
                                                         <p>{ `${data.city} ${data.city && ','} ${data.state} ${data.state && ','} ${data.country}`}</p>
                                                     </td>
-                                                    <td>{data.officers}</td>
                                                     <td>0</td>
                                                     <td>{ new Date(data.dateCreated).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'})}</td>
                                                 </tr>

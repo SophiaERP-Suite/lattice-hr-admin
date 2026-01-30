@@ -2,6 +2,7 @@ import {
   CheckCheck,
   ChevronRight,
   FolderOpenDot,
+  FolderOutput,
   PenLine,
   Plus,
   ReceiptText,
@@ -388,7 +389,7 @@ export default function Packages() {
                                     <X size={18} className="mr-2" /> Cancel
                                 </button>
                                 <button type="submit" className="btn btn-success">
-                                    <div className="dots hidden" id="query-loader">
+                                    <div className="dots" id="query-loader">
                                         <div className="dot"></div>
                                         <div className="dot"></div>
                                         <div className="dot"></div>
@@ -538,7 +539,7 @@ export default function Packages() {
                                             <X size={18} className="mr-2" /> Cancel
                                         </button>
                                         <button type="submit" className="btn btn-warning">
-                                            <div className="dots hidden" id="query-loader-1">
+                                            <div className="dots" id="query-loader-1">
                                                 <div className="dot"></div>
                                                 <div className="dot"></div>
                                                 <div className="dot"></div>
@@ -641,7 +642,7 @@ export default function Packages() {
                                             <X size={18} className="mr-2" /> Cancel
                                         </button>
                                         <button type="submit" className="btn btn-success">
-                                            <div className="dots hidden" id="query-loader-2">
+                                            <div className="dots" id="query-loader-2">
                                                 <div className="dot"></div>
                                                 <div className="dot"></div>
                                                 <div className="dot"></div>
@@ -741,8 +742,9 @@ export default function Packages() {
                                 <button type="button" className="btn btn-success" onClick={() => setAddModalState(true)}>
                                     <Plus size={18} className="mr-2" /> Add New Package
                                 </button>
-                                <a className="btn btn-info text-white" href="javascript:void(0);">Export As
-                                    CSV</a>
+                                <a className="btn btn-info text-white" href="javascript:void(0);">
+                                    <FolderOutput /> Export As CSV
+                                </a>
                             </div>
                         </div>
                         <div className="card-body pt-15">
@@ -750,13 +752,14 @@ export default function Packages() {
                                 <table className="table w-100 text-nowrap text-start" id="employeeAttendanceTable">
                                     <thead>
                                         <tr>
+                                            <th>S/N</th>
                                             <th>Name</th>
                                             <th>Description</th>
                                             <th>Duration</th>
                                             <th>Amount</th>
                                             <th>Active</th>
-                                            <th>Total Features</th>
-                                            <th>Total Subscribers</th>
+                                            <th>Features</th>
+                                            <th>Subscribers</th>
                                             <th>Date Created</th>
                                             <th>Action</th>
                                         </tr>
@@ -766,13 +769,9 @@ export default function Packages() {
                                             packages.map((data, index) => {
                                                 return (
                                                     <tr key={data.packageId ?? index}>
-                                                        <td>
-                                                            <div className="d-flex-items gap-10">
-                                                                <h6><a href="#">{data.packageName}</a>
-                                                                </h6>
-                                                            </div>
-                                                        </td>
-                                                        <td><HtmlRenderer html={data.packageDescription} /></td>
+                                                        <td>{ index + 1 }</td>
+                                                        <td>{ data.packageName }</td>
+                                                        <td style={{ maxWidth: '200px', textWrap: 'wrap'}}><HtmlRenderer html={data.packageDescription} /></td>
                                                         <td>{ `${data.duration} ${data.durationUnit}`}</td>
                                                         <td>{ `${data.currency} ${data.amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2})}` }</td>
                                                         <td>
@@ -783,8 +782,8 @@ export default function Packages() {
                                                                 <div className="toggle-knob" />
                                                             </div>
                                                         </td>
-                                                        <td>{`${data.totalFeatures} Features`}</td>
-                                                        <td>{ `${data.totalEmployers} Subscribers`}</td>
+                                                        <td>{`${data.totalFeatures}`}</td>
+                                                        <td>{ `${data.totalEmployers}`}</td>
                                                         <td>{(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                                                         <td>
                                                             <div className="d-flex-items gap-10">
