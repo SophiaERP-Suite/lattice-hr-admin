@@ -15,6 +15,7 @@ import RoleMgt from "../pages/ControlPanel/RoleMgt";
 import UserMgt from "../pages/ControlPanel/UserMgt";
 import IndustryMgt from "../pages/ControlPanel/IndustryMgt";
 import CurrencyMgt from "../pages/ControlPanel/CurrencyMgt";
+import PackageDetails from "../pages/Packages/PackageDetails";
 
 function AppRoutes() {
   return (
@@ -28,10 +29,11 @@ function AppRoutes() {
         <Route path="ComplianceMgt" element={<ComplianceMgt />} />
         <Route path="Timesheet" element={<TimeSheet />} />
         <Route path="JobMgt" element={<JobMgt />} />
-        <Route path="JobMgt/JobDetails" element={<JobDetails />} />
+        <Route path="JobMgt/:id" element={<JobDetails />} />
         <Route path="FinanceMgt" element={<FinanceMgt />} />
         <Route path="Complaints" element={<Complaints />} />
         <Route path="Packages" element={<Packages />} />
+        <Route path="Packages/:id" element={<PackageDetails />} />
         <Route path="ControlPanel" element={<ControlPanel />} />
         <Route path="ControlPanel/RoleMgt" element={<RoleMgt />} />
         <Route path="ControlPanel/UserMgt" element={<UserMgt />} />

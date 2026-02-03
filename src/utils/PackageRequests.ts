@@ -44,6 +44,31 @@ export const addFeatureToPackage = async (packageId: number, data: FormData) => 
   return response
 }
 
+export const updatePackageFeatureById = async (packageId: number, packageFeatureId: number, data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/packages/${packageId}/feature/${packageFeatureId}`;
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const deletetePackageFeatureById = async (packageId: number, packageFeatureId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/packages/${packageId}/feature/${packageFeatureId}`;
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+  })
+  return response
+}
+
 export const createPackage = async (data: FormData) => {
   const token = localStorage.getItem('accessToken');
   const url = `${BaseURL}/packages`;
@@ -57,7 +82,7 @@ export const createPackage = async (data: FormData) => {
   return response
 }
 
-export const UpdatePackage = async (packageId: number, data: FormData) => {
+export const updatePackageDetails = async (packageId: number, data: FormData) => {
   const token = localStorage.getItem('accessToken');
   const url = `${BaseURL}/packages/${packageId}`;
   const response = await fetch(url, {

@@ -21,6 +21,7 @@
     "ev-emitter": "^2.1.2",
     "fizzy-ui-utils": "^3.0.0",
     "get-size": "^3.0.0",
+    "hashids": "^2.3.0",
     "isotope-layout": "^3.0.6",
     "jquery": "^3.7.1",
     "lucide-react": "^0.552.0",

@@ -1,6 +1,7 @@
 import {
   CheckCheck,
   ChevronRight,
+  Eye,
   FolderOpenDot,
   FolderOutput,
   PenLine,
@@ -15,12 +16,13 @@ import { toast, ToastContainer } from 'react-toastify';
 import { NavLink } from "react-router-dom";
 import RichTextEditor from "../../layout/RichTextEditor";
 import { useForm, Controller } from "react-hook-form";
-import { addFeatureToPackage, createPackage, fetchAllPackages, UpdatePackage } from "../../utils/PackageRequests";
+import { addFeatureToPackage, createPackage, fetchAllPackages, updatePackageDetails } from "../../utils/PackageRequests";
 import { handleCreateEmployee } from "../../utils/EmployeeResponse";
 import HtmlRenderer from "../../layout/HTMLRenderer";
 import Modal from 'react-modal';
 import Tippy from "@tippyjs/react";
 import { fetchAllServiceTypes } from "../../utils/ServiceTypesRequests";
+import Hashids from "hashids";
 
 interface PackageData {
   packageId: number;
@@ -89,6 +91,7 @@ export default function Packages() {
     const [addModalState, setAddModalState] = useState(false);
     const [editModalState, setEditModalState] = useState(false);
     const [featureModalState, setFeatureModalState] = useState(false);
+    const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
 
     useEffect(() => {
         fetchAllPackages({ pageNumber, limit })
@@ -216,9 +219,9 @@ export default function Packages() {
     }
 
     const editPakage = async (data: PackageFormData) => {
-        if (packageEdit && !errors.PackageName && !errors.PackageDescription &&
-            !errors.Duration && !errors.DurationUnit && 
-            !errors.Amount && !errors.Currency
+        if (packageEdit && !editErrors.PackageName && !editErrors.PackageDescription &&
+            !editErrors.Duration && !editErrors.DurationUnit && 
+            !editErrors.Amount && !editErrors.Currency
         ) {
             const loader = document.getElementById('query-loader-1');
             const text = document.getElementById('query-text-1');
@@ -235,7 +238,7 @@ export default function Packages() {
             formData.append("PackageDescription", data.PackageDescription);
             formData.append("Amount", String(data.Amount));
             formData.append("Currency", data.Currency);
-            const res = await UpdatePackage(packageEdit.packageId, formData);
+            const res = await updatePackageDetails(packageEdit.packageId, formData);
             handleCreateEmployee(res, loader, text, { toast }, resetEdit)
             .finally(async () => {
                 await refetchPackages();
@@ -247,7 +250,7 @@ export default function Packages() {
     const updatePackageStatus = async (packageId: number, status: boolean) => {
         const formData = new FormData();
         formData.append("IsActive", String(status));
-        const res = await UpdatePackage(packageId, formData);
+        const res = await updatePackageDetails(packageId, formData);
         handleCreateEmployee(res, null, null, { toast }, resetEdit)
         .finally(async () => {
             await refetchPackages();
@@ -793,9 +796,14 @@ export default function Packages() {
                                                                     </button>
                                                                 </Tippy>
                                                                 <Tippy content="Add Feature">
-                                                                    <button className="btn-icon btn-info-light" type="button" onClick={() => { setPackageEdit(data); setFeatureModalState(true); }}>
+                                                                    <button className="btn-icon btn-success-light" type="button" onClick={() => { setPackageEdit(data); setFeatureModalState(true); }}>
                                                                         <a><Plus /></a>
                                                                     </button>
+                                                                </Tippy>
+                                                                <Tippy content="Preview Feature">
+                                                                    <NavLink className="btn-icon btn-info-light" to={`/Packages/${hashIds.encode(data.packageId)}`}>
+                                                                        <a><Eye /></a>
+                                                                    </NavLink>
                                                                 </Tippy>
                                                             </div>
                                                         </td>

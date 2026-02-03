@@ -43,6 +43,7 @@ interface EmployerData {
   postCode: string;
   dateCreated: string;
   officers: string;
+  jobsPosted: string;
 }
 
 interface JobSectorData {
@@ -352,7 +353,7 @@ export default function ClientMgt() {
                                                         <p style={{ marginBottom: '0px' }}>{data.address}</p>
                                                         <p>{ `${data.city} ${data.city && ','} ${data.state} ${data.state && ','} ${data.country}`}</p>
                                                     </td>
-                                                    <td>0</td>
+                                                    <td>{data.jobsPosted}</td>
                                                     <td>{ new Date(data.dateCreated).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'})}</td>
                                                 </tr>
                                             )
