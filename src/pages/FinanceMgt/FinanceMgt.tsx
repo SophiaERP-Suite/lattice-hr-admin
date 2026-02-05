@@ -1,17 +1,22 @@
-import { ArrowUp, BanknoteArrowDown, ChevronDown, ChevronRight, CircleDollarSign, Eye, HandCoins, PenLine, Trash2 } from "lucide-react";
+import {
+  BanknoteArrowDown,
+  ChevronRight,
+  CircleDollarSign,
+  Eye,
+  HandCoins,
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
 import ApexCharts from "apexcharts";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { fetchAllPayments } from "../../utils/PaymentRequests";
+import Tippy from "@tippyjs/react";
+import Hashids from "hashids";
 
 const revenueOptions = {
     series: [
         {
             name: "Revenue",
-            type: "column",
-            data: [18, 23, 28, 36, 44, 52, 61, 71, 76, 88, 91, 100],
-        },
-        {
-            name: "Profit",
             type: "area",
             data: [34, 38, 46, 55, 59, 68, 73, 85, 92, 105, 125, 135],
         }
@@ -54,23 +59,6 @@ const revenueOptions = {
             opacityTo: 0.1,
             stops: [0, 90, 100],
             colorStops: [
-                [
-                    {
-                        offset: 0,
-                        color: "var(--color-primary)",
-                        opacity: 1
-                    },
-                    {
-                        offset: 75,
-                        color: "var(--color-primary)",
-                        opacity: 1
-                    },
-                    {
-                        offset: 100,
-                        color: "var(--color-primary)",
-                        opacity: 1
-                    }
-                ],
                 [
                     {
                         offset: 0,
@@ -165,9 +153,6 @@ const disburseOptions = {
         name: 'Completed Payment',
         data: [2, 1, 4, 3, 5, 6, 8, 3]
     }, {
-        name: 'Outstanding Payment',
-        data: [1, 2, 2, 1, 3, 5, 4, 2]
-    }, {
         name: 'Failed Payment',
         data: [0, 1, 0, 2, 1, 3, 0, 1]
     }],
@@ -182,7 +167,7 @@ const disburseOptions = {
             enabled: true
         }
     },
-    colors: ['var(--color-success)', 'var(--color-warning)', 'var(--color-danger)'],
+    colors: ['var(--color-success)', 'var(--color-danger)'],
     plotOptions: {
         bar: {
             horizontal: false,
@@ -307,7 +292,7 @@ const industryOptions = {
         }
     },
     labels: ['Information Technology', 'Finance', 'Engineering', 'Healthcare'],
-    colors: ["var(--color-primary)", "var(--color-info)", "var(--color-warning)", "var(--color-success)"],
+    colors: ["var(--color-primary)", "var(--color-info)", "var(--color-warning)", "var(--color-success)", "var(--color-danger)"],
     responsive: [{
         breakpoint: 680,
         options: {
@@ -321,265 +306,182 @@ const industryOptions = {
     }]
 }
 
-const paymentData = [
-  {
-    company: "TechNova Inc.",
-    paymentType: "Subscription Renewal",
-    plan: "Pro Plan",
-    amount: 250000.00,
-    currency: "NGN",
-    transactionId: "TXN-984732",
-    status: "Completed",
-    paymentMethod: "Credit Card",
-    invoiceNumber: "INV-2025-001",
-    billingCycle: "Monthly",
-    date: "2025-11-01",
-    nextBillingDate: "2025-12-01"
-  },
-  {
-    company: "Skyline Technologies",
-    paymentType: "Job Posting Credit",
-    plan: "Standard",
-    amount: 45000.00,
-    currency: "NGN",
-    transactionId: "TXN-984733",
-    status: "Completed",
-    paymentMethod: "PayPal",
-    invoiceNumber: "INV-2025-002",
-    billingCycle: "One-Time",
-    date: "2025-10-29",
-    nextBillingDate: null
-  },
-  {
-    company: "BrightHire Solutions",
-    paymentType: "Featured Job Upgrade",
-    plan: "Premium Boost",
-    amount: 120000.00,
-    currency: "NGN",
-    transactionId: "TXN-984734",
-    status: "Pending",
-    paymentMethod: "Credit Card",
-    invoiceNumber: "INV-2025-003",
-    billingCycle: "One-Time",
-    date: "2025-11-05",
-    nextBillingDate: null
-  },
-  {
-    company: "Urban Workforce",
-    paymentType: "Subscription Renewal",
-    plan: "Enterprise",
-    amount: 850000.00,
-    currency: "NGN",
-    transactionId: "TXN-984735",
-    status: "Completed",
-    paymentMethod: "Bank Transfer",
-    invoiceNumber: "INV-2025-004",
-    billingCycle: "Quarterly",
-    date: "2025-10-15",
-    nextBillingDate: "2026-01-15"
-  },
-  {
-    company: "Nordic Shipping AS",
-    paymentType: "Additional Job Slots",
-    plan: "Add-on Pack",
-    amount: 200000.00,
-    currency: "NGN",
-    transactionId: "TXN-984736",
-    status: "Completed",
-    paymentMethod: "Credit Card",
-    invoiceNumber: "INV-2025-005",
-    billingCycle: "One-Time",
-    date: "2025-10-27",
-    nextBillingDate: null
-  },
-  {
-    company: "NextGen Labs",
-    paymentType: "Subscription Renewal",
-    plan: "Pro Plan",
-    amount: 250000.00,
-    currency: "NGN",
-    transactionId: "TXN-984737",
-    status: "Failed",
-    paymentMethod: "Credit Card",
-    invoiceNumber: "INV-2025-006",
-    billingCycle: "Monthly",
-    date: "2025-11-03",
-    nextBillingDate: "2025-12-03"
-  },
-  {
-    company: "EliteRecruit",
-    paymentType: "Premium Listing",
-    plan: "Gold Tier",
-    amount: 300000.00,
-    currency: "NGN",
-    transactionId: "TXN-984738",
-    status: "Completed",
-    paymentMethod: "PayPal",
-    invoiceNumber: "INV-2025-007",
-    billingCycle: "One-Time",
-    date: "2025-10-22",
-    nextBillingDate: null
-  },
-  {
-    company: "Workify HR",
-    paymentType: "Resume Access Credits",
-    plan: "Talent Access",
-    amount: 180000.00,
-    currency: "NGN",
-    transactionId: "TXN-984739",
-    status: "Completed",
-    paymentMethod: "Credit Card",
-    invoiceNumber: "INV-2025-008",
-    billingCycle: "One-Time",
-    date: "2025-10-25",
-    nextBillingDate: null
-  },
-  {
-    company: "TalentLink Africa",
-    paymentType: "Subscription Renewal",
-    plan: "Standard",
-    amount: 100000.00,
-    currency: "NGN",
-    transactionId: "TXN-984740",
-    status: "Pending",
-    paymentMethod: "Bank Transfer",
-    invoiceNumber: "INV-2025-009",
-    billingCycle: "Monthly",
-    date: "2025-11-06",
-    nextBillingDate: "2025-12-06"
-  },
-  {
-    company: "InnovaHire Ltd",
-    paymentType: "API Integration Fee",
-    plan: "Developer Access",
-    amount: 60000.00,
-    currency: "NGN",
-    transactionId: "TXN-984741",
-    status: "Completed",
-    paymentMethod: "Credit Card",
-    invoiceNumber: "INV-2025-010",
-    billingCycle: "Annual",
-    date: "2025-08-10",
-    nextBillingDate: "2026-08-10"
-  },
-  {
-    company: "TechNova Inc.",
-    paymentType: "Candidate Promotion",
-    plan: "Talent Boost",
-    amount: 75000.00,
-    currency: "NGN",
-    transactionId: "TXN-984742",
-    status: "Refunded",
-    paymentMethod: "PayPal",
-    invoiceNumber: "INV-2025-011",
-    billingCycle: "One-Time",
-    date: "2025-09-29",
-    nextBillingDate: null
-  },
-  {
-    company: "BrightHire Solutions",
-    paymentType: "Subscription Renewal",
-    plan: "Pro Plan",
-    amount: 250000.00,
-    currency: "NGN",
-    transactionId: "TXN-984743",
-    status: "Completed",
-    paymentMethod: "Credit Card",
-    invoiceNumber: "INV-2025-012",
-    billingCycle: "Monthly",
-    date: "2025-11-01",
-    nextBillingDate: "2025-12-01"
-  },
-  {
-    company: "Urban Workforce",
-    paymentType: "Advertisement Placement",
-    plan: "Homepage Banner",
-    amount: 400000.00,
-    currency: "NGN",
-    transactionId: "TXN-984744",
-    status: "Completed",
-    paymentMethod: "Bank Transfer",
-    invoiceNumber: "INV-2025-013",
-    billingCycle: "One-Time",
-    date: "2025-10-20",
-    nextBillingDate: null
-  },
-  {
-    company: "Workify HR",
-    paymentType: "Subscription Renewal",
-    plan: "Enterprise",
-    amount: 850000.00,
-    currency: "NGN",
-    transactionId: "TXN-984745",
-    status: "Completed",
-    paymentMethod: "Credit Card",
-    invoiceNumber: "INV-2025-014",
-    billingCycle: "Quarterly",
-    date: "2025-09-15",
-    nextBillingDate: "2025-12-15"
-  },
-  {
-    company: "TalentLink Africa",
-    paymentType: "Job Boost Credit",
-    plan: "Boost Pack",
-    amount: 50000.00,
-    currency: "NGN",
-    transactionId: "TXN-984746",
-    status: "Completed",
-    paymentMethod: "Credit Card",
-    invoiceNumber: "INV-2025-015",
-    billingCycle: "One-Time",
-    date: "2025-10-30",
-    nextBillingDate: null
-  }
-]
+interface CurrencyFilterForm {
+    Currency: string;
+    EndDate: string;
+}
 
+interface PaymentThusFarData {
+    month: string;
+    totalRevenue: number;
+}
+
+interface SectorGroupData {
+    jobSector: string;
+    jobSectorId: number;
+    percentage: number;
+}
+
+interface PaymentData {
+    paymentId: string;
+    amount: number;
+    currency: string;
+    employerId: string;
+    employer: string;
+    employerLogo: string;
+    packageId: string;
+    package: string;
+    txRef: string;
+    status: string;
+    dateCreated: string;
+}
 
 export default function FinanceMgt() {
+    const { register, control, setValue } = useForm<CurrencyFilterForm>();
+    const selectedCurrency = useWatch({
+        control,
+        name: 'Currency'
+    });
+    const selectedDate = useWatch({
+        control,
+        name: 'EndDate'
+    });
+    const [allRevenue, setAllRevenue] = useState(0);
+    const [revenueThisYear, setRevenueThisYear] = useState(0);
+    const [totalTransactions, setTotalTransactions] = useState(0);
+    const [paymentThusFar, setPaymentThusFar] = useState<PaymentThusFarData[]>([]);
+    const [successThusFar, setSuccessThusFar] = useState<PaymentThusFarData[]>([]);
+    const [pendingThusFar, setPendingThusFar] = useState<PaymentThusFarData[]>([]);
+    const [pageNumber, setPageNumber] = useState(1);
+    const limit = 10;
+    const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
+    const [firstPaymentDate, setFirstPaymentDate] = useState(new Date());
+    const [yearArray, setYearArray] = useState<number[]>([(new Date()).getFullYear()]);
+    const [sectorGroup, setSectorGroup] = useState<SectorGroupData[]>([]);
+    const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
+
     useEffect(() => {
+        setValue('Currency', 'NGN');
+        setValue('EndDate', `${(new Date()).getFullYear()}`)
+    }, [setValue]);
+
+    useEffect(() => {
+        fetchAllPayments({ Currency: selectedCurrency, EndDate: selectedDate, pageNumber, limit })
+            .then(res => {
+                if (res.status === 200) {
+                    res.json()
+                        .then(data => {
+                            console.log(data);
+                            setAllRevenue(data.data.totalAmount);
+                            setTotalTransactions(data.data.totalTransaction);
+                            setRevenueThisYear(data.data.totalThisYear);
+                            setPaymentThusFar(data.data.paymentThusFar);
+                            setFirstPaymentDate(data.data.firstPayment ?? new Date());
+                            setSuccessThusFar(data.data.successThusFar);
+                            setPaymentData(data.data.paymentData);
+                            setPendingThusFar(data.data.pendingThusFar);
+                            setSectorGroup(data.data.sectorGroups);
+                        })
+                } else {
+                    res.text()
+                        .then(data => {
+                            console.log(JSON.parse(data));
+                        })
+                }
+            })
+    }, [selectedCurrency, selectedDate, pageNumber, limit]);
+
+    useEffect(() => {
+        const data = revenueOptions;
+        data.series = [
+            {
+                name: "Revenue",
+                type: "area",
+                data: paymentThusFar.map(item => item.totalRevenue),
+            }
+        ];
+        data.labels = paymentThusFar.map(item => item.month);
+        data.tooltip.y = {
+            formatter: function (y: number | undefined) {
+                if (typeof y !== "undefined") {
+                    return selectedCurrency + y.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+                return y;
+            },
+        };
         const chartElement = document.querySelector("#revenueProfitChart");
         if (chartElement) {
-            const chart = new ApexCharts(chartElement, revenueOptions);
+            const chart = new ApexCharts(chartElement, data);
             chart.render();
             return () => {
                 chart.destroy();
             };
         }
-    });
+        
+    }, [paymentThusFar, selectedCurrency]);
 
     useEffect(() => {
+        const data = disburseOptions;
+        data.series = [{
+                name: 'Successful Payment',
+                data: successThusFar.map(item => item.totalRevenue)
+            }, {
+                name: 'Failed Payment',
+                data: pendingThusFar.map(item => item.totalRevenue)
+            }]
+        data.xaxis.categories = successThusFar.map(item => item.month);
+        data.tooltip.y = {
+            formatter: function (val: number) {
+                return selectedCurrency +  val.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2});
+            }
+        }
         const chartElement = document.querySelector("#orderAnalyticsChart");
         if (chartElement) {
-            const chart = new ApexCharts(chartElement, disburseOptions);
+            const chart = new ApexCharts(chartElement, data);
             chart.render();
             return () => {
                 chart.destroy();
             };
         }
-    });
+    }, [successThusFar, pendingThusFar, selectedCurrency])
 
     useEffect(() => {
+        if (firstPaymentDate) {
+            const thisYear = (new Date()).getFullYear()
+            const firstYear = (new Date(firstPaymentDate)).getFullYear();
+            const arr = []
+            for (let i = thisYear; i >= firstYear; i--){
+                arr.push(i);
+            }
+            setYearArray(arr);
+        }
+    }, [firstPaymentDate])
+
+    useEffect(() => {
+        const data = industryOptions;
+        data.series = sectorGroup.map(item => item.percentage);
+        data.labels = sectorGroup.map(item => item.jobSector);
         const chartElement = document.querySelector("#contacts-source");
         if (chartElement) {
-            const chart = new ApexCharts(chartElement, industryOptions);
+            const chart = new ApexCharts(chartElement, data);
             chart.render();
             return () => {
                 chart.destroy();
             };
         }
-    });
+    }, [sectorGroup]);
 
     return (
         <div className="container-fluid">
             <div className="row">
                 <div className="col-xl-12">
                     <div className="page-title-box d-flex-between flex-wrap gap-15">
-                        <h1 className="page-title fs-18 lh-1">Finance Management</h1>
+                        <h1 className="page-title fs-18 lh-1">Revenue Management</h1>
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb breadcrumb-example1 mb-0">
                                 <li className="active breadcrumb-item" aria-current="page">
-                                    <NavLink to="/FinanceMgt">
-                                        Finance Management
+                                    <NavLink to="/RevenueMgt">
+                                        Revenue Management
                                     </NavLink>
                                 </li>
                                 <li className="mb-2">
@@ -594,19 +496,26 @@ export default function FinanceMgt() {
                         </nav>
                     </div>
                 </div>
-                <div className="col-lg-4 col-md-6 col-12">
-                    <div className="card">
-                        <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-success-transparent text-success">
-                                <CircleDollarSign size={42} />
-                            </div>
-                            <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Total Revenue</span>
-                                <h2 className="mb-5">#8,600,000</h2>
-                                <span className="text-success">+2.05% <ArrowUp className="ml-5 d-inline-block" size={15} /></span>
-                                <span className="fs-12 text-muted ml-5">This week</span>
-                            </div>
-                        </div>
+                <div className="col-12 d-flex justify-content-end mb-4 gap-4">
+                    <div className="dataTables-sorting-control ">
+                        <select className="form-select sorting-dropdown" style={{ width: '100px' }} {
+                            ...register('Currency')
+                        }>
+                            <option value="NGN">NGN</option>
+                            <option value="USD">USD</option>
+                            <option value="GBP">GBP</option>
+                        </select>
+                    </div>
+                    <div className="dataTables-sorting-control ">
+                        <select className="form-select sorting-dropdown" style={{ width: '100px' }} {
+                            ...register('EndDate')
+                        }>
+                            {
+                                yearArray.map((data, index) => (
+                                    <option key={index} value={data}>{ data }</option>
+                                ))
+                            }
+                        </select>
                     </div>
                 </div>
                 <div className="col-lg-4 col-md-6 col-12">
@@ -616,10 +525,21 @@ export default function FinanceMgt() {
                                 <BanknoteArrowDown size={42} />
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Total Payment</span>
-                                <h2 className="mb-5">#4,500,000</h2>
-                                <span className="text-success">+12.5%<ArrowUp className="ml-5 d-inline-block" size={15} /></span>
-                                <span className="fs-12 text-muted ml-5">This week</span>
+                                <span className="d-block fs-16 mb-5">Total Revenue</span>
+                                <h2 className="mb-5">{selectedCurrency} { allRevenue.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2}) }</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-lg-4 col-md-6 col-12">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-success-transparent text-success">
+                                <HandCoins size={42} />
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Total Transactions</span>
+                                <h2 className="mb-5">{ totalTransactions }</h2>
                             </div>
                         </div>
                     </div>
@@ -628,13 +548,11 @@ export default function FinanceMgt() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-info-transparent text-info">
-                                <HandCoins size={42} />
+                                <CircleDollarSign size={42} />
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Total Profits</span>
-                                <h2 className="mb-5">#1,200,000</h2>
-                                <span className="text-success">+0.87%<ArrowUp className="ml-5 d-inline-block" size={15} /></span>
-                                <span className="fs-12 text-muted ml-5">This week</span>
+                                <span className="d-block fs-16 mb-5">Revenue For The Year {selectedDate}</span>
+                                <h2 className="mb-5">{selectedCurrency} { revenueThisYear.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2}) }</h2>
                             </div>
                         </div>
                     </div>
@@ -643,20 +561,7 @@ export default function FinanceMgt() {
                 <div className="col-12">
                     <div className="card">
                         <div className="card-header justify-between">
-                            <h4 className="">Revenue & Profit</h4>
-                            <div className="card-dropdown">
-                                <div className="dropdown">
-                                    <a className="card-dropdown-icon" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <ChevronDown />
-                                    </a>
-                                    <div className="dropdown-menu">
-                                        <a className="dropdown-item" href="javascript:void(0);">Today</a>
-                                        <a className="dropdown-item" href="javascript:void(0);">This Week</a>
-                                        <a className="dropdown-item active" href="javascript:void(0);">This Month</a>
-                                        <a className="dropdown-item" href="javascript:void(0);">This Year</a>
-                                    </div>
-                                </div>
-                            </div>
+                            <h4 className="">Revenue</h4>
                         </div>
                         <div className="card-body pt-15">
                             <div id="revenueProfitChart"></div>
@@ -667,78 +572,19 @@ export default function FinanceMgt() {
                     <div className="card">
                         <div className="card-header justify-between">
                             <h4 className="">Payments Analytics</h4>
-                            <div className="card-dropdown">
-                                <div className="dropdown">
-                                    <a className="card-dropdown-icon" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <ChevronDown />
-                                    </a>
-                                    <div className="dropdown-menu">
-                                        <a className="dropdown-item" href="javascript:void(0);">Today</a>
-                                        <a className="dropdown-item" href="javascript:void(0);">This Week</a>
-                                        <a className="dropdown-item active" href="javascript:void(0);">This Month</a>
-                                        <a className="dropdown-item" href="javascript:void(0);">This Year</a>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div className="card-body pt-15">
                             <div id="orderAnalyticsChart"></div>
                         </div>
                     </div>
                 </div>
-                
-
                 <div className="col-12">
                     <div className="card">
                         <div className="card-header justify-between">
-                            <h4 className="">Top Subscribed Industries</h4>
-                            <div className="card-dropdown">
-                                <div className="dropdown">
-                                    <a className="card-dropdown-icon" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <ChevronDown />
-                                    </a>
-                                    <div className="dropdown-menu">
-                                        <a className="dropdown-item" href="javascript:void(0);">Today</a>
-                                        <a className="dropdown-item" href="javascript:void(0);">This Week</a>
-                                        <a className="dropdown-item active" href="javascript:void(0);">This Month</a>
-                                        <a className="dropdown-item" href="javascript:void(0);">This Year</a>
-                                    </div>
-                                </div>
-                            </div>
+                            <h4 className="">Top Paying Industries</h4>
                         </div>
                         <div className="card-body pt-15">
                             <div id="contacts-source"></div>
-                            <div className="pipeline-stats mt-20">
-                                <div className="d-flex justify-between align-center">
-                                    <div className="d-flex align-center gap-10">
-                                        <span className="bullet bg-success"></span>
-                                        <span className="fs-14">Healthcare</span>
-                                    </div>
-                                    <span className="fw-500">#1,030,000 <span className="text-muted">(40%)</span></span>
-                                </div>
-                                <div className="d-flex justify-between align-center mb-8">
-                                    <div className="d-flex align-center gap-10">
-                                        <span className="bullet bg-primary"></span>
-                                        <span className="fs-14">Information Technology</span>
-                                    </div>
-                                    <span className="fw-500">#7,400,000 <span className="text-muted">(25%)</span></span>
-                                </div>
-                                <div className="d-flex justify-between align-center mb-8">
-                                    <div className="d-flex align-center gap-10">
-                                        <span className="bullet bg-info"></span>
-                                        <span className="fs-14">Finance</span>
-                                    </div>
-                                    <span className="fw-500">#6,700,000 <span className="text-muted">(20%)</span></span>
-                                </div>
-                                <div className="d-flex justify-between align-center mb-8">
-                                    <div className="d-flex align-center gap-10">
-                                        <span className="bullet bg-warning"></span>
-                                        <span className="fs-14">Engineering</span>
-                                    </div>
-                                    <span className="fw-500">#6,100,000 <span className="text-muted">(15%)</span></span>
-                                </div>
-                                
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -747,78 +593,53 @@ export default function FinanceMgt() {
                     <div className="card">
                         <div className="card-header justify-between">
                             <h4 className="">Payments Overview</h4>
-                            <div className="card-dropdown">
-                                <div className="dropdown">
-                                    <a className="card-dropdown-icon" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                        <ChevronDown />
-                                    </a>
-                                    <div className="dropdown-menu">
-                                        <a className="dropdown-item" href="javascript:void(0);">This Week</a>
-                                        <a className="dropdown-item" href="javascript:void(0);">Last Week</a>
-                                        <a className="dropdown-item" href="javascript:void(0);">This Month</a>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                         <div className="card-body pt-15">
                             <div className="table-responsive table--card">
                                 <table className="table table-bordered text-nowrap text-start">
                                     <thead>
                                         <tr>
+                                            <th>S/N</th>
                                             <th>Client</th>
-                                            <th>Payment Type</th>
-                                            <th>Plan</th>
                                             <th>Amount</th>
-                                            <th>Transaction Id</th>
+                                            <th>Package</th>
                                             <th>Status</th>
-                                            <th>Payment Method</th>
-                                            <th>Invoice Number</th>
-                                            <th>Billing Cycle</th>
-                                            <th>Date</th>
-                                            <th>Next Billing Date</th>
+                                            <th>Payment Date</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {
-                                            paymentData.map(data => {
+                                            paymentData.map((data, index) => {
                                                 return (
-                                                    <tr>
+                                                    <tr key={index}>
+                                                        <td>{index + 1}</td>
                                                         <td>
                                                             <div className="d-flex-items gap-10">
-                                                                <h6><a href="company-details.html">{ data.company }</a></h6>
+                                                                <div className="avatar avatar-md radius-100">
+                                                                    <img className="radius-100" src={data.employerLogo} alt="image not found"/>
+                                                                </div>
+                                                                <h6 className="cursor-pointer" data-bs-toggle="modal" data-bs-target="#viewCompanies">{ data.employer }</h6>
                                                             </div>
                                                         </td>
-                                                        <td>{ data.paymentType}</td>
-                                                        <td>{ data.plan }</td>
-                                                        <td>{ `NGN ${data.amount}` }</td>
-                                                        <td>{ data.transactionId }</td>
+                                                        <td>{ `${data.currency} ${data.amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2})}` }</td>
+                                                        <td>{ data.package }</td>
                                                         <td>
                                                             <span className={`badge 
-                                                                ${data.status === 'Completed' ? 'bg-label-success' : ''}
+                                                                ${data.status === 'Success' ? 'bg-label-success' : ''}
                                                                 ${data.status === 'Failed' ? 'bg-label-danger' : ''}
-                                                                ${data.status === 'Pending' ? 'bg-label-warning' : ''}
-                                                                ${data.status === 'Refunded' ? 'bg-label-purple' : ''}`}>
-                                                                {data.status}
+                                                                ${data.status === 'Pending' ? 'bg-label-danger' : ''}
+                                                                ${data.status === 'Reversed' ? 'bg-label-purple' : ''}`}>
+                                                                {data.status === 'Pending' ? 'Failed': data.status}
                                                             </span>
                                                         </td>
-                                                        <td>{ data.paymentMethod }</td>
-                                                        <td>{ data.invoiceNumber }</td>
-                                                        <td>{ data.billingCycle }</td>
-                                                        <td>{ data.date }</td>
-                                                        <td>{ data.nextBillingDate }</td>
+                                                        <td>{new Date(data.dateCreated).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                                                         <td>
-                                                            <div className="d-flex-items gap-10">
-                                                                <a className="btn-icon btn-success-light" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="View">
+                                                            <Tippy content="Preview Payment">
+                                                                <NavLink to={`/RevenueMgt/${hashIds.encode(data.paymentId)}`} className="btn-icon btn-info-light">
                                                                     <Eye />
-                                                                </a>
-                                                                <a className="btn-icon btn-info-light" href="#" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Edit">
-                                                                    <PenLine />
-                                                                </a>
-                                                                <a className="btn-icon btn-danger-light" href="javascript:void(0);" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
-                                                                    <Trash2 />
-                                                                </a>
-                                                            </div>
+                                                                </NavLink>
+                                                            </Tippy>
                                                         </td>
                                                     </tr>
                                                 )
@@ -827,18 +648,46 @@ export default function FinanceMgt() {
                                         
                                     </tbody>
                                 </table>
+                                {
+                                    paymentData.length === 0 ?
+                                        <div className="py-4 whitespace-nowrap w-full">
+                                        <span className="px-6 py-4 text-left font-medium text-black">There hasn't been any payments made</span>
+                                        </div> : <></>
+                                }
                             </div>
                         </div>
-                        <div className="card-footer mt-15">
-                            <div className="d-flex-between flex-wrap gap-16">
-                                <div className="tables-info">Showing 1 to 10 of 57 entries</div>
-                                <ul className="pagination">
-                                    <li className="page-item"><a href="javascript:void(0);" className="page-link">Previous</a></li>
-                                    <li className="page-item"><a href="javascript:void(0);" className="page-link">1</a></li>
-                                    <li className="page-item"><a href="javascript:void(0);" className="page-link">2</a></li>
-                                    <li className="page-item"><a href="javascript:void(0);" className="page-link">3</a></li>
-                                    <li className="page-item"><a href="javascript:void(0);" className="page-link">Next</a></li>
-                                </ul>
+                        <div className="d-flex justify-content-between mt-4">
+                            <div className="flex justify-content-center align-items-center mb-1">
+                                <p className="text-black">
+                                    Showing { paymentData.length > 0 ? ((pageNumber * limit) - limit) + 1 : 0 } to { paymentData.length > 0 ? (((pageNumber * limit) - limit) + 1) + (paymentData.length - 1) : 0 } of { totalTransactions } entries
+                                </p>
+                            </div>
+                            <div className="d-inline-flex flex-wrap">
+                                {
+                                    pageNumber > 1 && <a
+                                        href="#"
+                                        onClick={() => { if (pageNumber > 1) {setPageNumber(pageNumber - 1);} }}
+                                        className="border-top border-bottom border-start text-primary border-secondary px-2 py-1 rounded-start"
+                                    >
+                                        Previous
+                                    </a>
+                                }
+                                <a
+                                    href="#"
+                                    className="border border-secondary text-white bg-primary px-4 py-1 cursor-pointer"
+                                >
+                                    { pageNumber }
+                                </a>
+                                {
+                                    (pageNumber * limit) < totalTransactions && <a
+                                    href="#"
+                                    onClick={() => { setPageNumber(pageNumber + 1); }}
+                                    className="border-end border-top border-bottom text-primary border-secondary px-4 py-1 rounded-end"
+                                    >
+                                        Next
+                                    </a>
+                                }
+                                
                             </div>
                         </div>
                     </div>

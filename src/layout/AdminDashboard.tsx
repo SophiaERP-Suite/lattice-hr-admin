@@ -25,6 +25,7 @@ import {
   ArrowRight,
   ArrowLeft,
   ArrowUp,
+  Users,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -35,9 +36,14 @@ const sidebarMenus = [
     icon: (<LayoutDashboard style={{ color: "#000"}} />)
   },
   {
+    label: "Candidate Management",
+    path: "/CandidateMgt",
+    icon: (<BookUser style={{ color: "#000"}} />)
+  },
+  {
     label: "Client Management",
     path: "/ClientMgt",
-    icon: (<BookUser style={{ color: "#000"}} />)
+    icon: (<Users style={{ color: "#000"}} />)
   },
   {
     label: "Workers Management",
@@ -60,8 +66,8 @@ const sidebarMenus = [
     icon: (<Blocks style={{ color: "#000"}} />)
   },
   {
-    label: "Finance Management",
-    path: "/FinanceMgt",
+    label: "Revenue Management",
+    path: "/RevenueMgt",
     icon: (<CreditCard style={{ color: "#000"}} />)
   },
   {

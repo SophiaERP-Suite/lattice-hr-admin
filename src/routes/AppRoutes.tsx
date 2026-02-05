@@ -16,6 +16,8 @@ import UserMgt from "../pages/ControlPanel/UserMgt";
 import IndustryMgt from "../pages/ControlPanel/IndustryMgt";
 import CurrencyMgt from "../pages/ControlPanel/CurrencyMgt";
 import PackageDetails from "../pages/Packages/PackageDetails";
+import CandidatesMgt from "../pages/CandidateMgt/CandidatesMgt";
+import PaymentDetails from "../pages/FinanceMgt/PaymentDetails";
 
 function AppRoutes() {
   return (
@@ -25,12 +27,14 @@ function AppRoutes() {
         <Route index element={<Dashboard />} />
         <Route path="Dashboard" element={<Dashboard />} />
         <Route path="ClientMgt" element={<ClientMgt />} />
+        <Route path="CandidateMgt" element={<CandidatesMgt />} />
         <Route path="WorkerMgt" element={<WorkersMgt />} />
         <Route path="ComplianceMgt" element={<ComplianceMgt />} />
         <Route path="Timesheet" element={<TimeSheet />} />
         <Route path="JobMgt" element={<JobMgt />} />
         <Route path="JobMgt/:id" element={<JobDetails />} />
-        <Route path="FinanceMgt" element={<FinanceMgt />} />
+        <Route path="RevenueMgt" element={<FinanceMgt />} />
+        <Route path="RevenueMgt/:id" element={<PaymentDetails />} />
         <Route path="Complaints" element={<Complaints />} />
         <Route path="Packages" element={<Packages />} />
         <Route path="Packages/:id" element={<PackageDetails />} />
