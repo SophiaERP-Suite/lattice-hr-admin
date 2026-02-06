@@ -322,6 +322,12 @@ interface SectorGroupData {
     percentage: number;
 }
 
+interface PackageGroupData {
+    package: string;
+    packageId: number;
+    percentage: number;
+}
+
 interface PaymentData {
     paymentId: string;
     amount: number;
@@ -358,6 +364,7 @@ export default function FinanceMgt() {
     const [firstPaymentDate, setFirstPaymentDate] = useState(new Date());
     const [yearArray, setYearArray] = useState<number[]>([(new Date()).getFullYear()]);
     const [sectorGroup, setSectorGroup] = useState<SectorGroupData[]>([]);
+    const [packageGroup, setPackageGroup] = useState<PackageGroupData[]>([]);
     const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
 
     useEffect(() => {
@@ -381,6 +388,7 @@ export default function FinanceMgt() {
                             setPaymentData(data.data.paymentData);
                             setPendingThusFar(data.data.pendingThusFar);
                             setSectorGroup(data.data.sectorGroups);
+                            setPackageGroup(data.data.packageGroups);
                         })
                 } else {
                     res.text()
@@ -470,6 +478,20 @@ export default function FinanceMgt() {
             };
         }
     }, [sectorGroup]);
+
+    useEffect(() => {
+        const data = industryOptions;
+        data.series = packageGroup.map(item => item.percentage);
+        data.labels = packageGroup.map(item => item.package);
+        const chartElement = document.querySelector("#packages-source");
+        if (chartElement) {
+            const chart = new ApexCharts(chartElement, data);
+            chart.render();
+            return () => {
+                chart.destroy();
+            };
+        }
+    }, [packageGroup]);
 
     return (
         <div className="container-fluid">
@@ -578,13 +600,23 @@ export default function FinanceMgt() {
                         </div>
                     </div>
                 </div>
-                <div className="col-12">
+                <div className="col-md-6">
                     <div className="card">
                         <div className="card-header justify-between">
                             <h4 className="">Top Paying Industries</h4>
                         </div>
                         <div className="card-body pt-15">
                             <div id="contacts-source"></div>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-md-6">
+                    <div className="card">
+                        <div className="card-header justify-between">
+                            <h4 className="">Top Subscribed Packages</h4>
+                        </div>
+                        <div className="card-body pt-15">
+                            <div id="packages-source"></div>
                         </div>
                     </div>
                 </div>

@@ -3,12 +3,13 @@ import {
   FolderOpenDot,
   Briefcase,
   UserPlus,
-  ClockCheck,
   ChevronDown,
-  BanknoteArrowUp
+  BanknoteArrowUp,
+  Handshake,
+  FolderKanban
 } from "lucide-react";
 import ApexCharts from "apexcharts";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import nursing from "../assets/images/nursing.jpg";
 import carePhoto from "../assets/images/Care1.jpg";
 import homeCare from "../assets/images/home_care.jpg";
@@ -16,57 +17,94 @@ import hospital from "../assets/images/hospital.jpg";
 import elderlyCare from "../assets/images/elderly_care.png";
 import new_care from "../assets/images/new_care.png"
 import { NavLink } from "react-router-dom";
+import { useForm, useWatch } from "react-hook-form";
+import { fetchAdminData } from "../utils/AdminDataRequests";
 
-const options = {
-    chart: {
-        height: 352,
-        type: 'line',
-        stacked: false,
-        toolbar: { show: false }
-    },
+const revenueOptions = {
     series: [
         {
-            name: 'Subscriptions',
-            type: 'area',
-            data: [35000, 65000, 50000, 70000, 55000, 60000, 45000, 43000, 75000, 55000, 63000, 68000],
-            color: "#FEBB7B"
-        },
-        {
-            name: 'Earnings',
-            type: 'column',
-            data: [90000, 100000, 70000, 110000, 80000, 85000, 60000, 30000, 95000, 40000, 85000, 35000],
-
-            color: "#4F46E5",
-        },
-        {
-            name: 'Refunds',
-            type: 'line',
-            data: [10000, 15000, 12000, 20000, 18000, 10000, 5000, 8000, 10000, 25000, 14000, 20000],
-            color: "var(--color-success)",
-            stroke: {
-                dashArray: 5,
-                width: 2
-            }
+            name: "Revenue",
+            type: "area",
+            data: [34, 38, 46, 55, 59, 68, 73, 85, 92, 105, 125, 135],
         }
     ],
+    chart: {
+        toolbar: {
+            show: false,
+        },
+        height: 350,
+        stacked: false,
+        dropShadow: {
+            enabled: true,
+            enabledOnSeries: undefined,
+            top: 7,
+            left: 1,
+            blur: 3,
+            color: ["transparent", "#000"],
+            opacity: 0.2
+        },
+    },
     stroke: {
-        width: [2, 0, 2],
-        curve: 'smooth'
+        width: [1.5, 1.5],
+        curve: "smooth",
     },
     plotOptions: {
         bar: {
-            columnWidth: '45%'
+            columnWidth: "20%",
+            borderRadius: 3,
+        },
+    },
+    colors: [
+        "var(--color-primary)",
+        "var(--color-success)"
+    ],
+    fill: {
+        type: 'gradient',
+        gradient: {
+            shadeIntensity: 1,
+            opacityFrom: 0.4,
+            opacityTo: 0.1,
+            stops: [0, 90, 100],
+            colorStops: [
+                [
+                    {
+                        offset: 0,
+                        color: "rgba(var(--success-rgb),0.15)",
+                        opacity: 1
+                    },
+                    {
+                        offset: 75,
+                        color: "rgba(var(--success-rgb),0.15)",
+                        opacity: 1
+                    },
+                    {
+                        offset: 100,
+                        color: "rgba(var(--success-rgb),0.15)",
+                        opacity: 1
+                    }
+                ],
+            ]
         }
     },
-    fill: {
-        opacity: [0.2, 1, 1]
-    },
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    labels: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+    ],
     markers: {
-        size: 5
+        size: 0,
     },
     xaxis: {
-        type: 'category',
+        type: "month",
         labels: {
             style: {
                 colors: 'var(--color-body)',
@@ -78,6 +116,7 @@ const options = {
         },
     },
     yaxis: {
+        min: 0,
         labels: {
             style: {
                 colors: 'var(--color-body)',
@@ -88,19 +127,30 @@ const options = {
             },
         },
     },
-    legend: {
-        position: "top",
-        labels: {
-            colors: "var(--color-body)",
-        },
-    },
     tooltip: {
         shared: true,
         intersect: false,
         y: {
-            formatter: function (val: string) {
-                return "#" + val;
-            }
+            formatter: function (y: number | undefined) {
+                if (typeof y !== "undefined") {
+                    return "NGN " + y.toFixed(0) + ".0k";
+                }
+                return y;
+            },
+        },
+    },
+    legend: {
+        position: 'top',
+        fontSize: '14px',
+        markers: {
+            radius: 12
+        },
+        itemMargin: {
+            horizontal: 10,
+            vertical: 5
+        },
+        labels: {
+            colors: "var(--color-body)",
         },
     },
 };
@@ -592,18 +642,76 @@ const jobData = [
   }
 ]
 
-function Dashboard() {
+interface CurrencyFilterForm {
+    Currency: string;
+}
 
-  useEffect(() => {
-    const chartElement = document.querySelector("#order-status");
-    if (chartElement) {
-      const chart = new ApexCharts(chartElement, options);
-      chart.render();
-      return () => {
-        chart.destroy();
-      };
-    }
-  });
+interface PaymentThusFarData {
+    month: string;
+    totalRevenue: number;
+}
+
+function Dashboard() {
+    const { register, control, setValue } = useForm<CurrencyFilterForm>();
+    const selectedCurrency = useWatch({ control, name: 'Currency'});
+    const [totalPackages, setTotalPackages] = useState(0);
+    const [totalEmployers, setTotalEmployers] = useState(0);
+    const [totalRevenue, setTotalRevenue] = useState(0);
+    const [paymentData, setPaymentData] = useState<PaymentThusFarData[]>([]);
+
+     useEffect(() => {
+        setValue('Currency', 'NGN');
+    }, [setValue]);
+
+    useEffect(() => {
+        fetchAdminData({ Currency: selectedCurrency })
+            .then(res => {
+                if (res.status === 200) {
+                    res.json()
+                        .then(data => {
+                            console.log(data);
+                            setTotalPackages(data.data.totalPackages);
+                            setTotalEmployers(data.data.totalEmployers);
+                            setPaymentData(data.data.paymentThusFar);
+                            setTotalRevenue(data.data.totalRevenue);
+                        })
+                } else {
+                    res.text()
+                        .then(data => {
+                            console.log(JSON.parse(data));
+                        })
+                }
+            })
+    }, [selectedCurrency]);
+
+    useEffect(() => {
+        const data = revenueOptions;
+        data.series = [
+            {
+                name: "Revenue",
+                type: "area",
+                data: paymentData.map(item => item.totalRevenue),
+            }
+        ];
+        data.labels = paymentData.map(item => item.month);
+        data.tooltip.y = {
+            formatter: function (y: number | undefined) {
+                if (typeof y !== "undefined") {
+                    return selectedCurrency + y.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+                return y;
+            },
+        };
+        const chartElement = document.querySelector("#revenueProfitChart");
+        if (chartElement) {
+            const chart = new ApexCharts(chartElement, data);
+            chart.render();
+            return () => {
+                chart.destroy();
+            };
+        }
+        
+    }, [paymentData, selectedCurrency]);
 
   useEffect(() => {
     const widgetChartYear = document.querySelector("#widgetChartYear");
@@ -677,6 +785,17 @@ function Dashboard() {
               </nav>
           </div>
         </div>
+        <div className="col-12 d-flex justify-content-end mb-4 gap-4">
+            <div className="dataTables-sorting-control ">
+                <select className="form-select sorting-dropdown" style={{ width: '100px' }} {
+                    ...register('Currency')
+                }>
+                    <option value="NGN">NGN</option>
+                    <option value="USD">USD</option>
+                    <option value="GBP">GBP</option>
+                </select>
+            </div>
+        </div>
         <div className="col-12 col-lg-4 col-md-6 col-12">
           <div className="card">
             <div className="card-body d-flex align-center gap-16">
@@ -684,12 +803,8 @@ function Dashboard() {
                 <FolderOpenDot size={42}/>
               </div>
               <div className="card-content">
-                <span className="d-block fs-16 mb-5">Total Qty</span>
-                <h2 className="mb-5">1,250</h2>
-                <span className="text-success">
-                  +5% <ArrowUp size={12} className="ri-arrow-up-line"/>
-                </span>
-                <span className="fs-12 text-muted ml-5">vs. last month</span>
+                <span className="d-block fs-16 mb-5">Total Packages</span>
+                <h2 className="mb-5">{ totalPackages.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }</h2>
               </div>
             </div>
           </div>
@@ -702,7 +817,7 @@ function Dashboard() {
               </div>
               <div className="card-content">
                 <span className="d-block fs-16 mb-5">Total Revenue</span>
-                <h2 className="mb-5">#4,208,000</h2>
+                <h2 className="mb-5">{selectedCurrency} { totalRevenue.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2}) }</h2>
               </div>
             </div>
           </div>
@@ -711,16 +826,11 @@ function Dashboard() {
           <div className="card">
             <div className="card-body d-flex align-center gap-16">
               <div className="avatar avatar-xl bg-info-transparent text-info">
-                <FolderOpenDot size={42}/>
+                <Handshake size={42}/>
               </div>
               <div className="card-content">
-                <span className="d-block fs-16 mb-5">New Contracts</span>
-                <h2 className="mb-5">12</h2>
-                <span className="text-success">
-                  +3 New
-                  <ArrowUp size={12} className="ri-arrow-up-line"/>
-                </span>
-                <span className="fs-12 text-muted ml-5">this week</span>
+                <span className="d-block fs-16 mb-5">Total Contracts</span>
+                <h2 className="mb-5">0</h2>
               </div>
             </div>
           </div>
@@ -733,11 +843,7 @@ function Dashboard() {
               </div>
               <div className="card-content">
                 <span className="d-block fs-16 mb-5">Total Employers</span>
-                <h2 className="mb-5">568</h2>
-                <span className="text-success">
-                  +5% <ArrowUp size={12} className="ri-arrow-up-line"/>
-                </span>
-                <span className="fs-12 text-muted ml-5">vs. last month</span>
+                <h2 className="mb-5">{ totalEmployers.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0}) }</h2>
               </div>
             </div>
           </div>
@@ -750,12 +856,7 @@ function Dashboard() {
               </div>
               <div className="card-content">
                 <span className="d-block fs-16 mb-5">Total Candidates</span>
-                <h2 className="mb-5">2432</h2>
-                <span className="text-success">
-                  +10%
-                  <ArrowUp size={12} className="ri-arrow-up-line" />
-                </span>
-                <span className="fs-12 text-muted ml-5">vs. last month</span>
+                <h2 className="mb-5">0</h2>
               </div>
             </div>
           </div>
@@ -764,12 +865,11 @@ function Dashboard() {
           <div className="card">
             <div className="card-body d-flex align-center gap-16">
               <div className="avatar avatar-xl bg-slateblue-transparent text-slateblue">
-                <ClockCheck size={42}/>
+                <FolderKanban size={42}/>
               </div>
               <div className="card-content">
-                <span className="d-block fs-16 mb-5">Attendance Rate</span>
-                <h2 className="mb-5">94%</h2>
-                <span className="fs-12 text-muted">This week</span>
+                <span className="d-block fs-16 mb-5">Total Workers</span>
+                <h2 className="mb-5">0</h2>
               </div>
             </div>
           </div>
@@ -778,21 +878,9 @@ function Dashboard() {
           <div className="card">
             <div className="card-header justify-between">
               <h4>Revenue Report</h4>
-              <div className="card-dropdown">
-                  <div className="dropdown">
-                    <a className="card-dropdown-icon" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      <ChevronDown />
-                    </a>
-                    <div className="dropdown-menu">
-                      <a className="dropdown-item" href="javascript:void(0);">This Week</a>
-                      <a className="dropdown-item" href="javascript:void(0);">Last Week</a>
-                      <a className="dropdown-item" href="javascript:void(0);">This Month</a>
-                    </div>
-                  </div>
-              </div>
             </div>
             <div className="card-body mini-card-body pt-15">
-              <div id="order-status"></div>
+              <div id="revenueProfitChart"></div>
             </div>
           </div>
         </div>
