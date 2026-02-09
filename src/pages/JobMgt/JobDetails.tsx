@@ -216,7 +216,8 @@ export default function JobDetails() {
         if (res.status === 200) {
             res.json()
             .then(data => {
-            setCountries(data.data);
+                console.log('Country',data)
+                setCountries(data.data ?? []);
             })
         } else {
             res.text()
@@ -240,7 +241,7 @@ export default function JobDetails() {
         if (res.status === 200) {
             res.json()
             .then(data => {
-                setEditState(data.data);
+                setEditState(data.data ?? []);
             })
         } else {
             res.text()
@@ -264,7 +265,7 @@ export default function JobDetails() {
             res.json()
             .then(data => {
                 console.log(data)
-                setEditCities(data.data);
+                setEditCities(data ?? []);
             })
         } else {
             res.text()

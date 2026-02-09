@@ -1,6 +1,6 @@
 const BaseURL = "http://localhost:5127";
 
-export const fetchAllEmployers = async (filterData: object) => {
+export const fetchAllOfficers = async (filterData: object) => {
   const token = localStorage.getItem('accessToken');
   const params = new URLSearchParams();
   Object.entries(filterData).forEach(([key, value]) => {
@@ -8,24 +8,12 @@ export const fetchAllEmployers = async (filterData: object) => {
       params.append(key, value);
     }
   })
-  const url = `${BaseURL}/employers?${params}`;
+  const url = `${BaseURL}/responsibility-officers?${params}`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {
       "Authorization": `Bearer ${token}`
     }
-  })
-  return response
-}
-
-export const fetchEmployerById = async (employerId: number) => {
-  const token = localStorage.getItem('accessToken');
-  const url = `${BaseURL}/employers/${employerId}`;
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      "Authorization": `Bearer ${token}`
-    },
   })
   return response
 }

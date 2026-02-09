@@ -1,24 +1,21 @@
 import {
     BookUser,
-    Camera,
     CheckCheck,
     ChevronRight,
+    Eye,
     FolderOpenDot,
     FolderOutput,
     Gauge,
-    Mail,
-    Phone,
-    PhoneOutgoing,
     Plus,
     X,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
-import company from "../../assets/images/company.png";
-import avatar from "../../assets/images/company/company-thumb-008.png";
 import { useEffect, useState } from "react";
 import { fetchAllEmployers } from "../../utils/EmployerRequests";
 import { fetchJobSectors } from "../../utils/JobSetorRequests";
 import { useForm, useWatch } from "react-hook-form";
+import Hashids from "hashids";
+import Modal from 'react-modal';
 import { fetchCitiesByStateId, fetchCountries, fetchStatesByCountryId } from "../../utils/LocationRequests";
 
 interface EmployerData {
@@ -120,6 +117,8 @@ export default function ClientMgt() {
         control: regControl,
         name: 'StateId',
     });
+    const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
+    const [addModalState, setAddModalState] = useState(false);
 
     useEffect(() => {
         fetchAllEmployers({ pageNumber, limit, ...filters })
@@ -225,6 +224,153 @@ export default function ClientMgt() {
   }, [selectedState, setValue]);
 
     return <div className="container-fluid">
+        
+        <Modal isOpen={addModalState} onRequestClose={() => { setAddModalState(false); }}
+            style={{
+            content: {
+            width: 'fit-content',
+            height: 'fit-content',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            backgroundColor: 'rgb(255 255 255)',
+            borderRadius: '0.5rem',
+            boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+            },
+            overlay: {
+            backgroundColor: 'rgba(255, 255, 255, 0.7)'
+            }
+        }}
+        >
+            
+            <div className="h-fit w-100 overflow-auto" style={{ maxHeight: '70vh' }}>
+                <form noValidate>
+                    <div className="d-flex justify-content-between border-bottom">
+                        <h1 className="modal-title fs-16" id="addNewTimeSheetLabel">Create New Package</h1>
+                        <button type="button" className="btn-close"  onClick={() => setAddModalState(false)}></button>
+                    </div>
+                    <div className="mt-4">
+                        <div className="row gy-15">
+
+                        <div className="col-xl-6 text-start">
+                            <label htmlFor="fullName" className="form-label">Business Name</label>
+                            <input type="text" className="form-control" id="fullName" placeholder="Business Name"/>
+                        </div>
+                        <div className="col-xl-6 text-start">
+                            <label htmlFor="logo" className="form-label">Business Logo</label>
+                            <input type="file" className="form-control" id="logo" placeholder="Business Logo"/>
+                        </div>
+                        <div className="col-xl-6 text-start">
+                            <div>
+                                <label htmlFor="jobSector" className="form-label">Job Sector</label>
+                                <select className="form-select" id="jobSector">
+                                    <option value="">Select Job Sector</option>
+                                    {
+                                        jobSectors.map((data, index) => (
+                                            <option key={index} value={data.jobSectorId}>{ data.name }</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div className="col-xl-6 text-start">
+                            <div>
+                                <label htmlFor="companySize" className="form-label">Company Size</label>
+                                <select className="form-select" id="companySize">
+                                    <option value="">Select Company Size</option>
+                                    <option value="small">1 - 50 employees (Small)</option>
+                                    <option value="medium">51 - 250 employees (Medium)</option>
+                                    <option value="large">250+ employees (Large)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="col-xl-6 text-start">
+                            <label htmlFor="regsitrationNo" className="form-label">Registration No</label>
+                            <input type="text" className="form-control" id="regsitrationNo" placeholder="Regsitration No"/>
+                        </div>
+                        
+                        <div className="col-xl-6 text-start">
+                            <label htmlFor="website" className="form-label">Website</label>
+                            <input type="text" className="form-control" id="website" placeholder="Website URL"/>
+                        </div>
+                        <div className="col-xl-6 text-start">
+                            <div>
+                                <label htmlFor="country" className="form-label">Country</label>
+                                <select className="form-select" id="country"
+                                    {
+                                        ...empRegister('CountryId')
+                                    }
+                                >
+                                    <option value="">Select Country</option>
+                                    {
+                                        countries.map((data, index) => (
+                                            <option key={index} value={data.countryId}>{ data.name }</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div className="col-xl-6 text-start">
+                            <div>
+                                <label htmlFor="state" className="form-label">State</label>
+                                <select className="form-select" id="state" disabled={states.length === 0}
+                                    {
+                                        ...empRegister('StateId')
+                                    }
+                                >
+                                    <option value="">Select State</option>
+                                    {
+                                        states.map((data, index) => (
+                                            <option key={index} value={data.stateId}>{ data.name }</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div className="col-xl-6 text-start">
+                            <div>
+                                <label htmlFor="city" className="form-label">City</label>
+                                <select className="form-select" id="city" disabled={cities.length === 0}
+                                    {
+                                        ...empRegister('CityId')
+                                    }
+                                >
+                                    <option value="">Select City</option>
+                                    {
+                                        cities.map((data, index) => (
+                                            <option key={index} value={data.cityId}>{ data.name }</option>
+                                        ))
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div className="col-xl-6 text-start">
+                            <label htmlFor="postcode" className="form-label">PostCode</label>
+                            <input type="text" className="form-control" id="postcode" placeholder="PostCode"/>
+                        </div>
+                    </div>
+                    </div>
+                    <div className="modal-footer">
+                        <div className="d-flex justify-content-end gap-10 mt-20">
+                            <button type="button" className="btn btn-danger" onClick={() => setAddModalState(false)}>
+                                <X size={18} className="mr-2" /> Cancel
+                            </button>
+                            <button type="submit" className="btn btn-success">
+                                <div className="dots" id="query-loader">
+                                    <div className="dot"></div>
+                                    <div className="dot"></div>
+                                    <div className="dot"></div>
+                                </div>
+                                <span id="query-text">
+                                    <CheckCheck size={18} className="mr-2" />
+                                    Add Employer
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </Modal>
         <div className="row">
             <div className="col-xl-12">
                 <div className="page-title-box d-flex-between flex-wrap gap-15">
@@ -309,7 +455,7 @@ export default function ClientMgt() {
                                     }
                                 </select>
                             </div>
-                            <button type="button" className="btn btn-success" data-bs-toggle="modal" data-bs-target="#addNewCompanies">
+                            <button type="button" className="btn btn-success" onClick={() => setAddModalState(true)}>
                                 <Plus /> New Client
                             </button>
                             <a className="btn btn-info text-white" href="javascript:void(0);">
@@ -329,6 +475,7 @@ export default function ClientMgt() {
                                         <th scope="col">Location</th>
                                         <th scope="col">Jobs Posted</th>
                                         <th scope="col">Date Joined</th>
+                                        <th scope="col">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -344,7 +491,7 @@ export default function ClientMgt() {
                                                             <div className="avatar avatar-md radius-100">
                                                                 <img className="radius-100" src={data.employerLogo} alt="image not found"/>
                                                             </div>
-                                                            <h6 className="cursor-pointer" data-bs-toggle="modal" data-bs-target="#viewCompanies">{ data.businessName }</h6>
+                                                            <h6 className="cursor-pointer">{ data.businessName }</h6>
                                                         </div>
                                                     </td>
                                                     <td>{ data.package ?? 'None Subscribed' }</td>
@@ -355,6 +502,13 @@ export default function ClientMgt() {
                                                     </td>
                                                     <td>{data.jobsPosted}</td>
                                                     <td>{ new Date(data.dateCreated).toLocaleDateString('en-GB', {day: '2-digit', month: 'short', year: 'numeric'})}</td>
+                                                    <td>
+                                                        <div className="d-flex-items gap-10">
+                                                            <NavLink to={`/ClientMgt/${hashIds.encode(data.employerId)}`} className="btn-icon btn-info-light">
+                                                                <a><Eye /></a>
+                                                            </NavLink>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             )
                                         })
@@ -402,255 +556,6 @@ export default function ClientMgt() {
                                 
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div className="modal fade" id="addNewCompanies" aria-labelledby="addNewCompaniesLabel" aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered modal-lg">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h1 className="modal-title fs-16" id="addNewCompaniesLabel">Add New Client</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div className="modal-body">
-                        <div className="row gy-15">
-
-                            <div className="col-xl-6 text-start">
-                                <label htmlFor="fullName" className="form-label">Business Name</label>
-                                <input type="text" className="form-control" id="fullName" placeholder="Business Name"/>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <label htmlFor="logo" className="form-label">Business Logo</label>
-                                <input type="file" className="form-control" id="logo" placeholder="Business Logo"/>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <div>
-                                    <label htmlFor="jobSector" className="form-label">Job Sector</label>
-                                    <select className="form-select" id="jobSector">
-                                        <option value="">Select Job Sector</option>
-                                        {
-                                            jobSectors.map((data, index) => (
-                                                <option key={index} value={data.jobSectorId}>{ data.name }</option>
-                                            ))
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <div>
-                                    <label htmlFor="companySize" className="form-label">Company Size</label>
-                                    <select className="form-select" id="companySize">
-                                        <option value="">Select Company Size</option>
-                                        <option value="small">1 - 50 employees (Small)</option>
-                                        <option value="medium">51 - 250 employees (Medium)</option>
-                                        <option value="large">250+ employees (Large)</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <label htmlFor="regsitrationNo" className="form-label">Registration No</label>
-                                <input type="text" className="form-control" id="regsitrationNo" placeholder="Regsitration No"/>
-                            </div>
-                            
-                            <div className="col-xl-6 text-start">
-                                <label htmlFor="website" className="form-label">Website</label>
-                                <input type="text" className="form-control" id="website" placeholder="Website URL"/>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <div>
-                                    <label htmlFor="country" className="form-label">Country</label>
-                                    <select className="form-select" id="country"
-                                        {
-                                            ...empRegister('CountryId')
-                                        }
-                                    >
-                                        <option value="">Select Country</option>
-                                        {
-                                            countries.map((data, index) => (
-                                                <option key={index} value={data.countryId}>{ data.name }</option>
-                                            ))
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <div>
-                                    <label htmlFor="state" className="form-label">State</label>
-                                    <select className="form-select" id="state" disabled={states.length === 0}
-                                        {
-                                            ...empRegister('StateId')
-                                        }
-                                    >
-                                        <option value="">Select State</option>
-                                        {
-                                            states.map((data, index) => (
-                                                <option key={index} value={data.stateId}>{ data.name }</option>
-                                            ))
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <div>
-                                    <label htmlFor="city" className="form-label">City</label>
-                                    <select className="form-select" id="city" disabled={cities.length === 0}
-                                        {
-                                            ...empRegister('CityId')
-                                        }
-                                    >
-                                        <option value="">Select City</option>
-                                        {
-                                            cities.map((data, index) => (
-                                                <option key={index} value={data.cityId}>{ data.name }</option>
-                                            ))
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <label htmlFor="postcode" className="form-label">PostCode</label>
-                                <input type="text" className="form-control" id="postcode" placeholder="PostCode"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">
-                            <X /> Cancel
-                        </button>
-                        <button type="button" className="btn btn-success">
-                            <CheckCheck /> Add Client
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div className="modal fade" id="viewCompanies" aria-labelledby="viewCompaniesLabel" aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h1 className="modal-title fs-16" id="viewCompaniesLabel">View Companies</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div className="modal-body">
-                        <div className="row gy-15">
-                            <div className="col-xl-12">
-                                <div className="text-center">
-                                    <div className="name-info mb-15">
-                                        <div className="avatar avatar-xxl radius-100 mb-15">
-                                            <img src={company} alt="image not found" className="radius-100"/>
-                                        </div>
-                                        <h4 className="">Acme Corporation</h4>
-                                    </div>
-                                    <div className="contact-by d-flex-center gap-15 mb-15">
-                                        <a href="javascript:void(0);" className="btn-icon btn-sm btn-success-light fs-16">
-                                            <Phone />
-                                        </a>
-                                        <a href="javascript:void(0);" className="btn-icon btn-sm btn-warning-light fs-16">
-                                            <Mail />
-                                        </a>
-                                        <a href="javascript:void(0);" className="btn-icon btn-sm btn-info-light fs-16">
-                                            <PhoneOutgoing />
-                                        </a>
-                                    </div>
-                                    <div className="information">
-                                        <div className="table-responsive">
-                                            <table className="table table-borderless mb-0">
-                                                <tbody>
-                                                    <tr className="text-start">
-                                                        <th className="fw-6" scope="row">Email</th>
-                                                        <td><a href="mailto:contact@acme-corporation.com" className="text-start" data-cfemail="bad9d5d4cedbd9cefadbd9d7df94d9d5d7">contact@acme-corporation.com</a></td>
-                                                    </tr>
-                                                    <tr className="text-start">
-                                                        <th className="fw-6" scope="row">Phone No</th>
-                                                        <td>(555) 123-4567</td>
-                                                    </tr>
-                                                    <tr className="text-start">
-                                                        <th className="fw-6" scope="row">Industry</th>
-                                                        <td>Manufacturing</td>
-                                                    </tr>
-                                                    <tr className="text-start">
-                                                        <th className="fw-6" scope="row">Location</th>
-                                                        <td>New York, USA</td>
-                                                    </tr>
-                                                    <tr className="text-start">
-                                                        <th className="fw-6" scope="row">Jobs Posted</th>
-                                                        <td>12</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" className="btn btn-primary">Full Details</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div className="modal fade" id="editCompanies" aria-labelledby="editCompaniesLabel" aria-hidden="true">
-            <div className="modal-dialog modal-dialog-centered modal-lg">
-                <div className="modal-content">
-                    <div className="modal-header">
-                        <h1 className="modal-title fs-16" id="editCompaniesLabel">Edit Companies</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div className="modal-body">
-                        <div className="row gy-15">
-                            <div className="col-xl-12">
-                                <div className="text-center">
-                                    <div className="avatar avatar-xxl radius-100">
-                                        <img src={avatar} alt="image not found" id="profileImage" className="radius-100"/>
-                                        <span className="badge rounded-pill bg-primary avatar-badge">
-                                <input type="file" name="photo"
-                                    className="p-absolute z-3 cursor-pointer w-100 h-100 op-0 pl-0 pr-0"
-                                    id="profileImageChange"/>
-                                    <a><Camera className="p-relative z-1" size={15} /></a>
-                            </span>
-                                    </div>
-                                    <span className="d-block fw-5 text-muted">Company Logo</span>
-                                </div>
-                            </div>
-                            <div className="col-xl-12 text-start">
-                                <label htmlFor="fullName2" className="form-label">Company Name</label>
-                                <input type="text" className="form-control" id="fullName2" value="Acme Corporation"/>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <label htmlFor="phoneNumber2" className="form-label">Phone Number</label>
-                                <input type="text" className="form-control" id="phoneNumber2" value="(555) 123-4567"/>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <label htmlFor="email2" className="form-label">Email</label>
-                                <input type="text" className="form-control" id="email2" value="contact@acme.com"/>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <div>
-                                    <label htmlFor="industry_type" className="form-label">Industry Type</label>
-                                    <select className="form-select" id="industry_type">
-                                        <option selected value="Manufacturing">Manufacturing</option>
-                                        <option value="Information Technology">Information Technology</option>
-                                        <option value="Transportation">Transportation</option>
-                                        <option value="Healthcare">Healthcare</option>
-                                        <option value="Energy">Energy
-                                        </option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div className="col-xl-6 text-start">
-                                <label htmlFor="location2" className="form-label">Location</label>
-                                <input type="text" className="form-control" id="location2" value="New York, USA"/>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="modal-footer">
-                        <button type="button" className="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" className="btn btn-primary">Save changes</button>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 const BaseURL = "http://localhost:5127";
 
-export const fetchAllEmployers = async (filterData: object) => {
+export const fetchAllCandidates = async (filterData: object) => {
   const token = localStorage.getItem('accessToken');
   const params = new URLSearchParams();
   Object.entries(filterData).forEach(([key, value]) => {
@@ -8,7 +8,7 @@ export const fetchAllEmployers = async (filterData: object) => {
       params.append(key, value);
     }
   })
-  const url = `${BaseURL}/employers?${params}`;
+  const url = `${BaseURL}/jobseeker?${params}`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {
@@ -18,9 +18,9 @@ export const fetchAllEmployers = async (filterData: object) => {
   return response
 }
 
-export const fetchEmployerById = async (employerId: number) => {
+export const fetchCandidateById = async (userId: number) => {
   const token = localStorage.getItem('accessToken');
-  const url = `${BaseURL}/employers/${employerId}`;
+  const url = `${BaseURL}/jobseeker/${userId}`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {
