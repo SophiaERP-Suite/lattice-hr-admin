@@ -944,7 +944,8 @@ export default function JobMgt() {
                                             ))
                                         }
                                     </select>
-                                </div><div className="dataTables-sorting-control ">
+                                </div>
+                                <div className="dataTables-sorting-control ">
                                     <select className="form-select sorting-dropdown" { ...filterRegister('jobTypeId') }>
                                         <option value="">All Job Types</option>
                                         {

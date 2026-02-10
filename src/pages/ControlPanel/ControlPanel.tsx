@@ -1,4 +1,4 @@
-import { ChevronRight, Columns3Cog, FileCog, LocateFixed, Receipt, ShieldCheck, UserCog } from "lucide-react";
+import { Briefcase, BriefcaseBusiness, ChevronRight, Columns3Cog, FileCog, FolderKanban, LocateFixed, Receipt, ShieldCheck, UserCog } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 export default function ControlPanel() {
@@ -34,7 +34,7 @@ export default function ControlPanel() {
                                 <ShieldCheck size={42}/>
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Role Management</span>
+                                <span className="d-block fs-16 mb-5">Role</span>
                             </div>
                         </div>
                     </div>
@@ -46,19 +46,7 @@ export default function ControlPanel() {
                                 <UserCog size={42}/>
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">User Management</span>
-                            </div>
-                        </div>
-                    </div>
-                </NavLink>
-                <NavLink to="/ControlPanel/IndustryMgt" className="col-12 col-lg-4 col-md-6 col-12">
-                    <div className="card">
-                        <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-purple-transparent text-purple">
-                                <Columns3Cog size={42}/>
-                            </div>
-                            <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Industry Management</span>
+                                <span className="d-block fs-16 mb-5">User</span>
                             </div>
                         </div>
                     </div>
@@ -70,7 +58,55 @@ export default function ControlPanel() {
                                 <Receipt size={42}/>
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Currency Management</span>
+                                <span className="d-block fs-16 mb-5">Currency</span>
+                            </div>
+                        </div>
+                    </div>
+                </NavLink>
+                <NavLink to="/ControlPanel/JobSectorMgt" className="col-12 col-lg-4 col-md-6 col-12">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-primary-transparent text-primary">
+                                <Columns3Cog size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Job Sector</span>
+                            </div>
+                        </div>
+                    </div>
+                </NavLink>
+                <NavLink to="/ControlPanel/JobTypeMgt" className="col-12 col-lg-4 col-md-6 col-12">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-purple-transparent text-purple">
+                                <Briefcase size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Job Type</span>
+                            </div>
+                        </div>
+                    </div>
+                </NavLink>
+                <NavLink to="/ControlPanel/JobCategoryMgt" className="col-12 col-lg-4 col-md-6 col-12">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-success-transparent text-success">
+                                <FolderKanban size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Job Category</span>
+                            </div>
+                        </div>
+                    </div>
+                </NavLink>
+                <NavLink to="/ControlPanel/CurrencyMgt" className="col-12 col-lg-4 col-md-6 col-12">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-danger-transparent text-danger">
+                                <BriefcaseBusiness size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Job Work Mode</span>
                             </div>
                         </div>
                     </div>
@@ -82,7 +118,7 @@ export default function ControlPanel() {
                                 <LocateFixed size={42}/>
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Location Management</span>
+                                <span className="d-block fs-16 mb-5">Location</span>
                             </div>
                         </div>
                     </div>
@@ -94,7 +130,7 @@ export default function ControlPanel() {
                                 <FileCog size={42}/>
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Permission Management</span>
+                                <span className="d-block fs-16 mb-5">Permission</span>
                             </div>
                         </div>
                     </div>

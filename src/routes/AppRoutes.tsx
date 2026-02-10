@@ -20,6 +20,9 @@ import CandidatesMgt from "../pages/CandidateMgt/CandidatesMgt";
 import PaymentDetails from "../pages/FinanceMgt/PaymentDetails";
 import ClientDetails from "../pages/ClientMgt/ClientDetails";
 import CandidateDetails from "../pages/CandidateMgt/CandidateDetails";
+import JobSectorMgt from "../pages/ControlPanel/JobSectorMgt";
+import JobTypeMgt from "../pages/ControlPanel/JobTypeMgt";
+import JobCategoryMgt from "../pages/ControlPanel/JobCategoryMgt";
 
 function AppRoutes() {
   return (
@@ -47,6 +50,9 @@ function AppRoutes() {
         <Route path="ControlPanel/UserMgt" element={<UserMgt />} />
         <Route path="ControlPanel/IndustryMgt" element={<IndustryMgt />} />
         <Route path="ControlPanel/CurrencyMgt" element={<CurrencyMgt />} />
+        <Route path="ControlPanel/JobSectorMgt" element={<JobSectorMgt />} />
+        <Route path="ControlPanel/JobTypeMgt" element={<JobTypeMgt />} />
+        <Route path="ControlPanel/JobCategoryMgt" element={<JobCategoryMgt />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
