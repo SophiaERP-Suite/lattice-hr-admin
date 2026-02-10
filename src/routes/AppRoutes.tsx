@@ -23,6 +23,7 @@ import CandidateDetails from "../pages/CandidateMgt/CandidateDetails";
 import JobSectorMgt from "../pages/ControlPanel/JobSectorMgt";
 import JobTypeMgt from "../pages/ControlPanel/JobTypeMgt";
 import JobCategoryMgt from "../pages/ControlPanel/JobCategoryMgt";
+import WorkModeMgt from "../pages/ControlPanel/WorkModeMgt";
 
 function AppRoutes() {
   return (
@@ -53,6 +54,7 @@ function AppRoutes() {
         <Route path="ControlPanel/JobSectorMgt" element={<JobSectorMgt />} />
         <Route path="ControlPanel/JobTypeMgt" element={<JobTypeMgt />} />
         <Route path="ControlPanel/JobCategoryMgt" element={<JobCategoryMgt />} />
+        <Route path="ControlPanel/WorkModeMgt" element={<WorkModeMgt />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

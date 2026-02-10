@@ -30,7 +30,7 @@ export default function ControlPanel() {
                 <NavLink to="/ControlPanel/RoleMgt" className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-info-transparent text-info">
+                            <div className="avatar avatar-xl bg-purple-transparent text-purple">
                                 <ShieldCheck size={42}/>
                             </div>
                             <div className="card-content">
@@ -99,14 +99,14 @@ export default function ControlPanel() {
                         </div>
                     </div>
                 </NavLink>
-                <NavLink to="/ControlPanel/CurrencyMgt" className="col-12 col-lg-4 col-md-6 col-12">
+                <NavLink to="/ControlPanel/WorkModeMgt" className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-danger-transparent text-danger">
+                            <div className="avatar avatar-xl bg-info-transparent text-info">
                                 <BriefcaseBusiness size={42}/>
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Job Work Mode</span>
+                                <span className="d-block fs-16 mb-5">Work Mode</span>
                             </div>
                         </div>
                     </div>
@@ -114,7 +114,7 @@ export default function ControlPanel() {
                 <div className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-pink-transparent text-pink">
+                            <div className="avatar avatar-xl bg-primary-transparent text-primary">
                                 <LocateFixed size={42}/>
                             </div>
                             <div className="card-content">

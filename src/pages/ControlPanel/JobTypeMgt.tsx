@@ -326,12 +326,12 @@ export default function JobTypeMgt() {
         <div className="row">
             <div className="col-xl-12">
                 <div className="page-title-box d-flex-between flex-wrap gap-15">
-                    <h1 className="page-title fs-18 lh-1">Job Type Management</h1>
+                    <h1 className="page-title fs-18 lh-1">Job Type</h1>
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb breadcrumb-example1 mb-0">
                             <li className="active breadcrumb-item" aria-current="page">
                                 <NavLink to="/ControlPanel/JobTypeMgt">
-                                    Job Type Management
+                                    Job Type
                                 </NavLink>
                             </li>
                             <li className="mb-2">

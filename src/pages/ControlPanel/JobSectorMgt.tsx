@@ -326,12 +326,12 @@ export default function JobSectorMgt() {
         <div className="row">
             <div className="col-xl-12">
                 <div className="page-title-box d-flex-between flex-wrap gap-15">
-                    <h1 className="page-title fs-18 lh-1">Job Sector Management</h1>
+                    <h1 className="page-title fs-18 lh-1">Job Sector</h1>
                     <nav aria-label="breadcrumb">
                         <ol className="breadcrumb breadcrumb-example1 mb-0">
                             <li className="active breadcrumb-item" aria-current="page">
                                 <NavLink to="/ControlPanel/JobSectorMgt">
-                                    Job Sector Management
+                                    Job Sector
                                 </NavLink>
                             </li>
                             <li className="mb-2">
