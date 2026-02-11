@@ -24,6 +24,8 @@ import RichTextEditor from "../../layout/RichTextEditor";
 import Tippy from "@tippyjs/react";
 import Hashids from "hashids";
 import { fetchJobTypes } from "../../utils/JobTypeRequests";
+import { fetchJobCategories } from "../../utils/JobCategoryRequests";
+import { fetchWorkModes } from "../../utils/WorkModeRequests";
 
 interface CountryData {
   countryId: number;
@@ -62,6 +64,18 @@ interface JobData {
   published: boolean
   publishedDate: string;
   dateCreated: string;
+  jobExpiration: string;
+  jobAmount: string;
+  jobResponsibility: string;
+  jobRequirement: string;
+  jobCategoryId: string;
+  jobCategory: string;
+  isPaid: string;
+  workModeId: string;
+  workMode: string;
+  jobViewScope: string;
+  grade: string;
+  jobPhoto: string;
 }
 
 interface JobFormData {
@@ -73,6 +87,16 @@ interface JobFormData {
   CountryId: string;
   StateId: string;
   CityId: string;
+  JobExpiration: string;
+  JobAmount: string;
+  JobResponsibility: string;
+  JobRequirement: string;
+  JobCategoryId: string;
+  IsPaid: string;
+  WorkModeId: string;
+  JobViewScope: string;
+  Grade: string;
+  JobPhoto: string;
 }
 
 interface EmployerData {
@@ -106,13 +130,27 @@ interface JobSectorData {
 
 interface JobTypeData {
   jobTypeId: number;
-  name: string;
+  typeName: string;
 }
 
 interface JobFilter {
   jobSectorId: number;
   jobTypeId: number;
   jobTitle: string;
+}
+
+interface JobCategoryData {
+  jobCategoryId: number;
+  jobSector: string;
+  jobSectorId: string;
+  isEnabled: boolean;
+  categoryName: string;
+}
+
+interface WorkModeData {
+  workModeId: number;
+  isEnabled: boolean;
+  modeName: string;
 }
 
 export default function JobMgt() {
@@ -126,6 +164,7 @@ export default function JobMgt() {
     const { register: filterRegister, control: filterControl } = useForm<JobFilter>();
     const filters = useWatch({ control: filterControl });
     const [employers, setEmployers] = useState<EmployerData[]>([]);
+    const [jobCategories, setJobCategories] = useState<JobCategoryData[]>([]);
     const limit = 10;
     const { errors } = formState;
     const {
@@ -144,11 +183,17 @@ export default function JobMgt() {
     const [editState, setEditState] = useState<StateData[]>([]);
     const [editCity, setEditCities] = useState<CityData[]>([]);
     const [jobSectors, setJobSectors] = useState<JobSectorData[]>([]);
+    const [editJobCategories, setEditJobCategories] = useState<JobCategoryData[]>([]);
     const [jobTypes, setJobTypes] = useState<JobTypeData[]>([]);
+    const [workModes, setWorkModes] = useState<WorkModeData[]>([]);
     const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
     const selectedCountry = useWatch({
         control,
         name: 'CountryId',
+    });
+    const selectedSector = useWatch({
+        control,
+        name: 'JobSectorId',
     });
     const selectedState = useWatch({
         control,
@@ -162,6 +207,10 @@ export default function JobMgt() {
     const editSelectedState = useWatch({
         control: editControl,
         name: 'StateId',
+    });
+    const editSelectedSector = useWatch({
+        control: editControl,
+        name: 'JobSectorId',
     });
 
     useEffect(() => {
@@ -190,6 +239,9 @@ export default function JobMgt() {
             editSetValue('JobTypeId', jobEdit.jobTypeId);
             editSetValue('JobDescription', jobEdit.jobDescription);
             editSetValue('CountryId', jobEdit.countryId);
+            editSetValue('StateId', jobEdit.stateId);
+            editSetValue('CityId', jobEdit.cityId);
+            editSetValue('JobCategoryId', jobEdit.jobCategoryId);
             editSetValue('StateId', jobEdit.stateId);
             editSetValue('CityId', jobEdit.cityId);
         }
@@ -227,6 +279,24 @@ export default function JobMgt() {
                 console.log(JSON.parse(data));
             })
         }
+        })
+        .catch((err) => console.log(err))
+    }, []);
+
+    useEffect(() => {
+        fetchWorkModes()
+        .then(res => {
+            if (res.status === 200) {
+                res.json()
+                .then(data => {
+                    setWorkModes(data);
+                })
+            } else {
+                res.text()
+                .then(data => {
+                console.log(JSON.parse(data));
+                })
+            }
         })
         .catch((err) => console.log(err))
     }, []);
@@ -308,6 +378,52 @@ export default function JobMgt() {
     }, [selectedCountry, setValue]);
 
     useEffect(() => {
+        if (!selectedSector || selectedSector == '') {
+            setJobCategories([]);
+            setValue('JobCategoryId', '');
+            return;
+        }
+        fetchJobCategories(Number(selectedSector))
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                setJobCategories(data.data);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
+        })
+        .catch((err) => console.log(err))
+    }, [selectedSector, setValue]);
+
+    useEffect(() => {
+        if (!editSelectedSector || editSelectedSector == '') {
+            setEditJobCategories([]);
+            editSetValue('JobCategoryId', '');
+            return;
+        }
+        fetchJobCategories(Number(editSelectedSector))
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                setEditJobCategories(data.data);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
+        })
+        .catch((err) => console.log(err))
+    }, [editSelectedSector, editSetValue]);
+
+    useEffect(() => {
         if (!selectedState || selectedState == '') {
         setCities([]);
         setValue('CityId', '')
@@ -318,7 +434,7 @@ export default function JobMgt() {
         if (res.status === 200) {
             res.json()
             .then(data => {
-                setCities(data.data);
+                setCities(data);
             })
         } else {
             res.text()
@@ -365,7 +481,7 @@ export default function JobMgt() {
         if (res.status === 200) {
             res.json()
             .then(data => {
-                setEditCities(data.data);
+                setEditCities(data);
             })
         } else {
             res.text()
@@ -388,7 +504,7 @@ export default function JobMgt() {
         if (res.status === 200) {
             res.json()
             .then(data => {
-                setCities(data.data);
+                setCities(data);
             })
         } else {
             res.text()
@@ -404,7 +520,12 @@ export default function JobMgt() {
         if (!errors.JobTitle && !errors.JobDescription &&
             !errors.CountryId && !errors.StateId && 
             !errors.CityId && !errors.EmployerId &&
-            !errors.JobSectorId && !errors.JobTypeId
+            !errors.JobSectorId && !errors.JobTypeId &&
+            !errors.JobExpiration && !errors.JobViewScope && 
+            !errors.Grade && !errors.JobAmount &&
+            !errors.JobResponsibility && !errors.JobRequirement &&
+            !errors.JobCategoryId && !errors.WorkModeId &&
+            !errors.JobPhoto && !errors.IsPaid
         ) {
             const loader = document.getElementById('query-loader');
             const text = document.getElementById('query-text');
@@ -415,8 +536,19 @@ export default function JobMgt() {
                 text.style.display = 'none';
             }
             const formData = new FormData();
+
+            formData.append("JobExpiration", data.JobExpiration);
+            formData.append("JobViewScope", data.JobViewScope);
+            formData.append("Grade", String(data.Grade));
+            formData.append("JobAmount", data.JobAmount);
+            formData.append("IsPaid", `${Number(data.JobAmount) > 0}`);
             formData.append("JobTitle", data.JobTitle);
             formData.append("CountryId", data.CountryId);
+            formData.append("JobCategoryId", data.JobCategoryId);
+            formData.append("JobPhoto", data.JobPhoto[0]);
+            formData.append("WorkModeId", data.WorkModeId);
+            formData.append("JobResponsibility", data.JobResponsibility);
+            formData.append("JobRequirement", data.JobRequirement);
             formData.append("JobSectorId", data.JobSectorId);
             formData.append("JobTypeId", data.JobTypeId);
             formData.append("StateId", data.StateId);
@@ -502,7 +634,7 @@ export default function JobMgt() {
                         </div>
                         <div className="mt-4">
                             <div className="row gy-15 text-start">
-                                <div className="col-xl-12">
+                                <div className="col-xl-6">
                                     <label className="form-label">Job Title</label>
                                     <input
                                         type="text"
@@ -539,6 +671,27 @@ export default function JobMgt() {
                                     <p className='error-msg'>{errors.JobSectorId?.message}</p>
                                 </div>
                                 <div className="col-xl-6">
+                                    <label className="form-label">Job Category</label>
+                                    <select
+                                        className="form-select"
+                                        {
+                                            ...register('JobCategoryId',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        }
+                                        disabled={jobCategories.length === 0}>
+                                        <option value="">Select Job Category</option>
+                                        {
+                                            jobCategories.map((data, index) => (
+                                                <option key={index} value={data.jobCategoryId}>{ data.categoryName }</option>
+                                            ))
+                                        }
+                                    </select>
+                                    <p className='error-msg'>{errors.JobCategoryId?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
                                     <label className="form-label">Job Type</label>
                                     <select
                                         className="form-select"
@@ -552,11 +705,31 @@ export default function JobMgt() {
                                         <option value="">Select Job Type</option>
                                         {
                                             jobTypes.map((data, index) => (
-                                                <option key={index} value={data.jobTypeId}>{ data.name }</option>
+                                                <option key={index} value={data.jobTypeId}>{ data.typeName }</option>
                                             ))
                                         }
                                     </select>
-                                    <p className='error-msg'>{errors.JobSectorId?.message}</p>
+                                    <p className='error-msg'>{errors.JobTypeId?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
+                                    <label className="form-label">Work Mode</label>
+                                    <select
+                                        className="form-select"
+                                        {
+                                            ...register('WorkModeId',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        }>
+                                        <option value="">Select Work Mode</option>
+                                        {
+                                            workModes.map((data, index) => (
+                                                <option key={index} value={data.workModeId}>{ data.modeName }</option>
+                                            ))
+                                        }
+                                    </select>
+                                    <p className='error-msg'>{errors.WorkModeId?.message}</p>
                                 </div>
                                 <div className="col-xl-6">
                                     <label className="form-label">Employer</label>
@@ -640,6 +813,86 @@ export default function JobMgt() {
                                     </select>
                                     <p className='error-msg'>{errors.CityId?.message}</p>
                                 </div>
+                                <div className="col-xl-6">
+                                    <label className="form-label">Job Expiration</label>
+                                    <select
+                                        className="form-select"
+                                        {
+                                            ...register('JobExpiration',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        }>
+                                        <option value="">Select Job Expiration</option>
+                                        <option value="14">14 Days</option>
+                                        <option value="30">30 Days</option>
+                                        <option value="60">60 Days</option>
+                                        <option value="90">90 Days</option>
+                                    </select>
+                                    <p className='error-msg'>{errors.JobExpiration?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
+                                    <label className="form-label">Job View Scope</label>
+                                    <select
+                                        className="form-select"
+                                        {
+                                            ...register('JobViewScope',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        }>
+                                        <option value="">Select View Scope</option>
+                                        <option value="Global">Global</option>
+                                        <option value="Country">Country</option>
+                                        <option value="State">State</option>
+                                        <option value="City">City</option>
+                                    </select>
+                                    <p className='error-msg'>{errors.JobViewScope?.message}</p>
+                                </div>
+                                <div className="col-xl-6 text-start">
+                                    <label htmlFor="logo" className="form-label">Job Photo</label>
+                                    <input type="file" className="form-control" id="logo" placeholder="Job Photo"
+                                        {
+                                            ...register('JobPhoto',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                )
+                                        }/>
+                                    <p className='error-msg'>{errors.JobPhoto?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
+                                    <label className="form-label">Payment Amount</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="Payment Amount"
+                                        {
+                                            ...register('JobAmount',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        } />
+                                    <p className='error-msg'>{errors.JobAmount?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
+                                    <label className="form-label">Expected Grade</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Expected Grade"
+                                        {
+                                            ...register('Grade',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        } />
+                                    <p className='error-msg'>{errors.Grade?.message}</p>
+                                </div>
                                 <div className="col-xl-12">
                                     <label className="form-label">Job Description</label>
                                     <Controller
@@ -655,9 +908,39 @@ export default function JobMgt() {
                                     />
                                     <p className='error-msg'>{errors.JobDescription?.message}</p>
                                 </div>
+                                <div className="col-xl-12">
+                                    <label className="form-label">Job Requirement</label>
+                                    <Controller
+                                        name="JobRequirement"
+                                        control={control}
+                                        rules={{ required: 'Required' }}
+                                        render={({ field }) => (
+                                        <RichTextEditor
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                        />
+                                        )}
+                                    />
+                                    <p className='error-msg'>{errors.JobRequirement?.message}</p>
+                                </div>
+                                <div className="col-xl-12">
+                                    <label className="form-label">Job Responsibility</label>
+                                    <Controller
+                                        name="JobResponsibility"
+                                        control={control}
+                                        rules={{ required: 'Required' }}
+                                        render={({ field }) => (
+                                        <RichTextEditor
+                                            value={field.value}
+                                            onChange={field.onChange}
+                                        />
+                                        )}
+                                    />
+                                    <p className='error-msg'>{errors.JobResponsibility?.message}</p>
+                                </div>
                             </div>
                         </div>
-                        <div className="modal-footer">
+                        <div>
                             <div className="d-flex justify-content-end gap-10 mt-20">
                                 <button type="button" className="btn btn-danger" onClick={() => setAddModalState(false)}>
                                     <X size={18} className="mr-2" /> Cancel
@@ -705,7 +988,7 @@ export default function JobMgt() {
                                 </div>
                                 <div className="mt-4">
                                     <div className="row gy-15 text-start">
-                                        <div className="col-xl-6">
+                                        <div className="col-xl-12">
                                             <label className="form-label">Job Title</label>
                                             <input
                                                 type="text"
@@ -742,6 +1025,27 @@ export default function JobMgt() {
                                             <p className='error-msg'>{editErrors.JobSectorId?.message}</p>
                                         </div>
                                         <div className="col-xl-6">
+                                            <label className="form-label">Job Category</label>
+                                            <select
+                                                className="form-select"
+                                                {
+                                                    ...regEdit('JobCategoryId',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                }
+                                                disabled={editJobCategories.length === 0}>
+                                                <option value="">Select Job Category</option>
+                                                {
+                                                    editJobCategories.map((data, index) => (
+                                                        <option key={index} value={data.jobCategoryId}>{ data.categoryName }</option>
+                                                    ))
+                                                }
+                                            </select>
+                                            <p className='error-msg'>{editErrors.JobCategoryId?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6">
                                             <label className="form-label">Job Type</label>
                                             <select
                                                 className="form-select"
@@ -755,11 +1059,31 @@ export default function JobMgt() {
                                                 <option value="">Select Job Type</option>
                                                 {
                                                     jobTypes.map((data, index) => (
-                                                        <option key={index} value={data.jobTypeId}>{ data.name }</option>
+                                                        <option key={index} value={data.jobTypeId}>{ data.typeName }</option>
                                                     ))
                                                 }
                                             </select>
-                                            <p className='error-msg'>{editErrors.JobSectorId?.message}</p>
+                                            <p className='error-msg'>{editErrors.JobTypeId?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6">
+                                            <label className="form-label">Work Mode</label>
+                                            <select
+                                                className="form-select"
+                                                {
+                                                    ...regEdit('WorkModeId',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                }>
+                                                <option value="">Select Work Mode</option>
+                                                {
+                                                    workModes.map((data, index) => (
+                                                        <option key={index} value={data.workModeId}>{ data.modeName }</option>
+                                                    ))
+                                                }
+                                            </select>
+                                            <p className='error-msg'>{editErrors.WorkModeId?.message}</p>
                                         </div>
                                         <div className="col-xl-6">
                                             <label className="form-label">Country</label>
@@ -823,6 +1147,86 @@ export default function JobMgt() {
                                             </select>
                                             <p className='error-msg'>{editErrors.CityId?.message}</p>
                                         </div>
+                                        <div className="col-xl-6">
+                                            <label className="form-label">Job Expiration</label>
+                                            <select
+                                                className="form-select"
+                                                {
+                                                    ...regEdit('JobExpiration',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                }>
+                                                <option value="">Select Job Expiration</option>
+                                                <option value="14">14 Days</option>
+                                                <option value="30">30 Days</option>
+                                                <option value="60">60 Days</option>
+                                                <option value="90">90 Days</option>
+                                            </select>
+                                            <p className='error-msg'>{editErrors.JobExpiration?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6">
+                                            <label className="form-label">Job View Scope</label>
+                                            <select
+                                                className="form-select"
+                                                {
+                                                    ...regEdit('JobViewScope',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                }>
+                                                <option value="">Select View Scope</option>
+                                                <option value="Global">Global</option>
+                                                <option value="Country">Country</option>
+                                                <option value="State">State</option>
+                                                <option value="City">City</option>
+                                            </select>
+                                            <p className='error-msg'>{editErrors.JobViewScope?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6 text-start">
+                                            <label htmlFor="logo" className="form-label">Job Photo</label>
+                                            <input type="file" className="form-control" id="logo" placeholder="Job Photo"
+                                                {
+                                                    ...regEdit('JobPhoto',
+                                                                {
+                                                                    required: 'Required'
+                                                                }
+                                                        )
+                                                }/>
+                                            <p className='error-msg'>{editErrors.JobPhoto?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6">
+                                            <label className="form-label">Payment Amount</label>
+                                            <input
+                                                type="number"
+                                                className="form-control"
+                                                placeholder="Payment Amount"
+                                                {
+                                                    ...regEdit('JobAmount',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                } />
+                                            <p className='error-msg'>{editErrors.JobAmount?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6">
+                                            <label className="form-label">Expected Grade</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                placeholder="Expected Grade"
+                                                {
+                                                    ...regEdit('Grade',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                } />
+                                            <p className='error-msg'>{editErrors.Grade?.message}</p>
+                                        </div>
                                         <div className="col-xl-12">
                                             <label className="form-label">Job Description</label>
                                             <Controller
@@ -838,9 +1242,39 @@ export default function JobMgt() {
                                             />
                                             <p className='error-msg'>{editErrors.JobDescription?.message}</p>
                                         </div>
+                                        <div className="col-xl-12">
+                                            <label className="form-label">Job Requirement</label>
+                                            <Controller
+                                                name="JobRequirement"
+                                                control={editControl}
+                                                rules={{ required: 'Required' }}
+                                                render={({ field }) => (
+                                                <RichTextEditor
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                />
+                                                )}
+                                            />
+                                            <p className='error-msg'>{editErrors.JobRequirement?.message}</p>
+                                        </div>
+                                        <div className="col-xl-12">
+                                            <label className="form-label">Job Responsibility</label>
+                                            <Controller
+                                                name="JobResponsibility"
+                                                control={editControl}
+                                                rules={{ required: 'Required' }}
+                                                render={({ field }) => (
+                                                <RichTextEditor
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                />
+                                                )}
+                                            />
+                                            <p className='error-msg'>{editErrors.JobResponsibility?.message}</p>
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="modal-footer">
+                                <div>
                                     <div className="d-flex justify-content-end gap-10 mt-20">
                                         <button type="button" className="btn btn-danger" onClick={() => setEditModalState(false)}>
                                             <X size={18} className="mr-2" /> Cancel
@@ -950,7 +1384,7 @@ export default function JobMgt() {
                                         <option value="">All Job Types</option>
                                         {
                                             jobTypes.map((data, index) => (
-                                                <option key={index} value={data.jobTypeId}>{ data.name }</option>
+                                                <option key={index} value={data.jobTypeId}>{ data.typeName }</option>
                                             ))
                                         }
                                     </select>

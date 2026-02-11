@@ -19,6 +19,7 @@ import new_care from "../assets/images/new_care.png"
 import { NavLink } from "react-router-dom";
 import { useForm, useWatch } from "react-hook-form";
 import { fetchAdminData } from "../utils/AdminDataRequests";
+import { fetchCurrencies } from "../utils/CurrencyRequests";
 
 const revenueOptions = {
     series: [
@@ -651,17 +652,49 @@ interface PaymentThusFarData {
     totalRevenue: number;
 }
 
+interface CurrencyData {
+    currencyId: number;
+    name: string;
+    code: string;
+    symbol: string;
+    isActive: boolean;
+    dateCreated: string;
+}
+
+
 function Dashboard() {
     const { register, control, setValue } = useForm<CurrencyFilterForm>();
     const selectedCurrency = useWatch({ control, name: 'Currency'});
     const [totalPackages, setTotalPackages] = useState(0);
     const [totalEmployers, setTotalEmployers] = useState(0);
     const [totalRevenue, setTotalRevenue] = useState(0);
+    const [totalCandidates, setTotalCandidates] = useState(0);
     const [paymentData, setPaymentData] = useState<PaymentThusFarData[]>([]);
+    const [currencyData, setCurrencyData] = useState<CurrencyData[]>([]);
 
-     useEffect(() => {
-        setValue('Currency', 'NGN');
-    }, [setValue]);
+    useEffect(() => {
+        fetchCurrencies()
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                setCurrencyData(data.data);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
+        })
+        .catch((err) => console.log(err))
+    }, []);
+
+    useEffect(() => {
+        if (currencyData.length > 0) {
+            setValue('Currency', currencyData[0].code);
+        }
+    }, [setValue, currencyData]);
 
     useEffect(() => {
         fetchAdminData({ Currency: selectedCurrency })
@@ -674,6 +707,7 @@ function Dashboard() {
                             setTotalEmployers(data.data.totalEmployers);
                             setPaymentData(data.data.paymentThusFar);
                             setTotalRevenue(data.data.totalRevenue);
+                            setTotalCandidates(data.data.totalCandidates);
                         })
                 } else {
                     res.text()
@@ -790,9 +824,11 @@ function Dashboard() {
                 <select className="form-select sorting-dropdown" style={{ width: '100px' }} {
                     ...register('Currency')
                 }>
-                    <option value="NGN">NGN</option>
-                    <option value="USD">USD</option>
-                    <option value="GBP">GBP</option>
+                    {
+                        currencyData.map((data, index) => (
+                            <option key={index} value={data.code}>{data.code}</option>
+                        ))
+                    }
                 </select>
             </div>
         </div>
@@ -830,7 +866,7 @@ function Dashboard() {
               </div>
               <div className="card-content">
                 <span className="d-block fs-16 mb-5">Total Contracts</span>
-                <h2 className="mb-5">0</h2>
+                <h2 className="mb-5">{ totalCandidates.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }</h2>
               </div>
             </div>
           </div>

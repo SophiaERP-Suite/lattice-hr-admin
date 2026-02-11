@@ -1,4 +1,4 @@
-import { Briefcase, BriefcaseBusiness, ChevronRight, Columns3Cog, FileCog, FolderKanban, LocateFixed, Receipt, ShieldCheck, UserCog } from "lucide-react";
+import { AlertTriangleIcon, Briefcase, BriefcaseBusiness, ChevronRight, Columns3Cog, FolderKanban, LocateFixed, Receipt, ShieldCheck, UserCog } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 export default function ControlPanel() {
@@ -127,10 +127,10 @@ export default function ControlPanel() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-danger-transparent text-danger">
-                                <FileCog size={42}/>
+                                <AlertTriangleIcon size={42}/>
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Permission</span>
+                                <span className="d-block fs-16 mb-5">Complaints Category</span>
                             </div>
                         </div>
                     </div>

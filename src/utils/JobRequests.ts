@@ -20,7 +20,7 @@ export const fetchAllJobs = async (filterData: object) => {
 
 export const createJob = async (data: FormData) => {
   const token = localStorage.getItem('accessToken');
-  const url = `${BaseURL}/jobs`;
+  const url = `${BaseURL}/jobs/admin`;
   const response = await fetch(url, {
     method: 'POST',
     headers: {

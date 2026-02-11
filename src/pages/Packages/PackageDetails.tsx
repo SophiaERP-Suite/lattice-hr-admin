@@ -415,7 +415,7 @@ export default function PackageDetails() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="modal-footer">
+                                <div>
                                     <div className="d-flex justify-content-end gap-10 mt-20">
                                         <button type="button" className="btn btn-danger" onClick={() => setEditModalState(false)}>
                                             <X size={18} className="mr-2" /> Cancel
@@ -518,7 +518,7 @@ export default function PackageDetails() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="modal-footer">
+                                <div>
                                     <div className="d-flex justify-content-end gap-10 mt-20">
                                         <button type="button" className="btn btn-danger" onClick={() => setFeatureModalState(false)}>
                                             <X size={18} className="mr-2" /> Cancel
@@ -621,7 +621,7 @@ export default function PackageDetails() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="modal-footer">
+                                <div>
                                     <div className="d-flex justify-content-end gap-10 mt-20">
                                         <button type="button" className="btn btn-danger" onClick={() => setFeatureEditModalState(false)}>
                                             <X size={18} className="mr-2" /> Cancel
@@ -668,7 +668,7 @@ export default function PackageDetails() {
                                 <div  className="d-flex justify-content-between">
                                     <h1 className="modal-title fs-16 font-bold" id="addNewTimeSheetLabel">Are you sure you want to delete this feature?</h1>
                                 </div>
-                                <div className="modal-footer">
+                                <div>
                                     <div className="d-flex justify-content-end gap-10 mt-20">
                                         <button type="button" className="btn bg-black text-white" onClick={() => setFeatureDelModalState(false)}>
                                             <X size={18} className="mr-2" /> Cancel

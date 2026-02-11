@@ -11,12 +11,14 @@ import {
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { fetchAllEmployers } from "../../utils/EmployerRequests";
+import { addNewEmployer, fetchAllEmployers } from "../../utils/EmployerRequests";
 import { fetchJobSectors } from "../../utils/JobSetorRequests";
 import { useForm, useWatch } from "react-hook-form";
 import Hashids from "hashids";
 import Modal from 'react-modal';
 import { fetchCitiesByStateId, fetchCountries, fetchStatesByCountryId } from "../../utils/LocationRequests";
+import { handleCreateEmployee } from "../../utils/EmployeeResponse";
+import { toast, ToastContainer } from 'react-toastify';
 
 interface EmployerData {
   employerId: number;
@@ -82,19 +84,10 @@ interface EmployerRegister{
   CityId: string;
   Address: string;
   PostCode: string;
-  Email: string;
-  FirstName: string;
-  LastName: string;
-  Phone: string;
-  Position: string;
-  Password: string;
-  ConfirmPassword: string;
-  Gender: string;
-  DateOfBirth: string;
   EmployerLogo: string;
-  ProfilePhoto: string;
-  Terms: boolean;
-  Declaration: boolean;
+  CompanyMail: string;
+  CompanyPhone: string;
+  VAT: string;
 }
 
 export default function ClientMgt() {
@@ -106,7 +99,15 @@ export default function ClientMgt() {
     const { register, control } = useForm<EmployerFilter>();
     const filters = useWatch({ control });
     const [countries, setCountries] = useState<CountryData[]>([]);
-    const { setValue, control: regControl, register: empRegister } = useForm<EmployerRegister>()
+    const {
+        setValue,
+        control: regControl,
+        register: empRegister,
+        formState,
+        handleSubmit,
+        reset
+    } = useForm<EmployerRegister>()
+    const { errors } = formState;
     const [states, setStates] = useState<StateData[]>([]);
     const [cities, setCities] = useState<CityData[]>([]);
     const selectedCountry = useWatch({
@@ -138,6 +139,22 @@ export default function ClientMgt() {
         }
         })
     }, [pageNumber, limit, filters]);
+
+    const refetchEmployers = async () => {
+        try {
+            const res = await fetchAllEmployers({ pageNumber, limit, ...filters });
+            if (res.status === 200) {
+                const data = await res.json();
+                setEmployers(data.data.employers);
+                setTotalEmployers(data.data.totalCount);
+            } else {
+                const resText = await res.text();
+                console.log(JSON.parse(resText));
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     useEffect(() => {
         fetchJobSectors()
@@ -211,7 +228,7 @@ export default function ClientMgt() {
         res.json()
         .then(data => {
            console.log(data)
-          setCities(data.data);
+          setCities(data);
         })
       } else {
         res.text()
@@ -223,8 +240,49 @@ export default function ClientMgt() {
     .catch((err) => console.log(err))
   }, [selectedState, setValue]);
 
+    const submitEmployer = async (data: EmployerRegister) => {
+        if (!errors.CompanyMail && !errors.CompanyPhone &&
+            !errors.VAT && !errors.RegistrationNo &&
+            !errors.Address && !errors.CountryId &&
+            !errors.BusinessName && !errors.StateId &&
+            !errors.JobSectorId && !errors.CompanySize &&
+            !errors.CityId && !errors.WebsiteUrl &&
+            !errors.PostCode && !errors.EmployerLogo
+        ) {
+            const loader = document.getElementById('query-loader');
+            const text = document.getElementById('query-text');
+            if (loader) {
+                loader.style.display = 'flex';
+            }
+            if (text) {
+                text.style.display = 'none';
+            }
+            const formData = new FormData();
+            formData.append('CompanyPhone', data.CompanyPhone);
+            formData.append('CompanyMail', data.CompanyMail);
+            formData.append('VAT', data.VAT);
+            formData.append('RegistrationNo', data.RegistrationNo);
+            formData.append('Address', data.Address);
+            formData.append('StateId', data.StateId);
+            formData.append('CountryId', data.CountryId);
+            formData.append('CityId', data.CityId);
+            formData.append('JobSectorId', data.JobSectorId);
+            formData.append('BusinessName', data.BusinessName);
+            formData.append('CompanySize', data.CompanySize);
+            formData.append('WebsiteUrl', data.WebsiteUrl);
+            formData.append('PostCode', data.PostCode);
+            formData.append('EmployerLogo', data.EmployerLogo[0]);
+            const res = await addNewEmployer(formData);
+            handleCreateEmployee(res, loader, text, { toast }, reset)
+            .finally(() => {
+                setAddModalState(false);
+                refetchEmployers();
+            })
+        }
+    }
+
     return <div className="container-fluid">
-        
+        <ToastContainer />
         <Modal isOpen={addModalState} onRequestClose={() => { setAddModalState(false); }}
             style={{
             content: {
@@ -244,26 +302,72 @@ export default function ClientMgt() {
         >
             
             <div className="h-fit w-100 overflow-auto" style={{ maxHeight: '70vh' }}>
-                <form noValidate>
+                <form noValidate onSubmit={handleSubmit(submitEmployer)}>
                     <div className="d-flex justify-content-between border-bottom">
-                        <h1 className="modal-title fs-16" id="addNewTimeSheetLabel">Create New Package</h1>
+                        <h1 className="modal-title fs-16" id="addNewTimeSheetLabel">Create New Client</h1>
                         <button type="button" className="btn-close"  onClick={() => setAddModalState(false)}></button>
                     </div>
                     <div className="mt-4">
                         <div className="row gy-15">
 
-                        <div className="col-xl-6 text-start">
+                        <div className="col-xl-12 text-start">
                             <label htmlFor="fullName" className="form-label">Business Name</label>
-                            <input type="text" className="form-control" id="fullName" placeholder="Business Name"/>
+                            <input type="text" className="form-control" placeholder="Business Name"
+                                {
+                                    ...empRegister('BusinessName',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                        )
+                                }/>
+                            <p className='error-msg'>{errors.BusinessName?.message}</p>
+                        </div>
+                        <div className="col-xl-6 text-start">
+                            <label htmlFor="regsitrationNo" className="form-label">Company Mail</label>
+                            <input type="text" className="form-control" placeholder="Company Mail"
+                                {
+                                    ...empRegister('CompanyMail',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                        )
+                                }/>
+                            <p className='error-msg'>{errors.CompanyMail?.message}</p>
+                        </div>
+                        <div className="col-xl-6 text-start">
+                            <label htmlFor="regsitrationNo" className="form-label">Company Phone</label>
+                            <input type="text" className="form-control" placeholder="Company Phone"
+                                {
+                                    ...empRegister('CompanyPhone',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                        )
+                                }/>
+                            <p className='error-msg'>{errors.CompanyPhone?.message}</p>
                         </div>
                         <div className="col-xl-6 text-start">
                             <label htmlFor="logo" className="form-label">Business Logo</label>
-                            <input type="file" className="form-control" id="logo" placeholder="Business Logo"/>
+                            <input type="file" className="form-control" id="logo" placeholder="Business Logo"
+                                {
+                                    ...empRegister('EmployerLogo',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                        )
+                                }/>
+                            <p className='error-msg'>{errors.EmployerLogo?.message}</p>
                         </div>
                         <div className="col-xl-6 text-start">
                             <div>
                                 <label htmlFor="jobSector" className="form-label">Job Sector</label>
-                                <select className="form-select" id="jobSector">
+                                <select className="form-select" id="jobSector" {
+                                    ...empRegister('JobSectorId',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                        )
+                                }>
                                     <option value="">Select Job Sector</option>
                                     {
                                         jobSectors.map((data, index) => (
@@ -271,34 +375,73 @@ export default function ClientMgt() {
                                         ))
                                     }
                                 </select>
+                                <p className='error-msg'>{errors.JobSectorId?.message}</p>
                             </div>
                         </div>
                         <div className="col-xl-6 text-start">
                             <div>
                                 <label htmlFor="companySize" className="form-label">Company Size</label>
-                                <select className="form-select" id="companySize">
+                                <select className="form-select" id="companySize"{
+                                    ...empRegister('CompanySize',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                        )
+                                }>
                                     <option value="">Select Company Size</option>
                                     <option value="small">1 - 50 employees (Small)</option>
                                     <option value="medium">51 - 250 employees (Medium)</option>
                                     <option value="large">250+ employees (Large)</option>
                                 </select>
+                                <p className='error-msg'>{errors.CompanySize?.message}</p>
                             </div>
                         </div>
                         <div className="col-xl-6 text-start">
                             <label htmlFor="regsitrationNo" className="form-label">Registration No</label>
-                            <input type="text" className="form-control" id="regsitrationNo" placeholder="Regsitration No"/>
+                            <input type="text" className="form-control" placeholder="Regsitration No"
+                                {
+                                    ...empRegister('RegistrationNo',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                        )
+                                }/>
+                            <p className='error-msg'>{errors.RegistrationNo?.message}</p>
                         </div>
-                        
+                        <div className="col-xl-6 text-start">
+                            <label htmlFor="regsitrationNo" className="form-label">VAT No</label>
+                            <input type="text" className="form-control" placeholder="VAT No"
+                                {
+                                    ...empRegister('VAT',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                        )
+                                }/>
+                            <p className='error-msg'>{errors.VAT?.message}</p>
+                        </div>
                         <div className="col-xl-6 text-start">
                             <label htmlFor="website" className="form-label">Website</label>
-                            <input type="text" className="form-control" id="website" placeholder="Website URL"/>
+                            <input type="text" className="form-control" id="website" placeholder="Website URL"
+                                {
+                                    ...empRegister('WebsiteUrl',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                        )
+                                }/>
+                            <p className='error-msg'>{errors.WebsiteUrl?.message}</p>
                         </div>
                         <div className="col-xl-6 text-start">
                             <div>
                                 <label htmlFor="country" className="form-label">Country</label>
                                 <select className="form-select" id="country"
                                     {
-                                        ...empRegister('CountryId')
+                                        ...empRegister('CountryId',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
                                     }
                                 >
                                     <option value="">Select Country</option>
@@ -308,6 +451,7 @@ export default function ClientMgt() {
                                         ))
                                     }
                                 </select>
+                                <p className='error-msg'>{errors.CountryId?.message}</p>
                             </div>
                         </div>
                         <div className="col-xl-6 text-start">
@@ -315,7 +459,11 @@ export default function ClientMgt() {
                                 <label htmlFor="state" className="form-label">State</label>
                                 <select className="form-select" id="state" disabled={states.length === 0}
                                     {
-                                        ...empRegister('StateId')
+                                        ...empRegister('StateId',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
                                     }
                                 >
                                     <option value="">Select State</option>
@@ -325,6 +473,7 @@ export default function ClientMgt() {
                                         ))
                                     }
                                 </select>
+                                <p className='error-msg'>{errors.StateId?.message}</p>
                             </div>
                         </div>
                         <div className="col-xl-6 text-start">
@@ -332,7 +481,11 @@ export default function ClientMgt() {
                                 <label htmlFor="city" className="form-label">City</label>
                                 <select className="form-select" id="city" disabled={cities.length === 0}
                                     {
-                                        ...empRegister('CityId')
+                                        ...empRegister('CityId',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
                                     }
                                 >
                                     <option value="">Select City</option>
@@ -342,15 +495,36 @@ export default function ClientMgt() {
                                         ))
                                     }
                                 </select>
+                                <p className='error-msg'>{errors.CityId?.message}</p>
                             </div>
                         </div>
                         <div className="col-xl-6 text-start">
                             <label htmlFor="postcode" className="form-label">PostCode</label>
-                            <input type="text" className="form-control" id="postcode" placeholder="PostCode"/>
+                            <input type="text" className="form-control" id="postcode" placeholder="PostCode" {
+                                        ...empRegister('PostCode',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                    }/>
+                            
+                            <p className='error-msg'>{errors.PostCode?.message}</p>
+                        </div>
+                        <div className="col-xl-12 text-start">
+                            <label htmlFor="address" className="form-label">Address</label>
+                            <textarea className="form-control" id="address" placeholder="Address" {
+                                        ...empRegister('Address',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                    }>
+                                </textarea>
+                            <p className='error-msg'>{errors.Address?.message}</p>
                         </div>
                     </div>
                     </div>
-                    <div className="modal-footer">
+                    <div>
                         <div className="d-flex justify-content-end gap-10 mt-20">
                             <button type="button" className="btn btn-danger" onClick={() => setAddModalState(false)}>
                                 <X size={18} className="mr-2" /> Cancel

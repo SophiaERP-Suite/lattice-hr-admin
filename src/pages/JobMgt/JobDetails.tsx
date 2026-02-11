@@ -484,7 +484,7 @@ export default function JobDetails() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="modal-footer">
+                                <div>
                                     <div className="d-flex justify-content-end gap-10 mt-20">
                                         <button type="button" className="btn btn-danger" onClick={() => setEditModalState(false)}>
                                             <X size={18} className="mr-2" /> Cancel

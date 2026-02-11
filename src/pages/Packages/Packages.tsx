@@ -23,6 +23,7 @@ import Modal from 'react-modal';
 import Tippy from "@tippyjs/react";
 import { fetchAllServiceTypes } from "../../utils/ServiceTypesRequests";
 import Hashids from "hashids";
+import { fetchCurrencies } from "../../utils/CurrencyRequests";
 
 interface PackageData {
   packageId: number;
@@ -59,6 +60,14 @@ interface ServiceTypes {
     serviceName: string;
 }
 
+interface CurrencyData {
+    currencyId: number;
+    name: string;
+    code: string;
+    symbol: string;
+    isActive: boolean;
+    dateCreated: string;
+}
 
 export default function Packages() {
     const [packages, setPackages] = useState<PackageData[]>([]);
@@ -92,6 +101,7 @@ export default function Packages() {
     const [editModalState, setEditModalState] = useState(false);
     const [featureModalState, setFeatureModalState] = useState(false);
     const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
+    const [currencyData, setCurrencyData] = useState<CurrencyData[]>([]);
 
     useEffect(() => {
         fetchAllPackages({ pageNumber, limit })
@@ -113,6 +123,24 @@ export default function Packages() {
         }
         })
     }, [pageNumber, limit]);
+
+    useEffect(() => {
+        fetchCurrencies()
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                setCurrencyData(data.data);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
+        })
+        .catch((err) => console.log(err))
+    }, []);
 
     useEffect(() => {
         fetchAllServiceTypes()
@@ -363,9 +391,11 @@ export default function Packages() {
                                             )
                                         }>
                                         <option value="">Select Currency</option>
-                                        <option value="NGN">NGN</option>
-                                        <option value="CAD">CAD</option>
-                                        <option value="USD">USD</option>
+                                        {
+                                            currencyData.map((data, index) => (
+                                                <option key={index} value={data.code}>{data.code}</option>
+                                            ))
+                                        }
                                     </select>
                                     <p className='error-msg'>{errors.Currency?.message}</p>
                                 </div>
@@ -386,7 +416,7 @@ export default function Packages() {
                                 </div>
                             </div>
                         </div>
-                        <div className="modal-footer">
+                        <div>
                             <div className="d-flex justify-content-end gap-10 mt-20">
                                 <button type="button" className="btn btn-danger" onClick={() => setAddModalState(false)}>
                                     <X size={18} className="mr-2" /> Cancel
@@ -513,9 +543,11 @@ export default function Packages() {
                                                     )
                                                 }>
                                                 <option value="">Select Currency</option>
-                                                <option value="NGN">NGN</option>
-                                                <option value="CAD">CAD</option>
-                                                <option value="USD">USD</option>
+                                                {
+                                                    currencyData.map((data, index) => (
+                                                        <option key={index} value={data.code}>{data.code}</option>
+                                                    ))
+                                                }
                                             </select>
                                             <p className='error-msg'>{editErrors.Currency?.message}</p>
                                         </div>
@@ -536,7 +568,7 @@ export default function Packages() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="modal-footer">
+                                <div>
                                     <div className="d-flex justify-content-end gap-10 mt-20">
                                         <button type="button" className="btn btn-danger" onClick={() => setEditModalState(false)}>
                                             <X size={18} className="mr-2" /> Cancel
@@ -639,7 +671,7 @@ export default function Packages() {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="modal-footer">
+                                <div>
                                     <div className="d-flex justify-content-end gap-10 mt-20">
                                         <button type="button" className="btn btn-danger" onClick={() => setFeatureModalState(false)}>
                                             <X size={18} className="mr-2" /> Cancel

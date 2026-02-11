@@ -1,6 +1,7 @@
 import {
   Blocks,
   BriefcaseBusiness,
+  CheckCheck,
   ChevronRight,
   Eye,
   GlobeLock,
@@ -9,17 +10,21 @@ import {
   Mail,
   MapPinHouse,
   Phone,
+  Plus,
   VectorSquare,
+  X,
 } from "lucide-react";
 import { NavLink, useParams } from "react-router-dom";
 import Hashids from "hashids";
 import { useEffect, useState } from "react";
-import { fetchEmployerById } from "../../utils/EmployerRequests";
+import { addNewROfficer, fetchEmployerById } from "../../utils/EmployerRequests";
 import Tippy from "@tippyjs/react";
 import { fetchAllJobs, updateJob } from "../../utils/JobRequests";
 import { toast, ToastContainer } from "react-toastify";
 import { handleCreateEmployee } from "../../utils/EmployeeResponse";
 import { fetchAllOfficers } from "../../utils/OfficerRequests";
+import { useForm, useWatch } from "react-hook-form";
+import Modal from 'react-modal';
 
 interface EmployerData {
   employerId: number;
@@ -81,6 +86,19 @@ interface OfficerData {
     position: string;
 }
 
+interface ROfficerRegister {
+  Email: string;
+  FirstName: string;
+  LastName: string;
+  Phone: string;
+  Position: string;
+  Password: string;
+  ConfirmPassword: string;
+  Gender: string;
+  DateOfBirth: string;
+  ProfilePhoto: string;
+}
+
 export default function ClientDetails() {
     const { id } = useParams();
     const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
@@ -94,6 +112,19 @@ export default function ClientDetails() {
     const [officePageNumber, setOfficePageNumber] = useState(1);
     const officerLimit = 10
     const [officers, setOfficers] = useState<OfficerData[]>([]);
+    const {
+        register,
+        formState,
+        handleSubmit,
+        reset,
+        control
+    } = useForm<ROfficerRegister>()
+    const { errors } = formState;
+    const [addModalState, setAddModalState] = useState(false);
+    const password = useWatch({
+        control,
+        name: 'Password',
+    });
     
     useEffect(() => {
         fetchEmployerById(hashedId)
@@ -177,6 +208,26 @@ export default function ClientDetails() {
         }
     };
 
+    const refetchOfficers = async () => {
+        try {
+            const res = await fetchAllOfficers({
+                pageNumber: officePageNumber,
+                limit: officerLimit,
+                employerId: hashedId
+            });
+            if (res.status === 200) {
+                const data = await res.json()
+                setOfficers(data.data.officers);
+                setTotalOfficers(data.data.totalCount);
+            } else {
+                const resText = await res.text();
+                console.log(JSON.parse(resText));
+            }
+        } catch (err) {
+            console.error(err);
+        }
+    };
+
     const updateJobStatus = async (jobId: number, status: boolean) => {
         const formData = new FormData();
         formData.append("Published", String(status));
@@ -187,9 +238,217 @@ export default function ClientDetails() {
         });
     }
 
+    const submitOfficer = async (data: ROfficerRegister) => {
+        if (!errors.FirstName && !errors.LastName &&
+            !errors.ProfilePhoto && !errors.Phone &&
+            !errors.Email && !errors.DateOfBirth && 
+            !errors.Gender && !errors.Password &&
+            !errors.Position
+        ) {
+            const loader = document.getElementById('query-loader');
+            const text = document.getElementById('query-text');
+            if (loader) {
+                loader.style.display = 'flex';
+            }
+            if (text) {
+                text.style.display = 'none';
+            }
+            const formData = new FormData();
+            formData.append('FirstName', data.FirstName);
+            formData.append('LastName', data.LastName);
+            formData.append('ProfilePhoto', data.ProfilePhoto[0]);
+            formData.append('Phone', data.Phone);
+            formData.append('Email', data.Email);
+            formData.append('DateOfBirth', data.DateOfBirth);
+            formData.append('Gender', data.Gender);
+            formData.append('Position', data.Position);
+            formData.append('Password', data.Password);
+            formData.append('EmployerId', `${hashedId}`);
+            const res = await addNewROfficer(formData);
+            handleCreateEmployee(res, loader, text, { toast }, reset)
+            .finally(() => {
+                setAddModalState(false);
+                refetchOfficers();
+            })
+        }
+    }
+
     return (
         <div className="container-fluid">
             <ToastContainer />
+            <Modal isOpen={addModalState} onRequestClose={() => { setAddModalState(false); }}
+                style={{
+                content: {
+                width: 'fit-content',
+                height: 'fit-content',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                backgroundColor: 'rgb(255 255 255)',
+                borderRadius: '0.5rem',
+                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                },
+                overlay: {
+                backgroundColor: 'rgba(255, 255, 255, 0.7)'
+                }
+            }}
+            >
+                
+                <div className="h-fit w-100 overflow-auto" style={{ maxHeight: '70vh' }}>
+                    <form noValidate onSubmit={handleSubmit(submitOfficer)}>
+                        <div className="d-flex justify-content-between border-bottom">
+                            <h1 className="modal-title fs-16" id="addNewTimeSheetLabel">Create New Responsibility Officer</h1>
+                            <button type="button" className="btn-close"  onClick={() => setAddModalState(false)}></button>
+                        </div>
+                        <div className="mt-4">
+                            <div className="row gy-15">
+                                <div className="col-xl-6 text-start">
+                                    <label htmlFor="regsitrationNo" className="form-label">First Name</label>
+                                    <input type="text" className="form-control" placeholder="First Name"
+                                        {
+                                            ...register('FirstName',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                )
+                                        }/>
+                                    <p className='error-msg'>{errors.FirstName?.message}</p>
+                                </div>
+                                <div className="col-xl-6 text-start">
+                                    <label htmlFor="regsitrationNo" className="form-label">Last Name</label>
+                                    <input type="text" className="form-control" placeholder="Last Name"
+                                        {
+                                            ...register('LastName',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                )
+                                        }/>
+                                    <p className='error-msg'>{errors.LastName?.message}</p>
+                                </div>
+                                <div className="col-xl-6 text-start">
+                                    <label htmlFor="regsitrationNo" className="form-label">Email</label>
+                                    <input type="text" className="form-control" placeholder="Email"
+                                        {
+                                            ...register('Email',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                )
+                                        }/>
+                                    <p className='error-msg'>{errors.Email?.message}</p>
+                                </div>
+                                <div className="col-xl-6 text-start">
+                                    <label htmlFor="regsitrationNo" className="form-label">Phone</label>
+                                    <input type="text" className="form-control" placeholder="Phone"
+                                        {
+                                            ...register('Phone',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                )
+                                        }/>
+                                    <p className='error-msg'>{errors.Phone?.message}</p>
+                                </div>
+                                <div className="col-xl-6 text-start">
+                                    <label htmlFor="logo" className="form-label">Profile Photo</label>
+                                    <input type="file" className="form-control" id="logo" placeholder="Profile Photo"
+                                        {
+                                            ...register('ProfilePhoto',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                )
+                                        }/>
+                                    <p className='error-msg'>{errors.ProfilePhoto?.message}</p>
+                                </div>
+                                <div className="col-xl-6 text-start">
+                                    <div>
+                                        <label htmlFor="jobSector" className="form-label">Gender</label>
+                                        <select className="form-select" id="jobSector" {
+                                            ...register('Gender',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                )
+                                        }>
+                                            <option value="">Select Gender</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Female">Female</option>
+                                        </select>
+                                        <p className='error-msg'>{errors.Gender?.message}</p>
+                                    </div>
+                                </div>
+                                <div className="col-xl-6 text-start">
+                                    <label htmlFor="regsitrationNo" className="form-label">Position</label>
+                                    <input type="text" className="form-control" placeholder="Position"
+                                        {
+                                            ...register('Position',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                )
+                                        }/>
+                                    <p className='error-msg'>{errors.Position?.message}</p>
+                                </div>
+                                <div className="col-xl-6 text-start">
+                                    <label htmlFor="regsitrationNo" className="form-label">Date Of Birth</label>
+                                    <input type="date" className="form-control" placeholder="Date Of Birth"
+                                        {
+                                            ...register('DateOfBirth',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                )
+                                        }/>
+                                    <p className='error-msg'>{errors.DateOfBirth?.message}</p>
+                                </div>
+                                <div className="col-xl-6 text-start">
+                                    <label htmlFor="regsitrationNo" className="form-label">Password</label>
+                                    <input type="password" className="form-control" placeholder="Password"
+                                        {
+                                            ...register('Password',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                )
+                                        }/>
+                                    <p className='error-msg'>{errors.Password?.message}</p>
+                                </div>
+                                <div className="col-xl-6 text-start">
+                                    <label htmlFor="regsitrationNo" className="form-label">Confirm Password</label>
+                                    <input type="password" className="form-control" placeholder="Confirm Password"
+                                        {...register('ConfirmPassword', {
+                                                required: 'Confirm your password',
+                                                validate: (value) =>
+                                                value === password || 'Passwords do not match',
+                                            })}
+                                        />
+                                    <p className='error-msg'>{errors.ConfirmPassword?.message}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div className="d-flex justify-content-end gap-10 mt-20">
+                                <button type="button" className="btn btn-danger" onClick={() => setAddModalState(false)}>
+                                    <X size={18} className="mr-2" /> Cancel
+                                </button>
+                                <button type="submit" className="btn btn-success">
+                                    <div className="dots" id="query-loader">
+                                        <div className="dot"></div>
+                                        <div className="dot"></div>
+                                        <div className="dot"></div>
+                                    </div>
+                                    <span id="query-text">
+                                        <CheckCheck size={18} className="mr-2" />
+                                        Add Officer
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </Modal>
             <div className="row">
                 <div className="col-xl-12">
                     <div className="page-title-box d-flex-between flex-wrap gap-15">
@@ -266,6 +525,9 @@ export default function ClientDetails() {
                                         <div className="tab-pane show active" id="pills-officers" role="tabpanel" aria-labelledby="pills-officers-tab" tabIndex={1}>
                                             <div className="card-header justify-between gap-25 flex-wrap mb-25">
                                                 <h4 className="">Responsibility Officers ({totalOfficers})</h4>
+                                                <button type="button" className="btn btn-success" onClick={() => setAddModalState(true)}>
+                                                    <Plus />
+                                                </button>
                                             </div>
                                             <div className="card-body pt-15">
                                                 <div className="table-responsive">

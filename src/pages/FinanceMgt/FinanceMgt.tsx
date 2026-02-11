@@ -12,6 +12,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { fetchAllPayments } from "../../utils/PaymentRequests";
 import Tippy from "@tippyjs/react";
 import Hashids from "hashids";
+import { fetchCurrencies } from "../../utils/CurrencyRequests";
 
 const revenueOptions = {
     series: [
@@ -342,6 +343,15 @@ interface PaymentData {
     dateCreated: string;
 }
 
+interface CurrencyData {
+    currencyId: number;
+    name: string;
+    code: string;
+    symbol: string;
+    isActive: boolean;
+    dateCreated: string;
+}
+
 export default function FinanceMgt() {
     const { register, control, setValue } = useForm<CurrencyFilterForm>();
     const selectedCurrency = useWatch({
@@ -366,11 +376,32 @@ export default function FinanceMgt() {
     const [sectorGroup, setSectorGroup] = useState<SectorGroupData[]>([]);
     const [packageGroup, setPackageGroup] = useState<PackageGroupData[]>([]);
     const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
+    const [currencyData, setCurrencyData] = useState<CurrencyData[]>([]);
 
     useEffect(() => {
-        setValue('Currency', 'NGN');
+        fetchCurrencies()
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                setCurrencyData(data.data);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
+        })
+        .catch((err) => console.log(err))
+    }, []);
+
+    useEffect(() => {
+        if (currencyData.length > 0) {
+            setValue('Currency', currencyData[0].code);
+        }
         setValue('EndDate', `${(new Date()).getFullYear()}`)
-    }, [setValue]);
+    }, [setValue, currencyData]);
 
     useEffect(() => {
         fetchAllPayments({ Currency: selectedCurrency, EndDate: selectedDate, pageNumber, limit })
@@ -523,9 +554,11 @@ export default function FinanceMgt() {
                         <select className="form-select sorting-dropdown" style={{ width: '100px' }} {
                             ...register('Currency')
                         }>
-                            <option value="NGN">NGN</option>
-                            <option value="USD">USD</option>
-                            <option value="GBP">GBP</option>
+                            {
+                                currencyData.map((data, index) => (
+                                    <option key={index} value={data.code}>{data.code}</option>
+                                ))
+                            }
                         </select>
                     </div>
                     <div className="dataTables-sorting-control ">
