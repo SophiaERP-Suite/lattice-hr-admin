@@ -242,8 +242,12 @@ export default function JobMgt() {
             editSetValue('StateId', jobEdit.stateId);
             editSetValue('CityId', jobEdit.cityId);
             editSetValue('JobCategoryId', jobEdit.jobCategoryId);
-            editSetValue('StateId', jobEdit.stateId);
-            editSetValue('CityId', jobEdit.cityId);
+            editSetValue('JobViewScope', jobEdit.jobViewScope);
+            editSetValue('Grade', jobEdit.grade);
+            editSetValue('JobAmount', jobEdit.jobAmount);
+            editSetValue('JobResponsibility', jobEdit.jobResponsibility);
+            editSetValue('JobRequirement', jobEdit.jobRequirement);
+            editSetValue('WorkModeId', jobEdit.workModeId);
         }
     }, [jobEdit, editSetValue]);
 
@@ -568,7 +572,12 @@ export default function JobMgt() {
         if (!editErrors.JobTitle && !editErrors.JobDescription &&
             !editErrors.CountryId && !editErrors.StateId && 
             !editErrors.CityId && jobEdit &&
-            !editErrors.JobSectorId && !editErrors.JobTypeId
+            !editErrors.JobSectorId && !editErrors.JobTypeId &&
+            !editErrors.JobExpiration && !editErrors.JobViewScope && 
+            !editErrors.Grade && !editErrors.JobAmount &&
+            !editErrors.JobResponsibility && !editErrors.JobRequirement &&
+            !editErrors.JobCategoryId && !editErrors.WorkModeId &&
+            !editErrors.JobPhoto && !editErrors.IsPaid
         ) {
             const loader = document.getElementById('query-loader-1');
             const text = document.getElementById('query-text-1');
@@ -579,8 +588,22 @@ export default function JobMgt() {
                 text.style.display = 'none';
             }
             const formData = new FormData();
+            if (!data.JobExpiration || data.JobExpiration != ""){
+                formData.append("JobExpiration", data.JobExpiration);
+            }
+            formData.append("JobViewScope", data.JobViewScope);
+            formData.append("Grade", String(data.Grade));
+            formData.append("JobAmount", data.JobAmount);
+            formData.append("IsPaid", `${Number(data.JobAmount) > 0}`);
             formData.append("JobTitle", data.JobTitle);
             formData.append("CountryId", data.CountryId);
+            formData.append("JobCategoryId", data.JobCategoryId);
+            if (!data.JobPhoto || data.JobPhoto != ""){
+                formData.append("JobPhoto", data.JobPhoto[0]);
+            }
+            formData.append("WorkModeId", data.WorkModeId);
+            formData.append("JobResponsibility", data.JobResponsibility);
+            formData.append("JobRequirement", data.JobRequirement);
             formData.append("JobSectorId", data.JobSectorId);
             formData.append("JobTypeId", data.JobTypeId);
             formData.append("StateId", data.StateId);
@@ -1148,13 +1171,13 @@ export default function JobMgt() {
                                             <p className='error-msg'>{editErrors.CityId?.message}</p>
                                         </div>
                                         <div className="col-xl-6">
-                                            <label className="form-label">Job Expiration</label>
+                                            <label className="form-label">Move Job Expiration</label>
                                             <select
                                                 className="form-select"
                                                 {
                                                     ...regEdit('JobExpiration',
                                                         {
-                                                            required: 'Required'
+                                                            required: false
                                                         }
                                                     )
                                                 }>
@@ -1191,7 +1214,7 @@ export default function JobMgt() {
                                                 {
                                                     ...regEdit('JobPhoto',
                                                                 {
-                                                                    required: 'Required'
+                                                                    required: false
                                                                 }
                                                         )
                                                 }/>

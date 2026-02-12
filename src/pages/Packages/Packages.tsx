@@ -6,7 +6,6 @@ import {
   FolderOutput,
   PenLine,
   Plus,
-  ReceiptText,
   ShieldCheck,
   ShieldX,
   X,
@@ -21,7 +20,7 @@ import { handleCreateEmployee } from "../../utils/EmployeeResponse";
 import HtmlRenderer from "../../layout/HTMLRenderer";
 import Modal from 'react-modal';
 import Tippy from "@tippyjs/react";
-import { fetchAllServiceTypes } from "../../utils/ServiceTypesRequests";
+import { fetchActiveServiceTypes } from "../../utils/ServiceTypesRequests";
 import Hashids from "hashids";
 import { fetchCurrencies } from "../../utils/CurrencyRequests";
 
@@ -77,6 +76,7 @@ export default function Packages() {
     const [totalActive, setTotalActive] = useState(0);
     const [totalInactive, setTotalInactive] = useState(0);
     const [totalPackages, setTotalPackages] = useState(0);
+    const [totalSubscribers, setTotalSubscribers] = useState(0);
     const limit = 10;
     const { errors } = formState;
     const {
@@ -114,6 +114,7 @@ export default function Packages() {
                 setTotalPackages(data.data.totalCount);
                 setTotalActive(data.data.totalActive ?? 0);
                 setTotalInactive(data.data.totalInActive ?? 0);
+                setTotalSubscribers(data.data.totalSubscribed ?? 0);
             })
         } else {
             res.text()
@@ -143,7 +144,7 @@ export default function Packages() {
     }, []);
 
     useEffect(() => {
-        fetchAllServiceTypes()
+        fetchActiveServiceTypes()
         .then(res => {
         if (res.status === 200) {
             res.json()
@@ -182,6 +183,7 @@ export default function Packages() {
             setTotalPackages(data.data.totalCount);
             setTotalActive(data.data.totalActive ?? 0);
             setTotalInactive(data.data.totalInActive ?? 0);
+            setTotalSubscribers(data.data.totalSubscribed ?? 0);
         } else {
             const resText = await res.text();
             console.log(JSON.parse(resText));
@@ -696,12 +698,12 @@ export default function Packages() {
             <div className="row">
                 <div className="col-xl-12">
                     <div className="page-title-box d-flex-between flex-wrap gap-15">
-                        <h1 className="page-title fs-18 lh-1">Packages & Contracts</h1>
+                        <h1 className="page-title fs-18 lh-1">Packages</h1>
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb breadcrumb-example1 mb-0">
                                 <li className="active breadcrumb-item" aria-current="page">
                                     <NavLink to="/Packages">
-                                        Packages & Contracts
+                                        Packages
                                     </NavLink>
                                 </li>
                                 <li className="mb-2">
@@ -716,57 +718,44 @@ export default function Packages() {
                         </nav>
                     </div>
                 </div>
-                <div className="col-12 col-lg-3 col-md-6 col-12">
+                <div className="col-12 col-lg-4 col-md-6">
                     <div className="card">
-                        <div className="card-body mini-card-body d-flex align-center gap-16">
-                        <div className="avatar avatar-xl bg-info-transparent text-info">
-                            <ShieldCheck size={42}/>
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-info-transparent text-info">
+                                <ShieldCheck size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Active Packages</span>
+                                <h2 className="mb-5">{totalActive}</h2>
+                            </div>
                         </div>
-                        <div className="card-content">
-                            <span className="d-block fs-16 mb-5">Active Packages</span>
-                            <h2 className="mb-5">{totalActive}</h2>
+                    </div>
+                </div>
+                <div className="col-12 col-lg-4 col-md-6">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-warning-transparent text-warning">
+                                <FolderOpenDot size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Total Subscribers</span>
+                                <h2 className="mb-5">{ totalSubscribers }</h2>
+                            </div>
                         </div>
+                    </div>
+                </div>
+                <div className="col-12 col-lg-4 col-md-6">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-danger-transparent text-danger">
+                                <ShieldX size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Expired / Inactive</span>
+                                <h2 className="mb-5">{totalInactive}</h2>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div className="col-12 col-lg-3 col-md-6">
-                <div className="card">
-                    <div className="card-body mini-card-body d-flex align-center gap-16">
-                    <div className="avatar avatar-xl bg-success-transparent text-success">
-                        <ReceiptText size={42}/>
-                    </div>
-                    <div className="card-content">
-                        <span className="d-block fs-16 mb-5">Ongoing Contracts</span>
-                        <h2 className="mb-5">0</h2>
-                    </div>
-                    </div>
-                </div>
-                </div>
-                <div className="col-12 col-lg-3 col-md-6">
-                <div className="card">
-                    <div className="card-body mini-card-body d-flex align-center gap-16">
-                    <div className="avatar avatar-xl bg-warning-transparent text-warning">
-                        <FolderOpenDot size={42}/>
-                    </div>
-                    <div className="card-content">
-                        <span className="d-block fs-16 mb-5">Total Revenue</span>
-                        <h2 className="mb-5">0</h2>
-                    </div>
-                    </div>
-                </div>
-                </div>
-                <div className="col-12 col-lg-3 col-md-6">
-                <div className="card">
-                    <div className="card-body mini-card-body d-flex align-center gap-16">
-                    <div className="avatar avatar-xl bg-danger-transparent text-danger">
-                        <ShieldX size={42}/>
-                    </div>
-                    <div className="card-content">
-                        <span className="d-block fs-16 mb-5">Expired / Inactive</span>
-                        <h2 className="mb-5">{totalInactive}</h2>
-                    </div>
-                    </div>
-                </div>
                 </div>
 
                 <div className="col-xl-12">

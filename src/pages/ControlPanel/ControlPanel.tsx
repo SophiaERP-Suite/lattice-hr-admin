@@ -1,4 +1,15 @@
-import { AlertTriangleIcon, Briefcase, BriefcaseBusiness, ChevronRight, Columns3Cog, FolderKanban, LocateFixed, Receipt, ShieldCheck, UserCog } from "lucide-react";
+import {
+  AlertTriangleIcon,
+  Briefcase,
+  BriefcaseBusiness,
+  ChevronRight,
+  Columns3Cog,
+  FolderKanban,
+  MonitorCloud,
+  Receipt,
+  ShieldCheck,
+  UserCog,
+} from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 export default function ControlPanel() {
@@ -111,30 +122,30 @@ export default function ControlPanel() {
                         </div>
                     </div>
                 </NavLink>
-                <div className="col-12 col-lg-4 col-md-6 col-12">
+                <NavLink to="/ControlPanel/ServiceTypeMgt" className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-primary-transparent text-primary">
-                                <LocateFixed size={42}/>
+                                <MonitorCloud size={42}/>
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Location</span>
+                                <span className="d-block fs-16 mb-5">Service Type</span>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="col-12 col-lg-4 col-md-6 col-12">
+                </NavLink>
+                <NavLink to="/ControlPanel/ComplaintCategoryMgt" className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-danger-transparent text-danger">
                                 <AlertTriangleIcon size={42}/>
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Complaints Category</span>
+                                <span className="d-block fs-16 mb-5">Complaint Category</span>
                             </div>
                         </div>
                     </div>
-                </div>
+                </NavLink>
             </div>
         </div>
     )

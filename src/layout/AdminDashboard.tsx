@@ -26,6 +26,7 @@ import {
   ArrowLeft,
   ArrowUp,
   Users,
+  ReceiptText,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -36,37 +37,42 @@ const sidebarMenus = [
     icon: (<LayoutDashboard style={{ color: "#000"}} />)
   },
   {
-    label: "Candidate Management",
+    label: "Candidate",
     path: "/CandidateMgt",
     icon: (<BookUser style={{ color: "#000"}} />)
   },
   {
-    label: "Client Management",
+    label: "Client",
     path: "/ClientMgt",
     icon: (<Users style={{ color: "#000"}} />)
   },
   {
-    label: "Workers Management",
+    label: "Workers",
     path: "/WorkerMgt",
     icon: (<ListChecks style={{ color: "#000"}} />)
   },
   {
-    label: "Timesheet Management",
+    label: "Timesheet",
     path: "/Timesheet",
     icon: (<ClipboardClock style={{ color: "#000"}} />)
   },
   {
-    label: "Jobs Management",
+    label: "Jobs",
     path: "/JobMgt",
     icon: (<BriefcaseBusiness style={{ color: "#000"}} />)
   },
   {
-    label: "Packages & Contracts",
+    label: "Packages",
     path: "/Packages",
     icon: (<Blocks style={{ color: "#000"}} />)
   },
   {
-    label: "Revenue Management",
+    label: "Contracts",
+    path: "/Contracts",
+    icon: (<ReceiptText style={{ color: "#000"}} />)
+  },
+  {
+    label: "Revenue",
     path: "/RevenueMgt",
     icon: (<CreditCard style={{ color: "#000"}} />)
   },

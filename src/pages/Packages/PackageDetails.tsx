@@ -15,7 +15,7 @@ import { Controller, useForm } from "react-hook-form";
 import { handleCreateEmployee } from "../../utils/EmployeeResponse";
 import { toast, ToastContainer } from 'react-toastify';
 import RichTextEditor from "../../layout/RichTextEditor";
-import { fetchAllServiceTypes } from "../../utils/ServiceTypesRequests";
+import { fetchActiveServiceTypes } from "../../utils/ServiceTypesRequests";
 import { addFeatureToPackage, deletetePackageFeatureById, fetchPackageById, updatePackageDetails, updatePackageFeatureById } from "../../utils/PackageRequests";
 import Tippy from "@tippyjs/react";
 
@@ -110,7 +110,7 @@ export default function PackageDetails() {
     }, [packageFeaturesEdit, featSetValue])
 
     useEffect(() => {
-        fetchAllServiceTypes()
+        fetchActiveServiceTypes()
         .then(res => {
             if (res.status === 200) {
                 res.json()

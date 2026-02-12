@@ -1,0 +1,296 @@
+import {
+  ChevronRight,
+  Eye,
+  FolderOpenDot,
+  FolderOutput,
+  Plus,
+  ReceiptText,
+  ShieldX,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { ToastContainer } from 'react-toastify';
+import { NavLink } from "react-router-dom";
+import { useForm, useWatch } from "react-hook-form";
+import Hashids from "hashids";
+import { fetchAllContractRequests } from "../../utils/ContractRequests";
+import Tippy from "@tippyjs/react";
+
+interface PackageData {
+  packageId: number;
+  packageName: string;
+  packageDescription: string;
+  duration: number;
+  durationUnit: string;
+  amount: number;
+  currency: string;
+  totalFeatures: number;
+  totalEmployers: number;
+  dateCreated: string;
+  isActive: boolean;
+}
+
+interface ContractRequestsData {
+    requestId: number;
+    employerId: string;
+    employer: string;
+    employerLogo: string;
+    description: string;
+    contractSigned: boolean;
+    dateCreated: string;
+}
+
+interface ContractRequestFilter {
+    Employer: string;
+}
+
+export default function Contracts() {
+    const [contracts, setContracts] = useState<PackageData[]>([]);
+    const [contractRequests, setContractRequests] = useState<ContractRequestsData[]>([]);
+    const [totalRequests, setTotalRequests] = useState(0);
+    const [reqPageNumber, setReqPageNumber] = useState(1);
+    const reqLimit = 10;
+    const { register, control } = useForm<ContractRequestFilter>();
+    const filters = useWatch({control});
+    const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
+
+    useEffect(() => {
+        fetchAllContractRequests({
+            pageNumber: reqPageNumber,
+            limit: reqLimit,
+            ...filters
+        })
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                console.log(data);
+                setContractRequests(data.data.requests);
+                setTotalRequests(data.data.totalCount);
+            })
+        } else {
+            res.text()
+            .then(data => {
+                console.log(JSON.parse(data));
+            })
+        }
+        })
+    }, [reqPageNumber, reqLimit, filters]);
+
+    return (
+        <div className="container-fluid">
+            <ToastContainer />
+            <div className="row">
+                <div className="col-xl-12">
+                    <div className="page-title-box d-flex-between flex-wrap gap-15">
+                        <h1 className="page-title fs-18 lh-1">Contracts</h1>
+                        <nav aria-label="breadcrumb">
+                            <ol className="breadcrumb breadcrumb-example1 mb-0">
+                                <li className="active breadcrumb-item" aria-current="page">
+                                    <NavLink to="/Contracts">
+                                        Contracts
+                                    </NavLink>
+                                </li>
+                                <li className="mb-2">
+                                    <ChevronRight size={15} />
+                                </li>
+                                <li className="breadcrumb-item">
+                                    <NavLink to="/Dashboard">
+                                        Dashboard
+                                    </NavLink>
+                                </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+                <div className="col-12 col-lg-4 col-md-6">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-info-transparent text-info">
+                                <ReceiptText size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Ongoing Contracts</span>
+                                <h2 className="mb-5">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-12 col-lg-4 col-md-6">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-warning-transparent text-warning">
+                                <FolderOpenDot size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Total Requests</span>
+                                <h2 className="mb-5">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="col-12 col-lg-4 col-md-6">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-danger-transparent text-danger">
+                                <ShieldX size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Expired / Inactive</span>
+                                <h2 className="mb-5">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="col-xl-12">
+                    <div className="card">
+                        <div className="tab-style-three mb-25">
+                            <ul className="nav nav-pills gap-10 b-bottom2px b-color-primary mobile-nav" id="pills-tab" role="tablist">
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link active" id="pills-contracts-tab" data-bs-toggle="pill" data-bs-target="#pills-contracts" type="button" role="tab" aria-controls="pills-contracts" aria-selected="false" tabIndex={1}>Contracts</button>
+                                </li>
+                                <li className="nav-item" role="presentation">
+                                    <button className="nav-link" id="pills-requests-tab" data-bs-toggle="pill" data-bs-target="#pills-requests" type="button" role="tab" aria-controls="pills-requests" aria-selected="false" tabIndex={1}>Requests</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div className="tab-content" id="pills-tabContent">
+                            <div className="tab-pane show active" id="pills-contracts" role="tabpanel" aria-labelledby="pills-contracts-tab" tabIndex={1}>
+                                <div className="card-header justify-between">
+                                    <h4 className="d-flex-items gap-10">Contracts</h4>
+                                    <div className="d-flex flex-wrap gap-15">
+                                        <button type="button" className="btn btn-success">
+                                            <Plus size={18} className="mr-2" /> Add New Contract
+                                        </button>
+                                        <a className="btn btn-info text-white" href="javascript:void(0);">
+                                            <FolderOutput /> Export As CSV
+                                        </a>
+                                    </div>
+                                </div>
+                                <div className="card-body pt-15">
+                                    <div className="table-responsive">
+                                        <table id="dataTableDefault" className="table text-nowrap text-start">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">S/N</th>
+                                                    <th scope="col">Client</th>
+                                                    <th scope="col">Date Requested</th>
+                                                    <th scope="col">Pricing</th>
+                                                    <th scope="col">Date Signed</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                        {
+                                            contracts.length === 0 ?
+                                                <div className="py-4 whitespace-nowrap w-full">
+                                                <span className="px-6 py-4 text-left font-medium text-black">There hasn't been any contract added</span>
+                                                </div> : <></>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="tab-pane fade" id="pills-requests" role="tabpanel" aria-labelledby="pills-requests-tab" tabIndex={1}>
+                                <div className="card-header justify-between gap-25 flex-wrap mb-25">
+                                    <h4 className="">Contract Requests</h4>
+                                </div>
+                                <div className="card-body pt-15">
+                                    <div className="table-responsive">
+                                        <table id="dataTableDefault" className="table text-nowrap text-start">
+                                            <thead>
+                                                <tr>
+                                                    <th>
+                                                        S/N
+                                                    </th>
+                                                    <th>Client</th>
+                                                    <th>Signed</th>
+                                                    <th>Request Date</th>
+                                                    <th>Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {
+                                                    contractRequests.map((data, index) => (
+                                                        <tr key={index}>
+                                                            <td>
+                                                                { index + 1}
+                                                            </td>
+                                                            <td>
+                                                                <NavLink to={`/ClientMgt/${hashIds.encode(data.employerId)}`} className="d-flex-items gap-10">
+                                                                    <div className="avatar avatar-md radius-100">
+                                                                        <img className="radius-100" src={data.employerLogo} alt="image not found"/>
+                                                                    </div>
+                                                                    <h6 className="cursor-pointer">{ data.employer }</h6>
+                                                                </NavLink>
+                                                            </td>
+                                                            <td>
+                                                                { data.contractSigned
+                                                                    ? <span className="badge bg-label-success">Signed</span>
+                                                                    : <span className="badge bg-label-warning">None Signed</span>}
+                                                            </td>
+                                                            <td>
+                                                                {new Date(data.dateCreated).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                            </td>
+                                                            <td>
+                                                                <Tippy content="View Request">
+                                                                    <NavLink to={`/Contracts/Requests/${hashIds.encode(data.requestId)}`} className="btn-icon btn-info-light">
+                                                                        <Eye />
+                                                                    </NavLink>
+                                                                </Tippy>
+                                                            </td>
+                                                        </tr>
+                                                    ))
+                                                }
+                                            </tbody>
+                                        </table>
+                                        {
+                                            contractRequests.length === 0 ?
+                                                <div className="py-4 whitespace-nowrap w-full">
+                                                <span className="px-6 py-4 text-left font-medium text-black">There hasn't been any contract requests</span>
+                                                </div> : <></>
+                                        }
+                                    </div>
+                                    <div className="d-flex justify-content-between mt-4">
+                                        <div className="flex justify-content-center align-items-center mb-1">
+                                            <p className="text-black">
+                                                Showing { contractRequests.length > 0 ? ((reqPageNumber * reqLimit) - reqLimit) + 1 : 0 } to { contractRequests.length > 0 ? (((reqPageNumber * reqLimit) - reqLimit) + 1) + (contractRequests.length - 1) : 0 } of { totalRequests } entries
+                                            </p>
+                                        </div>
+                                        <div className="d-inline-flex flex-wrap">
+                                            {
+                                                reqPageNumber > 1 && <a
+                                                    href="#"
+                                                    onClick={() => { if (reqPageNumber > 1) {setReqPageNumber(reqPageNumber - 1);} }}
+                                                    className="border-top border-bottom border-start text-primary border-secondary px-2 py-1 rounded-start"
+                                                >
+                                                    Previous
+                                                </a>
+                                            }
+                                            <a
+                                                href="#"
+                                                className="border border-secondary text-white bg-primary px-4 py-1 cursor-pointer"
+                                            >
+                                                { reqPageNumber }
+                                            </a>
+                                            {
+                                                (reqPageNumber * reqLimit) < totalRequests && <a
+                                                href="#"
+                                                onClick={() => { setReqPageNumber(reqPageNumber + 1); }}
+                                                className="border-end border-top border-bottom text-primary border-secondary px-4 py-1 rounded-end"
+                                                >
+                                                    Next
+                                                </a>
+                                            }
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

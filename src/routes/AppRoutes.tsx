@@ -24,6 +24,9 @@ import JobSectorMgt from "../pages/ControlPanel/JobSectorMgt";
 import JobTypeMgt from "../pages/ControlPanel/JobTypeMgt";
 import JobCategoryMgt from "../pages/ControlPanel/JobCategoryMgt";
 import WorkModeMgt from "../pages/ControlPanel/WorkModeMgt";
+import ComplaintCategoryMgt from "../pages/ControlPanel/ComplaintCategoryMgt";
+import ServiceTypeMgt from "../pages/ControlPanel/ServiceTypeMgt";
+import Contracts from "../pages/ContractMgt/Contracts";
 
 function AppRoutes() {
   return (
@@ -46,6 +49,7 @@ function AppRoutes() {
         <Route path="Complaints" element={<Complaints />} />
         <Route path="Packages" element={<Packages />} />
         <Route path="Packages/:id" element={<PackageDetails />} />
+        <Route path="Contracts" element={<Contracts />} />
         <Route path="ControlPanel" element={<ControlPanel />} />
         <Route path="ControlPanel/RoleMgt" element={<RoleMgt />} />
         <Route path="ControlPanel/UserMgt" element={<UserMgt />} />
@@ -53,8 +57,10 @@ function AppRoutes() {
         <Route path="ControlPanel/CurrencyMgt" element={<CurrencyMgt />} />
         <Route path="ControlPanel/JobSectorMgt" element={<JobSectorMgt />} />
         <Route path="ControlPanel/JobTypeMgt" element={<JobTypeMgt />} />
+        <Route path="ControlPanel/ServiceTypeMgt" element={<ServiceTypeMgt />} />
         <Route path="ControlPanel/JobCategoryMgt" element={<JobCategoryMgt />} />
         <Route path="ControlPanel/WorkModeMgt" element={<WorkModeMgt />} />
+        <Route path="ControlPanel/ComplaintCategoryMgt" element={<ComplaintCategoryMgt />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
