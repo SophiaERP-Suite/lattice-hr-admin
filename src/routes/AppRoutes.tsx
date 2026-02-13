@@ -27,6 +27,8 @@ import WorkModeMgt from "../pages/ControlPanel/WorkModeMgt";
 import ComplaintCategoryMgt from "../pages/ControlPanel/ComplaintCategoryMgt";
 import ServiceTypeMgt from "../pages/ControlPanel/ServiceTypeMgt";
 import Contracts from "../pages/ContractMgt/Contracts";
+import RequestDetails from "../pages/ContractMgt/RequestsDetails";
+import ResponsibilityTypeMgt from "../pages/ControlPanel/ResponsibilityTypeMgt";
 
 function AppRoutes() {
   return (
@@ -50,6 +52,7 @@ function AppRoutes() {
         <Route path="Packages" element={<Packages />} />
         <Route path="Packages/:id" element={<PackageDetails />} />
         <Route path="Contracts" element={<Contracts />} />
+        <Route path="Contracts/Requests/:id" element={<RequestDetails />} />
         <Route path="ControlPanel" element={<ControlPanel />} />
         <Route path="ControlPanel/RoleMgt" element={<RoleMgt />} />
         <Route path="ControlPanel/UserMgt" element={<UserMgt />} />
@@ -61,6 +64,7 @@ function AppRoutes() {
         <Route path="ControlPanel/JobCategoryMgt" element={<JobCategoryMgt />} />
         <Route path="ControlPanel/WorkModeMgt" element={<WorkModeMgt />} />
         <Route path="ControlPanel/ComplaintCategoryMgt" element={<ComplaintCategoryMgt />} />
+        <Route path="ControlPanel/ResponsibilityTypeMgt" element={<ResponsibilityTypeMgt />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

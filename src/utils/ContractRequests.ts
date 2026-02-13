@@ -17,3 +17,53 @@ export const fetchAllContractRequests = async (filterData: object) => {
   })
   return response
 }
+
+export const getContractRequestById = async (requestId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/contract-requests/${requestId}`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+  })
+  return response
+}
+
+export const sendContractRequestMessage = async (requestId: number, data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/contract-requests/${requestId}/message`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const updateContractRequestMessage = async (requestId: number, data: FormData, messageId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/contract-requests/${requestId}/message/${messageId}`;
+  const response = await fetch(url, {
+    method: 'PATCH',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+export const deleteContractRequestMessage = async (requestId: number, messageId: number) => {
+  const token = localStorage.getItem('accessToken');
+  const url = `${BaseURL}/contract-requests/${requestId}/message/${messageId}`;
+  const response = await fetch(url, {
+    method: 'DELETE',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+  })
+  return response
+}

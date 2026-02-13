@@ -41,7 +41,7 @@ export default function ControlPanel() {
                 <NavLink to="/ControlPanel/RoleMgt" className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-purple-transparent text-purple">
+                            <div className="avatar avatar-xl bg-info-transparent text-info">
                                 <ShieldCheck size={42}/>
                             </div>
                             <div className="card-content">
@@ -50,22 +50,10 @@ export default function ControlPanel() {
                         </div>
                     </div>
                 </NavLink>
-                <NavLink to="/ControlPanel/UserMgt" className="col-12 col-lg-4 col-md-6 col-12">
-                    <div className="card">
-                        <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-success-transparent text-success">
-                                <UserCog size={42}/>
-                            </div>
-                            <div className="card-content">
-                                <span className="d-block fs-16 mb-5">User</span>
-                            </div>
-                        </div>
-                    </div>
-                </NavLink>
                 <NavLink to="/ControlPanel/CurrencyMgt" className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-warning-transparent text-warning">
+                            <div className="avatar avatar-xl bg-success-transparent text-success">
                                 <Receipt size={42}/>
                             </div>
                             <div className="card-content">
@@ -89,7 +77,7 @@ export default function ControlPanel() {
                 <NavLink to="/ControlPanel/JobTypeMgt" className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-purple-transparent text-purple">
+                            <div className="avatar avatar-xl bg-warning-transparent text-warning">
                                 <Briefcase size={42}/>
                             </div>
                             <div className="card-content">
@@ -101,7 +89,7 @@ export default function ControlPanel() {
                 <NavLink to="/ControlPanel/JobCategoryMgt" className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-success-transparent text-success">
+                            <div className="avatar avatar-xl bg-primary-transparent text-primary">
                                 <FolderKanban size={42}/>
                             </div>
                             <div className="card-content">
@@ -113,7 +101,7 @@ export default function ControlPanel() {
                 <NavLink to="/ControlPanel/WorkModeMgt" className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-info-transparent text-info">
+                            <div className="avatar avatar-xl bg-success-transparent text-success">
                                 <BriefcaseBusiness size={42}/>
                             </div>
                             <div className="card-content">
@@ -125,11 +113,23 @@ export default function ControlPanel() {
                 <NavLink to="/ControlPanel/ServiceTypeMgt" className="col-12 col-lg-4 col-md-6 col-12">
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
-                            <div className="avatar avatar-xl bg-primary-transparent text-primary">
+                            <div className="avatar avatar-xl bg-purple-transparent text-purple">
                                 <MonitorCloud size={42}/>
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Service Type</span>
+                            </div>
+                        </div>
+                    </div>
+                </NavLink>
+                <NavLink to="/ControlPanel/ResponsibilityTypeMgt" className="col-12 col-lg-4 col-md-6 col-12">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-warning-transparent text-warning">
+                                <UserCog size={42}/>
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Responsibility Type</span>
                             </div>
                         </div>
                     </div>

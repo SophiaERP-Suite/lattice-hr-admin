@@ -94,3 +94,19 @@
 .toggle-switch.on .toggle-knob {
     transform: translateX(22px);
 }
+
+.card-footer p {
+  color: #000;
+}
+
+.all-color-white * {
+  color: #fff !important;
+}
+
+.all-color-black * {
+  color: #000 !important;
+}
+
+.bg-gray {
+  background-color: #e7e3e3;
+}
