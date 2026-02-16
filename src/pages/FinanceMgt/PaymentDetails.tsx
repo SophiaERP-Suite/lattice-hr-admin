@@ -96,7 +96,7 @@ export default function PaymentDetails() {
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb breadcrumb-example1 mb-0">
                                 <li className="active breadcrumb-item" aria-current="page">
-                                    <NavLink to={`/RevenueMgt/`}>
+                                    <NavLink to={`/RevenueMgt/${id}`}>
                                         Payment Details
                                     </NavLink>
                                 </li>

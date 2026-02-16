@@ -29,6 +29,7 @@ import {
   ReceiptText,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import Modal from 'react-modal';
 
 const sidebarMenus = [
   {
@@ -112,6 +113,10 @@ function AdminDashboard() {
     const currentPath = location.pathname.replace(/^\//, "");
     return currentPath === path || currentPath.startsWith(path + "/");
   };
+
+  useEffect(() => {
+    Modal.setAppElement('#lattice-full-body');
+  }, [])
 
   return (
     <div className="page">
@@ -398,6 +403,7 @@ function AdminDashboard() {
       
       <div
         className={`${isCollapsed ? "app-content-area2" : "app-content-area"}`}
+        id='lattice-full-body'
       >
         <Outlet />
       </div>

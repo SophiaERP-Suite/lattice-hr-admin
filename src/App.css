@@ -110,3 +110,8 @@
 .bg-gray {
   background-color: #e7e3e3;
 }
+
+.pdf-page {
+  page-break-after: always;
+  break-after: page;
+}

@@ -2,6 +2,7 @@ import {
   Calendar,
   CheckCheck,
   ChevronRight,
+  Eye,
   Mail,
   PenLine,
   Phone,
@@ -16,13 +17,14 @@ import Hashids from "hashids";
 import { useEffect, useRef, useState } from "react";
 import Tippy from "@tippyjs/react";
 import { toast, ToastContainer } from "react-toastify";
-import { deleteContractRequestMessage, getContractRequestById, sendContractRequestMessage, updateContractRequestMessage } from "../../utils/ContractRequests";
+import { createNewContract, deleteContractRequestMessage, getContractRequestById, sendContractRequestMessage, updateContractRequestMessage } from "../../utils/ContractRequests";
 import HtmlRenderer from "../../layout/HTMLRenderer";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import RichTextEditor from "../../layout/RichTextEditor";
 import { handleCreateEmployee } from "../../utils/EmployeeResponse";
 import Modal from 'react-modal';
 import { fetchResponsibilityTypes } from "../../utils/ResponsibilityTypeRequests";
+import { fetchCurrencies } from "../../utils/CurrencyRequests";
 
 interface MessageData {
   messageId : number;
@@ -31,6 +33,21 @@ interface MessageData {
   deleted : string;
   sender : string;
   dateCreated : string;
+}
+
+interface ResponsibilitiesData {
+    typeId: number;
+    typeName: string
+    handler: string;
+}
+
+interface ContractData {
+    contractId: number;
+    content: string;
+    currency: string;
+    amount: number;
+    expiryDate: string;
+    responsibilities: ResponsibilitiesData[];
 }
 
 interface RequestData {
@@ -43,6 +60,7 @@ interface RequestData {
   description : string;
   dateCreated : string;
   messages : MessageData[];
+  contract: ContractData;
 }
 
 interface MessageFormData {
@@ -62,7 +80,19 @@ interface ResponsibilityTypeFormData {
 
 interface ContractFormData {
     Content: string;
+    Amount: string;
+    Currency: string;
+    ExpiryDate: string;
     Responsibilities: ResponsibilityTypeFormData[];
+}
+
+interface CurrencyData {
+    currencyId: number;
+    name: string;
+    code: string;
+    symbol: string;
+    isActive: boolean;
+    dateCreated: string;
 }
 
 export default function RequestDetails() {
@@ -82,10 +112,11 @@ export default function RequestDetails() {
     const [delModalState, setDelModalState] = useState(false);
     const [addModalState, setAddModalState] = useState(false);
     const [responsibilityTypes, setResponsibilityTypes] = useState<ResponsibilityTypeData[]>([]);
-    const { fields, append, remove } = useFieldArray({
+    const { fields } = useFieldArray({
         control: contractControl,
         name: 'Responsibilities'
     });
+    const [currencyData, setCurrencyData] = useState<CurrencyData[]>([]);
 
     const verifyMessageValidity = (message: string) => {
         return message && message.trim() !== '' && message !== '<p></p>'
@@ -98,6 +129,24 @@ export default function RequestDetails() {
         const oneHour = 60 * 60 * 1000;
         return diffMinutes < oneHour;
     }
+
+    useEffect(() => {
+        fetchCurrencies()
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                setCurrencyData(data.data);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
+        })
+        .catch((err) => console.log(err))
+    }, []);
 
     useEffect(() => {
         const el = containerRef.current;
@@ -161,7 +210,7 @@ export default function RequestDetails() {
                 Responsibilities: formatted as any
             })
         }
-    }, [reset, responsibilityTypes])
+    }, [contractReset, responsibilityTypes])
 
     const refetchRequest = async () => {
         const res = await getContractRequestById(hashedId);
@@ -227,8 +276,26 @@ export default function RequestDetails() {
     }
 
     const submitContract = async (data: ContractFormData) => {
-        if (isValid) {
-            console.log(data);
+        if (isValid && hashedId) {
+            const loader = document.getElementById('query-loader');
+            const text = document.getElementById('query-text');
+            if (loader) {
+                loader.style.display = 'flex';
+            }
+            if (text) {
+                text.style.display = 'none';
+            }
+            const responsibilities = data.Responsibilities.filter(data => data.Handler !== 'NIL');
+            const reqData = {
+                ...data,
+                Responsibilities: responsibilities
+            }
+            const res = await createNewContract(hashedId, reqData);
+            handleCreateEmployee(res, null, null, { toast }, contractReset)
+            .finally(() => {
+                refetchRequest();
+                setAddModalState(false);
+            })
         }
     }
 
@@ -278,7 +345,7 @@ export default function RequestDetails() {
                                 </div>
                                 {
                                     fields.map((field, index) => (
-                                        <div className="col-xl-12 text-start">
+                                        <div className="col-xl-12 text-start" key={index}>
                                             <div>
                                                 <label htmlFor="type" className="form-label">{(field as any).TypeName}</label>
                                                 <input type="hidden" {...register(`Responsibilities.${index}.TypeId`)} />
@@ -291,7 +358,7 @@ export default function RequestDetails() {
                                                 }>
                                                     <option value="">Select Handler</option>
                                                     <option value="Admin">Admin</option>
-                                                    <option value="Staff">Staff</option>
+                                                    <option value="Client">Client</option>
                                                     <option value="NIL">Not In Contract</option>
                                                 </select>
                                                 <p className='error-msg'>{errors.Responsibilities?.[index]?.Handler?.message}</p>
@@ -299,6 +366,56 @@ export default function RequestDetails() {
                                         </div>
                                     ))
                                 }
+                                <div className="col-xl-6">
+                                    <label className="form-label">Package Price</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="Amount"
+                                        {
+                                            ...register('Amount',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        } />
+                                    <p className='error-msg'>{errors.Amount?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
+                                    <label className="form-label">Currency</label>
+                                    <select
+                                        className="form-select"
+                                        {
+                                            ...register('Currency',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        }>
+                                        <option value="">Select Currency</option>
+                                        {
+                                            currencyData.map((data, index) => (
+                                                <option key={index} value={data.code}>{data.code}</option>
+                                            ))
+                                        }
+                                    </select>
+                                    <p className='error-msg'>{errors.Currency?.message}</p>
+                                </div>
+                                <div className="col-xl-12">
+                                    <label className="form-label">Expiry Date</label>
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        placeholder="Expiry Date"
+                                        {
+                                            ...register('ExpiryDate',
+                                                {
+                                                    required: 'Required'
+                                                }
+                                            )
+                                        } />
+                                    <p className='error-msg'>{errors.ExpiryDate?.message}</p>
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -433,9 +550,18 @@ export default function RequestDetails() {
                                 <div className="card" style={{ height: '75vh'}}>
                                     <div className="card-header justify-content-between gap-25 flex-wrap mb-25">
                                         <h4 className="">Messages ({requestDetails.messages.length})</h4>
-                                        <button type="button" className="btn btn-success" onClick={() => setAddModalState(true)}>
-                                            <Plus size={18} className="mr-2" /> Create Contract
-                                        </button>
+                                        {
+                                            requestDetails.contract ? (
+                                                <NavLink to={`/Contracts/${hashIds.encode(requestDetails.contract.contractId)}`} className="btn btn-warning">
+                                                    <Eye size={18} className="mr-2" /> Preview Contract
+                                                </NavLink>
+                                            ) : (
+                                                <button type="button" className="btn btn-success" onClick={() => setAddModalState(true)}>
+                                                    <Plus size={18} className="mr-2" /> Create Contract
+                                                </button>
+                                            )
+                                        }
+                                        
                                     </div>
                                     <div className="card-body overflow-y-auto" ref={containerRef}>
                                         <p className="text-center" style={{ fontSize: '12px'}}>This is the start of this conversation</p>

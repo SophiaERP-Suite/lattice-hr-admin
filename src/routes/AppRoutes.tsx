@@ -29,6 +29,7 @@ import ServiceTypeMgt from "../pages/ControlPanel/ServiceTypeMgt";
 import Contracts from "../pages/ContractMgt/Contracts";
 import RequestDetails from "../pages/ContractMgt/RequestsDetails";
 import ResponsibilityTypeMgt from "../pages/ControlPanel/ResponsibilityTypeMgt";
+import ContractDetails from "../pages/ContractMgt/ContractDetails";
 
 function AppRoutes() {
   return (
@@ -52,7 +53,9 @@ function AppRoutes() {
         <Route path="Packages" element={<Packages />} />
         <Route path="Packages/:id" element={<PackageDetails />} />
         <Route path="Contracts" element={<Contracts />} />
+        <Route path="Contracts" element={<Contracts />} />
         <Route path="Contracts/Requests/:id" element={<RequestDetails />} />
+        <Route path="Contracts/:id" element={<ContractDetails />} />
         <Route path="ControlPanel" element={<ControlPanel />} />
         <Route path="ControlPanel/RoleMgt" element={<RoleMgt />} />
         <Route path="ControlPanel/UserMgt" element={<UserMgt />} />

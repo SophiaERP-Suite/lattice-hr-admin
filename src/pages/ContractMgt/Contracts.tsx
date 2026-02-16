@@ -12,22 +12,8 @@ import { ToastContainer } from 'react-toastify';
 import { NavLink } from "react-router-dom";
 import { useForm, useWatch } from "react-hook-form";
 import Hashids from "hashids";
-import { fetchAllContractRequests } from "../../utils/ContractRequests";
+import { fetchAllContractRequests, fetchAllContracts } from "../../utils/ContractRequests";
 import Tippy from "@tippyjs/react";
-
-interface PackageData {
-  packageId: number;
-  packageName: string;
-  packageDescription: string;
-  duration: number;
-  durationUnit: string;
-  amount: number;
-  currency: string;
-  totalFeatures: number;
-  totalEmployers: number;
-  dateCreated: string;
-  isActive: boolean;
-}
 
 interface ContractRequestsData {
     requestId: number;
@@ -43,14 +29,41 @@ interface ContractRequestFilter {
     Employer: string;
 }
 
+interface ResponsibilitiesData {
+    typeId: number;
+    typeName: string
+    handler: string;
+}
+
+interface ContractData {
+    contractId: number;
+    content: string;
+    currency: string;
+    amount: number;
+    expiryDate: string;
+    employerId: number;
+    employer: string;
+    employerLogo: string;
+    employerMail : string;
+    employerPhone : string;
+    dateCreated: string;
+    signed: boolean;
+    responsibilities: ResponsibilitiesData[];
+}
+
 export default function Contracts() {
-    const [contracts, setContracts] = useState<PackageData[]>([]);
+    const [contracts, setContracts] = useState<ContractData[]>([]);
     const [contractRequests, setContractRequests] = useState<ContractRequestsData[]>([]);
     const [totalRequests, setTotalRequests] = useState(0);
+    const [totalContracts, setTotalContracts] = useState(0);
     const [reqPageNumber, setReqPageNumber] = useState(1);
     const reqLimit = 10;
+    const [pageNumber, setPageNumber] = useState(1);
+    const limit = 10;
     const { register, control } = useForm<ContractRequestFilter>();
     const filters = useWatch({control});
+    const { register: cRegister, control: cControl } = useForm<ContractRequestFilter>();
+    const cFilters = useWatch({control: cControl});
     const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
 
     useEffect(() => {
@@ -75,6 +88,29 @@ export default function Contracts() {
         }
         })
     }, [reqPageNumber, reqLimit, filters]);
+
+    useEffect(() => {
+        fetchAllContracts({
+            pageNumber,
+            limit,
+            ...cFilters
+        })
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                console.log(data);
+                setContracts(data.data.contracts);
+                setTotalContracts(data.data.totalCount);
+            })
+        } else {
+            res.text()
+            .then(data => {
+                console.log(JSON.parse(data));
+            })
+        }
+        })
+    }, [pageNumber, limit, cFilters]);
 
     return (
         <div className="container-fluid">
@@ -110,7 +146,7 @@ export default function Contracts() {
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Ongoing Contracts</span>
-                                <h2 className="mb-5">0</h2>
+                                <h2 className="mb-5">{totalContracts}</h2>
                             </div>
                         </div>
                     </div>
@@ -123,7 +159,7 @@ export default function Contracts() {
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Total Requests</span>
-                                <h2 className="mb-5">0</h2>
+                                <h2 className="mb-5">{totalRequests}</h2>
                             </div>
                         </div>
                     </div>
@@ -159,6 +195,11 @@ export default function Contracts() {
                                 <div className="card-header justify-between">
                                     <h4 className="d-flex-items gap-10">Contracts</h4>
                                     <div className="d-flex flex-wrap gap-15">
+                                        <div className="dataTables-sorting-control ">
+                                            <input type="text" className="form-control" placeholder="Search by Name" {
+                                                ...cRegister('Employer')
+                                            } />
+                                        </div>
                                         <button type="button" className="btn btn-success">
                                             <Plus size={18} className="mr-2" /> Add New Contract
                                         </button>
@@ -174,12 +215,48 @@ export default function Contracts() {
                                                 <tr>
                                                     <th scope="col">S/N</th>
                                                     <th scope="col">Client</th>
-                                                    <th scope="col">Date Requested</th>
+                                                    <th scope="col">Signed</th>
                                                     <th scope="col">Pricing</th>
-                                                    <th scope="col">Date Signed</th>
+                                                    <th scope="col">Date Created</th>
+                                                    <th scope="col">Action</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                {
+                                                    contracts.map((data, index) => (
+                                                        <tr key={index}>
+                                                            <td>
+                                                                { index + 1}
+                                                            </td>
+                                                            <td>
+                                                                <NavLink to={`/ClientMgt/${hashIds.encode(data.employerId)}`} className="d-flex-items gap-10">
+                                                                    <div className="avatar avatar-md radius-100">
+                                                                        <img className="radius-100" src={data.employerLogo} alt="image not found"/>
+                                                                    </div>
+                                                                    <h6 className="cursor-pointer">{ data.employer }</h6>
+                                                                </NavLink>
+                                                            </td>
+                                                            <td>
+                                                                { data.signed
+                                                                    ? <span className="badge bg-label-success">Signed</span>
+                                                                    : <span className="badge bg-label-warning">Not Signed</span>}
+                                                            </td>
+                                                            <td>
+                                                                {`${data.currency} ${data.amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
+                                                            </td>
+                                                            <td>
+                                                                {new Date(data.dateCreated).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                                            </td>
+                                                            <td>
+                                                                <Tippy content="View Request">
+                                                                    <NavLink to={`/Contracts/${hashIds.encode(data.contractId)}`} className="btn-icon btn-info-light">
+                                                                        <Eye />
+                                                                    </NavLink>
+                                                                </Tippy>
+                                                            </td>
+                                                        </tr>
+                                                    ))
+                                                }
                                             </tbody>
                                         </table>
                                         {
@@ -189,11 +266,55 @@ export default function Contracts() {
                                                 </div> : <></>
                                         }
                                     </div>
+                                    <div className="d-flex justify-content-between mt-4">
+                                        <div className="flex justify-content-center align-items-center mb-1">
+                                            <p className="text-black">
+                                                Showing { contracts.length > 0 ? ((pageNumber * limit) - limit) + 1 : 0 } to { contracts.length > 0 ? (((pageNumber * limit) - limit) + 1) + (contracts.length - 1) : 0 } of { totalContracts } entries
+                                            </p>
+                                        </div>
+                                        <div className="d-inline-flex flex-wrap">
+                                            {
+                                                pageNumber > 1 && <a
+                                                    href="#"
+                                                    onClick={() => { if (pageNumber > 1) {setPageNumber(pageNumber - 1);} }}
+                                                    className="border-top border-bottom border-start text-primary border-secondary px-2 py-1 rounded-start"
+                                                >
+                                                    Previous
+                                                </a>
+                                            }
+                                            <a
+                                                href="#"
+                                                className="border border-secondary text-white bg-primary px-4 py-1 cursor-pointer"
+                                            >
+                                                { pageNumber }
+                                            </a>
+                                            {
+                                                (pageNumber * limit) < totalContracts && <a
+                                                href="#"
+                                                onClick={() => { setPageNumber(pageNumber + 1); }}
+                                                className="border-end border-top border-bottom text-primary border-secondary px-4 py-1 rounded-end"
+                                                >
+                                                    Next
+                                                </a>
+                                            }
+                                            
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div className="tab-pane fade" id="pills-requests" role="tabpanel" aria-labelledby="pills-requests-tab" tabIndex={1}>
                                 <div className="card-header justify-between gap-25 flex-wrap mb-25">
                                     <h4 className="">Contract Requests</h4>
+                                    <div className="d-flex flex-wrap gap-15">
+                                        <div className="dataTables-sorting-control ">
+                                            <input type="text" className="form-control" placeholder="Search by Name" {
+                                                ...register('Employer')
+                                            } />
+                                        </div>
+                                        <a className="btn btn-info text-white" href="javascript:void(0);">
+                                            <FolderOutput /> Export As CSV
+                                        </a>
+                                    </div>
                                 </div>
                                 <div className="card-body pt-15">
                                     <div className="table-responsive">
