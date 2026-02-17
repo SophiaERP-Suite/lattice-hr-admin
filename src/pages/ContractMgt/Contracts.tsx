@@ -56,6 +56,7 @@ export default function Contracts() {
     const [contractRequests, setContractRequests] = useState<ContractRequestsData[]>([]);
     const [totalRequests, setTotalRequests] = useState(0);
     const [totalContracts, setTotalContracts] = useState(0);
+    const [totalExpired, setTotalExpired] = useState(0);
     const [reqPageNumber, setReqPageNumber] = useState(1);
     const reqLimit = 10;
     const [pageNumber, setPageNumber] = useState(1);
@@ -79,6 +80,7 @@ export default function Contracts() {
                 console.log(data);
                 setContractRequests(data.data.requests);
                 setTotalRequests(data.data.totalCount);
+                setTotalExpired(data.data.totalExpired);
             })
         } else {
             res.text()
@@ -102,6 +104,7 @@ export default function Contracts() {
                 console.log(data);
                 setContracts(data.data.contracts);
                 setTotalContracts(data.data.totalCount);
+                setTotalExpired(data.data.totalExpired);
             })
         } else {
             res.text()
@@ -145,7 +148,7 @@ export default function Contracts() {
                                 <ReceiptText size={42}/>
                             </div>
                             <div className="card-content">
-                                <span className="d-block fs-16 mb-5">Ongoing Contracts</span>
+                                <span className="d-block fs-16 mb-5">Total Contracts</span>
                                 <h2 className="mb-5">{totalContracts}</h2>
                             </div>
                         </div>
@@ -172,7 +175,7 @@ export default function Contracts() {
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Expired / Inactive</span>
-                                <h2 className="mb-5">0</h2>
+                                <h2 className="mb-5">{ totalExpired }</h2>
                             </div>
                         </div>
                     </div>

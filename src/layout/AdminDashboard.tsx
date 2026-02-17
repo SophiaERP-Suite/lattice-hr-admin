@@ -53,7 +53,7 @@ const sidebarMenus = [
     icon: (<ListChecks style={{ color: "#000"}} />)
   },
   {
-    label: "Timesheet",
+    label: "Timesheet & Payslip",
     path: "/Timesheet",
     icon: (<ClipboardClock style={{ color: "#000"}} />)
   },

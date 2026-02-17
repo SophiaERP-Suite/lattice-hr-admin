@@ -437,11 +437,17 @@ export default function ContractDetails() {
                     </div>
                 </div>
                 <div className="col-12 d-flex justify-content-end mb-4 gap-4">
-                    <div className="dataTables-sorting-control ">
-                        <button className="btn btn-warning" onClick={() => setEditModalState(true)}>
-                            <PenLine size={18} className="mr-2" /> Update Contract
-                        </button>
-                    </div>
+                    {
+                        contractData?.signed
+                        ? <></>
+                        : (
+                            <div className="dataTables-sorting-control ">
+                                <button className="btn btn-warning" onClick={() => setEditModalState(true)}>
+                                    <PenLine size={18} className="mr-2" /> Update Contract
+                                </button>
+                            </div>
+                        )
+                    }
                     <div className="dataTables-sorting-control ">
                         <button className="btn btn-success" onClick={() => downloadReceipt()}>
                             <div className="dots" id="query-loader">

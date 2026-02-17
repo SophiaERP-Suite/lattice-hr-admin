@@ -110,12 +110,12 @@ export default function TimeSheet() {
             <div className="row">
                 <div className="col-xl-12">
                     <div className="page-title-box d-flex-between flex-wrap gap-15">
-                        <h1 className="page-title fs-18 lh-1">Timesheet Management</h1>
+                        <h1 className="page-title fs-18 lh-1">Timesheet & Payslip</h1>
                         <nav aria-label="breadcrumb">
                             <ol className="breadcrumb breadcrumb-example1 mb-0">
                                 <li className="active breadcrumb-item" aria-current="page">
                                     <NavLink to="/Timesheet">
-                                        Timesheet Management
+                                        Timesheet & Payslip
                                     </NavLink>
                                 </li>
                                 <li className="mb-2">
