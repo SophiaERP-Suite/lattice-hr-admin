@@ -1,5 +1,4 @@
 import {
-  ArrowUp,
   FolderOpenDot,
   Briefcase,
   UserPlus,
@@ -10,11 +9,6 @@ import {
 } from "lucide-react";
 import ApexCharts from "apexcharts";
 import { useEffect, useState } from "react";
-import nursing from "../assets/images/nursing.jpg";
-import carePhoto from "../assets/images/Care1.jpg";
-import homeCare from "../assets/images/home_care.jpg";
-import hospital from "../assets/images/hospital.jpg";
-import elderlyCare from "../assets/images/elderly_care.png";
 import new_care from "../assets/images/new_care.png"
 import { NavLink } from "react-router-dom";
 import { useForm, useWatch } from "react-hook-form";
@@ -669,6 +663,8 @@ function Dashboard() {
     const [totalEmployers, setTotalEmployers] = useState(0);
     const [totalRevenue, setTotalRevenue] = useState(0);
     const [totalCandidates, setTotalCandidates] = useState(0);
+    const [totalWorkers, setTotalWorkers] = useState(0);
+    const [totalContracts, setTotalContracts] = useState(0);
     const [paymentData, setPaymentData] = useState<PaymentThusFarData[]>([]);
     const [currencyData, setCurrencyData] = useState<CurrencyData[]>([]);
 
@@ -692,7 +688,11 @@ function Dashboard() {
 
     useEffect(() => {
         if (currencyData.length > 0) {
-            setValue('Currency', currencyData[0].code);
+            if (currencyData.find(data => data.code === 'NGN')) {
+                setValue('Currency', 'NGN');
+            } else {
+                setValue('Currency', currencyData[0].code);
+            }
         }
     }, [setValue, currencyData]);
 
@@ -708,6 +708,8 @@ function Dashboard() {
                             setPaymentData(data.data.paymentThusFar);
                             setTotalRevenue(data.data.totalRevenue);
                             setTotalCandidates(data.data.totalCandidates);
+                            setTotalWorkers(data.data.totalWorkers);
+                            setTotalContracts(data.data.totalContracts);
                         })
                 } else {
                     res.text()
@@ -866,7 +868,7 @@ function Dashboard() {
               </div>
               <div className="card-content">
                 <span className="d-block fs-16 mb-5">Total Contracts</span>
-                <h2 className="mb-5">{ totalCandidates.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }</h2>
+                <h2 className="mb-5">{ totalContracts.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }</h2>
               </div>
             </div>
           </div>
@@ -892,7 +894,7 @@ function Dashboard() {
               </div>
               <div className="card-content">
                 <span className="d-block fs-16 mb-5">Total Candidates</span>
-                <h2 className="mb-5">0</h2>
+                <h2 className="mb-5">{ totalCandidates.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }</h2>
               </div>
             </div>
           </div>
@@ -905,7 +907,7 @@ function Dashboard() {
               </div>
               <div className="card-content">
                 <span className="d-block fs-16 mb-5">Total Workers</span>
-                <h2 className="mb-5">0</h2>
+                <h2 className="mb-5">{ totalWorkers.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }</h2>
               </div>
             </div>
           </div>
@@ -917,227 +919,6 @@ function Dashboard() {
             </div>
             <div className="card-body mini-card-body pt-15">
               <div id="revenueProfitChart"></div>
-            </div>
-          </div>
-        </div>
-        <div className="col-12">
-          <div className="card">
-            <div className="card-header justify-between">
-              <h4>Top Employer</h4>
-              <div className="card-dropdown">
-                  <div className="dropdown">
-                      <a className="card-dropdown-icon" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                          <ChevronDown />
-                      </a>
-                      <div className="dropdown-menu">
-                        <a className="dropdown-item" href="javascript:void(0);">This Week</a>
-                        <a className="dropdown-item" href="javascript:void(0);">Last Week</a>
-                        <a className="dropdown-item" href="javascript:void(0);">This Month</a>
-                      </div>
-                  </div>
-              </div>
-            </div>
-            <div className="card-body pt-15">
-              <div className="vendor-box p-relative mb-4">
-                  <div className="vendor-content">
-                    <div className="d-flex-between">
-                        <div className="d-flex gap-15">
-                            <div className="vendor-thumb">
-                                <img src={homeCare} alt="image not found"/>
-                            </div>
-                            <div className="text-start">
-                                <h5 className="mb-5">One Health Solutions Inc.</h5>
-                                <span className="text-body" style={{ textAlign: 'start' }}>Health Care</span>
-                            </div>
-                        </div>
-                        <div className="card-dropdown">
-                            <div className="dropdown">
-                                <a className="card-dropdown-icon" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                  <ChevronDown />
-                                </a>
-                                <div className="dropdown-menu">
-                                  <a className="dropdown-item" href="javascript:void(0);">View Jobs</a>
-                                  <a className="dropdown-item" href="javascript:void(0);">Contact</a>
-                                  <a className="dropdown-item" href="javascript:void(0);">Reports</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="vendor-content mb-10">
-                        <span className="d-block mb-5">Monthly Revenue</span>
-                        <div className="d-flex flex-wrap gap-10">
-                            <h3>#850,000</h3>
-                            <div>
-                                <span className="text-success">+3.2%<ArrowUp size={12} className="ri-arrow-up-line"/></span>
-                                <span className="fs-12 text-muted ml-5">This month</span>
-                            </div>
-                        </div>
-                    </div>
-                  </div>
-                  <div className="vendor-chart">
-                      <div id="widgetChartYear"></div>
-                  </div>
-              </div>
-              <div className="vendor-box p-relative mb-4">
-                  <div className="vendor-content">
-                      <div className="d-flex-between">
-                          <div className="d-flex gap-15">
-                              <div className="vendor-thumb">
-                                  <img src={carePhoto} alt="image not found"/>
-                              </div>
-                              <div className="text-start">
-                                  <h5 className="mb-5">Care Plus Ltd.</h5>
-                                  <span className="text-body">Hospital & Care</span>
-                              </div>
-                          </div>
-                          <div className="card-dropdown">
-                              <div className="dropdown">
-                                  <a className="card-dropdown-icon" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <ChevronDown />
-                                  </a>
-                                  <div className="dropdown-menu">
-                                    <a className="dropdown-item" href="javascript:void(0);">View Jobs</a>
-                                    <a className="dropdown-item" href="javascript:void(0);">Contact</a>
-                                    <a className="dropdown-item" href="javascript:void(0);">Reports</a>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div className="vendor-content mb-10">
-                          <span className="d-block mb-5">Monthly Revenue</span>
-                          <div className="d-flex flex-wrap gap-10">
-                              <h3>#922,300</h3>
-                              <div>
-                                  <span className="text-success">+5.1%<ArrowUp size={12} className="ri-arrow-up-line"/></span>
-                                  <span className="fs-12 text-muted ml-5">This month</span>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                  <div className="vendor-chart">
-                      <div id="widgetChartYear2"></div>
-                  </div>
-              </div>
-              <div className="vendor-box p-relative mb-4">
-                  <div className="vendor-content">
-                      <div className="d-flex-between">
-                          <div className="d-flex gap-15">
-                              <div className="vendor-thumb">
-                                  <img src={hospital} alt="image not found"/>
-                              </div>
-                              <div className="text-start">
-                                  <h5 className="mb-5">Little Nest Health Co.</h5>
-                                  <span className="text-body">Hospital</span>
-                              </div>
-                          </div>
-                          <div className="card-dropdown">
-                              <div className="dropdown">
-                                  <a className="card-dropdown-icon" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <ChevronDown />
-                                  </a>
-                                  <div className="dropdown-menu">
-                                    <a className="dropdown-item" href="javascript:void(0);">View Jobs</a>
-                                    <a className="dropdown-item" href="javascript:void(0);">Contact</a>
-                                    <a className="dropdown-item" href="javascript:void(0);">Reports</a>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div className="vendor-content mb-10">
-                          <span className="d-block mb-5">Monthly Revenue</span>
-                          <div className="d-flex flex-wrap gap-10">
-                              <h3>#612,450</h3>
-                              <div>
-                                  <span className="text-success">+2.8%<ArrowUp size={12} className="ri-arrow-up-line"/></span>
-                                  <span className="fs-12 text-muted ml-5">This month</span>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                  <div className="vendor-chart">
-                      <div id="widgetChartYear3"></div>
-                  </div>
-              </div>
-              <div className="vendor-box p-relative mb-4">
-                  <div className="vendor-content">
-                      <div className="d-flex-between">
-                          <div className="d-flex gap-15">
-                              <div className="vendor-thumb">
-                                  <img src={elderlyCare} alt="image not found"/>
-                              </div>
-                              <div className="text-start">
-                                  <h5 className="mb-5">God's Own Care Co</h5>
-                                  <span className="text-body">Elderly Care</span>
-                              </div>
-                          </div>
-                          <div className="card-dropdown">
-                              <div className="dropdown">
-                                  <a className="card-dropdown-icon" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <ChevronDown />
-                                  </a>
-                                  <div className="dropdown-menu">
-                                    <a className="dropdown-item" href="javascript:void(0);">View Jobs</a>
-                                    <a className="dropdown-item" href="javascript:void(0);">Contact</a>
-                                    <a className="dropdown-item" href="javascript:void(0);">Reports</a>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div className="vendor-content mb-10">
-                          <span className="d-block mb-5">Monthly Revenue</span>
-                          <div className="d-flex flex-wrap gap-10">
-                              <h3>#492,920</h3>
-                              <div>
-                                  <span className="text-success">+1.9%<ArrowUp size={12} className="ri-arrow-up-line"/></span>
-                                  <span className="fs-12 text-muted ml-5">This month</span>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                  <div className="vendor-chart">
-                      <div id="widgetChartYear4"></div>
-                  </div>
-              </div>
-              <div className="vendor-box p-relative mb-4">
-                  <div className="vendor-content">
-                      <div className="d-flex-between">
-                          <div className="d-flex gap-15">
-                              <div className="vendor-thumb">
-                                  <img src={nursing} alt="image not found"/>
-                              </div>
-                              <div className="text-start">
-                                  <h5 className="mb-5">St.Thomas Care Home</h5>
-                                  <span className="text-body">Home Care</span>
-                              </div>
-                          </div>
-                          <div className="card-dropdown">
-                              <div className="dropdown">
-                                  <a className="card-dropdown-icon" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <ChevronDown />
-                                  </a>
-                                  <div className="dropdown-menu">
-                                    <a className="dropdown-item" href="javascript:void(0);">View Jobs</a>
-                                    <a className="dropdown-item" href="javascript:void(0);">Contact</a>
-                                    <a className="dropdown-item" href="javascript:void(0);">Reports</a>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <div className="vendor-content mb-10">
-                          <span className="d-block mb-5">Monthly Revenue</span>
-                          <div className="d-flex flex-wrap gap-10">
-                              <h3>#295,680</h3>
-                              <div>
-                                  <span className="text-success">+7.3%<ArrowUp size={12} className="ri-arrow-up-line"/></span>
-                                  <span className="fs-12 text-muted ml-5">This month</span>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-                  <div className="vendor-chart">
-                      <div id="widgetChartYear5"></div>
-                  </div>
-              </div>
             </div>
           </div>
         </div>

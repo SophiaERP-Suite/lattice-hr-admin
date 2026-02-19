@@ -717,9 +717,9 @@ export default function WorkersMgt() {
                                                     <td>{new Date(data.joinDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                                                     <td>
                                                         <div className="d-flex-items gap-10">
-                                                            <button className="btn-icon btn-info-light" type="button">
+                                                            <NavLink className="btn-icon btn-info-light" to={`/WorkerMgt/${hashIds.encode(data.workerId)}`}>
                                                                 <a><Eye /></a>
-                                                            </button>
+                                                            </NavLink>
                                                         </div>
                                                     </td>
                                                 </tr>

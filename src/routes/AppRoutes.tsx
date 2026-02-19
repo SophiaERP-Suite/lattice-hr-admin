@@ -30,6 +30,7 @@ import Contracts from "../pages/ContractMgt/Contracts";
 import RequestDetails from "../pages/ContractMgt/RequestsDetails";
 import ResponsibilityTypeMgt from "../pages/ControlPanel/ResponsibilityTypeMgt";
 import ContractDetails from "../pages/ContractMgt/ContractDetails";
+import WorkerDetails from "../pages/WorkersMgt/WorkerDetails";
 
 function AppRoutes() {
   return (
@@ -43,6 +44,7 @@ function AppRoutes() {
         <Route path="CandidateMgt" element={<CandidatesMgt />} />
         <Route path="CandidateMgt/:id" element={<CandidateDetails />} />
         <Route path="WorkerMgt" element={<WorkersMgt />} />
+        <Route path="WorkerMgt/:id" element={<WorkerDetails />} />
         <Route path="ComplianceMgt" element={<ComplianceMgt />} />
         <Route path="Timesheet" element={<TimeSheet />} />
         <Route path="JobMgt" element={<JobMgt />} />

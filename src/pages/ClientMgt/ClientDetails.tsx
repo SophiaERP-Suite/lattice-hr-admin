@@ -1134,7 +1134,7 @@ export default function ClientDetails() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div className="tab-pane show" id="pills-workers" role="tabpanel" aria-labelledby="pills-workers-tab" tabIndex={1}>
+                                        <div className="tab-pane fade" id="pills-workers" role="tabpanel" aria-labelledby="pills-workers-tab" tabIndex={1}>
                                             <div className="card-header justify-between gap-25 flex-wrap mb-25">
                                                 <h4 className="">Workers ({totalWorkers})</h4>
                                                 <div className="d-flex flex-wrap gap-15">

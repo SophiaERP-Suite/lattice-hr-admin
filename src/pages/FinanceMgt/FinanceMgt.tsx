@@ -396,9 +396,15 @@ export default function FinanceMgt() {
         .catch((err) => console.log(err))
     }, []);
 
+    
+
     useEffect(() => {
         if (currencyData.length > 0) {
-            setValue('Currency', currencyData[0].code);
+            if (currencyData.find(data => data.code === 'NGN')) {
+                setValue('Currency', 'NGN');
+            } else {
+                setValue('Currency', currencyData[0].code);
+            }
         }
         setValue('EndDate', `${(new Date()).getFullYear()}`)
     }, [setValue, currencyData]);

@@ -18,9 +18,9 @@ export const fetchAllWorkers = async (filterData: object) => {
   return response
 }
 
-export const fetchWorkerById = async (userId: number) => {
+export const fetchWorkerById = async (workerId: number) => {
   const token = localStorage.getItem('accessToken');
-  const url = `${BaseURL}/workers/${userId}`;
+  const url = `${BaseURL}/workers/${workerId}`;
   const response = await fetch(url, {
     method: 'GET',
     headers: {
@@ -34,6 +34,20 @@ export const addNewWorker = async (data: FormData) => {
   const token = localStorage.getItem('accessToken');
   const response = await fetch(`${BaseURL}/workers`, {
     method: 'POST',
+    headers: {
+      "Authorization": `Bearer ${token}`
+    },
+    body: data
+  })
+  return response
+}
+
+
+
+export const updateWorkerById = async (workerId: number, data: FormData) => {
+  const token = localStorage.getItem('accessToken');
+  const response = await fetch(`${BaseURL}/workers/${workerId}`, {
+    method: 'PATCH',
     headers: {
       "Authorization": `Bearer ${token}`
     },
