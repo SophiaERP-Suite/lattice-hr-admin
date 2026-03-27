@@ -115,3 +115,28 @@
   page-break-after: always;
   break-after: page;
 }
+
+.btn-modified {
+    display: inline-flex;
+    padding: 7.5px 20px;
+    border-radius: 6px;
+    color: var(--custom-white);
+    font-size: 14px !important;
+    align-items: center !important;
+    justify-content: start !important;
+    transition: 0.3s linear !important;
+    white-space: nowrap !important;
+    gap: 0px 6px !important;
+    font-weight: var(--fw-medium) !important;
+    border: none !important;
+}
+
+.timeline-wrapper {
+  max-height: 400px; 
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.form-check {
+    margin-right: 15px;
+}
