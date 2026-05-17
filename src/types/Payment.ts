@@ -1,6 +1,8 @@
 export interface PayslipDto {
   payslipId: number;
   jobSeekerId: number;
+  employerName: string;
+  employerId: number;
   employeeName: string;
   employeeAvatar?: string;
   month: number;

@@ -1,7 +1,7 @@
 import type { JobOfferDiscussion, SendDiscussionMessageRequest } from "../types/JobOffer";
 
 // const BaseURL = import.meta.env.VITE_API_URL;
-const BaseURL = "http://localhost:5127";
+const BaseURL = import.meta.env.VITE_API_URL ?? "http://localhost:5127";
 const token = localStorage.getItem("token");
 
 export const GetDiscussions = async (jobOfferId: number): Promise<JobOfferDiscussion[]> => {

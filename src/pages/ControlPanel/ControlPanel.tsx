@@ -1,14 +1,15 @@
 import {
-  AlertTriangleIcon,
-  Briefcase,
-  BriefcaseBusiness,
-  ChevronRight,
-  Columns3Cog,
-  FolderKanban,
-  MonitorCloud,
-  Receipt,
-  ShieldCheck,
-  UserCog,
+    AlertTriangleIcon,
+    Briefcase,
+    BriefcaseBusiness,
+    Calculator,
+    ChevronRight,
+    Columns3Cog,
+    FolderKanban,
+    MonitorCloud,
+    Receipt,
+    ShieldCheck,
+    UserCog,
 } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
@@ -42,7 +43,7 @@ export default function ControlPanel() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-info-transparent text-info">
-                                <ShieldCheck size={42}/>
+                                <ShieldCheck size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Role</span>
@@ -54,10 +55,22 @@ export default function ControlPanel() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-success-transparent text-success">
-                                <Receipt size={42}/>
+                                <Receipt size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Currency</span>
+                            </div>
+                        </div>
+                    </div>
+                </NavLink>
+                <NavLink to="/ControlPanel/TaxMgt" className="col-12 col-lg-4 col-md-6 col-12">
+                    <div className="card">
+                        <div className="card-body d-flex align-center gap-16">
+                            <div className="avatar avatar-xl bg-success-transparent text-success">
+                                <Calculator size={42} />
+                            </div>
+                            <div className="card-content">
+                                <span className="d-block fs-16 mb-5">Tax Management</span>
                             </div>
                         </div>
                     </div>
@@ -66,7 +79,7 @@ export default function ControlPanel() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-primary-transparent text-primary">
-                                <Columns3Cog size={42}/>
+                                <Columns3Cog size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Job Sector</span>
@@ -78,7 +91,7 @@ export default function ControlPanel() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-warning-transparent text-warning">
-                                <Briefcase size={42}/>
+                                <Briefcase size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Job Type</span>
@@ -90,7 +103,7 @@ export default function ControlPanel() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-primary-transparent text-primary">
-                                <FolderKanban size={42}/>
+                                <FolderKanban size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Job Category</span>
@@ -102,7 +115,7 @@ export default function ControlPanel() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-success-transparent text-success">
-                                <BriefcaseBusiness size={42}/>
+                                <BriefcaseBusiness size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Work Mode</span>
@@ -114,7 +127,7 @@ export default function ControlPanel() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-purple-transparent text-purple">
-                                <MonitorCloud size={42}/>
+                                <MonitorCloud size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Service Type</span>
@@ -126,7 +139,7 @@ export default function ControlPanel() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-warning-transparent text-warning">
-                                <UserCog size={42}/>
+                                <UserCog size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Responsibility Type</span>
@@ -138,7 +151,7 @@ export default function ControlPanel() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-danger-transparent text-danger">
-                                <AlertTriangleIcon size={42}/>
+                                <AlertTriangleIcon size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Complaint Category</span>

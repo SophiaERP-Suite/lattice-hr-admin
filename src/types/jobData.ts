@@ -110,3 +110,12 @@ export interface WorkModeData {
   isEnabled: boolean;
   modeName: string;
 }
+
+export interface RecentJobs {
+  jobId: number;
+  employerId: number;
+  jobTitle: string;
+  jobPhoto: string;
+  employer: string;
+  totalApplications: number;
+}

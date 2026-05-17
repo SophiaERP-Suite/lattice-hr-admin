@@ -2,7 +2,7 @@
 import { buildInductionItemFormData } from "../components/ItemEditorFields";
 import type { InductionItem } from "../types/induction";
 
-const BaseURL = "http://localhost:5127";
+const BaseURL = import.meta.env.VITE_API_URL ?? "http://localhost:5127";
 const token = localStorage.getItem("token");
 
 export const getInductionAssigmentsByJobSeekerId = async (jobSeekerId: number, employerId: number) => {
