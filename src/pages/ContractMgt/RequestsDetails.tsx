@@ -375,7 +375,8 @@ export default function RequestDetails() {
                                         {
                                             ...register('Amount',
                                                 {
-                                                    required: 'Required'
+                                                    required: 'Required',
+                                                    validate: (value) => (value && Number(value) < 0) ? 'Cannot be less than 0' : true
                                                 }
                                             )
                                         } />

@@ -375,7 +375,8 @@ export default function Packages() {
                                         {
                                             ...register('Amount',
                                                 {
-                                                    required: 'Required'
+                                                    required: 'Required',
+                                                    validate: (value) => (value && value < 0) ? 'Cannot be less than 0' : true
                                                 }
                                             )
                                         } />
@@ -527,7 +528,8 @@ export default function Packages() {
                                                 {
                                                     ...regEdit('Amount',
                                                         {
-                                                            required: 'Required'
+                                                            required: 'Required',
+                                                            validate: (value) => (value && value < 0) ? 'Cannot be less than 0' : true
                                                         }
                                                     )
                                                 } />

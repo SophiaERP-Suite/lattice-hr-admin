@@ -374,7 +374,8 @@ export default function PackageDetails() {
                                                 {
                                                     ...regEdit('Amount',
                                                         {
-                                                            required: 'Required'
+                                                            required: 'Required',
+                                                            validate: (value) => (value && value < 0) ? 'Cannot be less than 0' : true
                                                         }
                                                     )
                                                 } />

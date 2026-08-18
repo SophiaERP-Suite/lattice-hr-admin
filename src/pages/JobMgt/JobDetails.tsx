@@ -1,7 +1,12 @@
 import {
+    AppWindow,
   Briefcase,
+  CheckCheck,
+  ChevronDown,
   ChevronRight,
+  FileQuestionMark,
   MapPin,
+  MessagesSquare,
   PenLine,
   X,
 } from "lucide-react";
@@ -20,6 +25,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import RichTextEditor from "../../layout/RichTextEditor";
 import { fetchWorkModes } from "../../utils/WorkModeRequests";
 import { fetchJobCategories } from "../../utils/JobCategoryRequests";
+import { fetchCurrencies } from "../../utils/CurrencyRequests";
 
 interface EmployerData {
   jobSectorId: string;
@@ -50,7 +56,7 @@ interface JobFormData {
   StateId: string;
   CityId: string;
   JobExpiration: string;
-  JobAmount: string;
+  JobAmount: number;
   JobResponsibility: string;
   JobRequirement: string;
   JobCategoryId: string;
@@ -59,6 +65,7 @@ interface JobFormData {
   JobViewScope: string;
   Grade: string;
   JobPhoto: string;
+  Currency: string;
 }
 
 interface CountryData {
@@ -99,7 +106,7 @@ interface JobData {
   publishedDate: string;
   dateCreated: string;
   jobExpiration: string;
-  jobAmount: string;
+  jobAmount: number;
   jobResponsibility: string;
   jobRequirement: string;
   jobCategoryId: string;
@@ -111,6 +118,7 @@ interface JobData {
   grade: string;
   jobPhoto: string;
   employerDetails: EmployerData;
+  currency: string;
 }
 
 interface JobSectorData {
@@ -130,17 +138,33 @@ interface JobCategoryData {
   isEnabled: boolean;
   categoryName: string;
 }
+
 interface WorkModeData {
   workModeId: number;
   isEnabled: boolean;
   modeName: string;
 }
 
+interface CurrencyData {
+    currencyId: number;
+    name: string;
+    code: string;
+    symbol: string;
+    isActive: boolean;
+    dateCreated: string;
+}
+
+interface QuestionFormData {
+    Question: string;
+    Hint: string;
+}
+
 export default function JobDetails() {
     const { id } = useParams();
     const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
     const hashedId = id ? Number(hashIds.decode(id)[0]) : 0;
-    const [job, setJob] = useState<JobData | null>(null);const {
+    const [job, setJob] = useState<JobData | null>(null);
+    const {
         register: regEdit,
         reset: resetEdit,
         handleSubmit: submitEdit,
@@ -148,6 +172,7 @@ export default function JobDetails() {
         control: editControl,
         setValue: editSetValue,
     } = useForm<JobFormData>();
+    const { register, control, formState: { errors } } = useForm<QuestionFormData>();
     const { errors: editErrors } = editFormState;
     const [countries, setCountries] = useState<CountryData[]>([]);
     const [editState, setEditState] = useState<StateData[]>([]);
@@ -155,8 +180,11 @@ export default function JobDetails() {
     const [jobSectors, setJobSectors] = useState<JobSectorData[]>([]);
     const [jobTypes, setJobTypes] = useState<JobTypeData[]>([]);
     const [editModalState, setEditModalState] = useState(false);
+    const [interviewModalState, setInterviewModalState] = useState(false);
     const [editJobCategories, setEditJobCategories] = useState<JobCategoryData[]>([]);
     const [workModes, setWorkModes] = useState<WorkModeData[]>([]);
+    const [currencyData, setCurrencyData] = useState<CurrencyData[]>([]);
+    const [isOpen, setIsOpen] = useState(false);
     const editSelectedCountry = useWatch({
         control: editControl,
         name: 'CountryId',
@@ -169,6 +197,11 @@ export default function JobDetails() {
         control: editControl,
         name: 'JobSectorId',
     });
+    const editJobAmount = useWatch({
+        control: editControl,
+        name: 'JobAmount',
+        defaultValue: 0
+    })
 
     useEffect(() => {
         if (job) {
@@ -187,6 +220,7 @@ export default function JobDetails() {
             editSetValue('JobResponsibility', job.jobResponsibility);
             editSetValue('JobRequirement', job.jobRequirement);
             editSetValue('WorkModeId', job.workModeId);
+            editSetValue('Currency', job.currency);
         }
     }, [job, editSetValue]);
     
@@ -204,6 +238,24 @@ export default function JobDetails() {
                 console.log(JSON.parse(data));
                 })
             }
+        })
+        .catch((err) => console.log(err))
+    }, []);
+
+    useEffect(() => {
+        fetchCurrencies()
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                setCurrencyData(data.data);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
         })
         .catch((err) => console.log(err))
     }, []);
@@ -388,18 +440,21 @@ export default function JobDetails() {
                 text.style.display = 'none';
             }
             const formData = new FormData();
-            if (!data.JobExpiration || data.JobExpiration != ""){
+            if (data.JobExpiration || data.JobExpiration !== ""){
                 formData.append("JobExpiration", data.JobExpiration);
             }
             formData.append("JobViewScope", data.JobViewScope);
             formData.append("Grade", String(data.Grade));
-            formData.append("JobAmount", data.JobAmount);
+            formData.append("JobAmount", `${data.JobAmount}`);
             formData.append("IsPaid", `${Number(data.JobAmount) > 0}`);
             formData.append("JobTitle", data.JobTitle);
             formData.append("CountryId", data.CountryId);
             formData.append("JobCategoryId", data.JobCategoryId);
             if (!data.JobPhoto || data.JobPhoto != ""){
                 formData.append("JobPhoto", data.JobPhoto[0]);
+            }
+            if (data.Currency && data.Currency !== "") {
+                formData.append("Currency", data.Currency);
             }
             formData.append("WorkModeId", data.WorkModeId);
             formData.append("JobResponsibility", data.JobResponsibility);
@@ -669,6 +724,26 @@ export default function JobDetails() {
                                             <p className='error-msg'>{editErrors.JobPhoto?.message}</p>
                                         </div>
                                         <div className="col-xl-6">
+                                            <label className="form-label">Currency</label>
+                                            <select
+                                                className="form-select"
+                                                {
+                                                    ...regEdit('Currency',
+                                                        {
+                                                            required: (editJobAmount && editJobAmount > 0) ? 'Required' : false,
+                                                        }
+                                                    )
+                                                }>
+                                                <option value="">Select Currency</option>
+                                                {
+                                                    currencyData.map((data, index) => (
+                                                        <option key={index} value={data.code}>{data.code}</option>
+                                                    ))
+                                                }
+                                            </select>
+                                            <p className='error-msg'>{editErrors.Currency?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6">
                                             <label className="form-label">Payment Amount</label>
                                             <input
                                                 type="number"
@@ -677,7 +752,8 @@ export default function JobDetails() {
                                                 {
                                                     ...regEdit('JobAmount',
                                                         {
-                                                            required: 'Required'
+                                                            required: 'Required',
+                                                            validate: (value) => (value && value < 0) ? 'Cannot be less than 0' : true
                                                         }
                                                     )
                                                 } />
@@ -767,6 +843,89 @@ export default function JobDetails() {
                     }
                 </div>
             </Modal>
+            <Modal isOpen={interviewModalState} onRequestClose={() => { setInterviewModalState(false); }}
+                style={{
+                content: {
+                    width: 'fit-content',
+                    height: 'fit-content',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%)',
+                    backgroundColor: 'rgb(255 255 255)',
+                    borderRadius: '0.5rem',
+                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                },
+                overlay: {
+                    backgroundColor: 'rgba(255, 255, 255, 0.7)'
+                }
+            }}
+            >
+                
+                <div  className="h-fit w-100 overflow-auto" style={{ maxHeight: '70vh' }}>
+                    {
+                        job && (
+                            <form noValidate onSubmit={submitEdit(editJob)}>
+                                <div className="d-flex justify-content-between border-bottom">
+                                    <h1 className="modal-title fs-16" id="addNewTimeSheetLabel">Add Interview Question</h1>
+                                    <button type="button" className="btn-close"  onClick={() => setInterviewModalState(false)}></button>
+                                </div>
+                                <div className="mt-4">
+                                    <div className="row gy-15 text-start">
+                                        <div className="col-xl-12">
+                                            <label className="form-label">Question</label>
+                                            <Controller
+                                                name="Question"
+                                                control={control}
+                                                rules={{ required: 'Required' }}
+                                                render={({ field }) => (
+                                                <RichTextEditor
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                />
+                                                )}
+                                            />
+                                            <p className='error-msg'>{errors.Question?.message}</p>
+                                        </div>
+                                        <div className="col-xl-12">
+                                            <label className="form-label">Hint</label>
+                                            <input
+                                                type="text"
+                                                className="form-control"
+                                                placeholder="Hint"
+                                                {
+                                                    ...register('Hint',
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                }
+                                            />
+                                            <p className='error-msg'>{errors.Hint?.message}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="d-flex justify-content-end gap-10 mt-20">
+                                        <button type="button" className="btn btn-danger" onClick={() => setInterviewModalState(false)}>
+                                            <X size={18} className="mr-2" /> Cancel
+                                        </button>
+                                        <button type="submit" className="btn btn-success">
+                                            <div className="dots" id="query-loader-1">
+                                                <div className="dot"></div>
+                                                <div className="dot"></div>
+                                                <div className="dot"></div>
+                                            </div>
+                                            <span id="query-text-1">
+                                                <CheckCheck size={18} className="mr-2" /> Add Question
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        )
+                    }
+                </div>
+            </Modal>
             <div className="row">
                 <div className="col-xl-12">
                     <div className="page-title-box d-flex-between flex-wrap gap-15">
@@ -808,9 +967,37 @@ export default function JobDetails() {
                                     >
                                     <div className="toggle-knob" />
                                 </div>
-                                <button type="button" className="btn btn-warning" onClick={() => setEditModalState(true)}>
-                                    <PenLine /> Update Job
-                                </button>
+                                <div className="position-relative">
+                                    <button type="button" className="btn btn-info position-relative" onClick={() => setIsOpen(!isOpen)}>
+                                        More Actions <ChevronDown />
+                                    </button>
+                                    {isOpen && (
+                                        <div className="position-absolute end-0 mt-2 bg-white rounded shadow-lg z-3" style={{ width: '200px'}}>
+                                            <div className="py-2">
+                                                <button
+                                                    className="d-flex align-items-center w-100 px-4 py-2 small gap-3"
+                                                    onClick={() => {setIsOpen(false); setEditModalState(true);}}>
+                                                    <PenLine style={{ marginRight: '10px'}} />  Update Job
+                                                </button>
+                                                <button
+                                                    className="d-flex align-items-center w-100 px-4 py-2 small gap-3"
+                                                    onClick={() => { setIsOpen(false); setInterviewModalState(true); }}>
+                                                    <FileQuestionMark style={{ marginRight: '10px'}} />  Add Interview Question
+                                                </button>
+                                                <button
+                                                    className="d-flex align-items-center w-100 px-4 py-2 small gap-3"
+                                                    onClick={() => {setIsOpen(false)}}>
+                                                    <MessagesSquare style={{ marginRight: '10px'}} />  View Interview Question
+                                                </button>
+                                                <button
+                                                    className="d-flex align-items-center w-100 px-4 py-2 small gap-3"
+                                                    onClick={() => {setIsOpen(false)}}>
+                                                    <AppWindow style={{ marginRight: '10px'}} />  Preview Applications
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                             <div className="col-lg-8">
                                 <div className="card">
@@ -819,7 +1006,7 @@ export default function JobDetails() {
                                             <h2 className="mb-15">{ job.jobTitle}</h2>
                                             <div className="d-flex align-items-center gap-4">
                                                 <div className="avatar avatar-big">
-                                                    <img src={job.employerDetails.employerLogo } alt="Company Logo" className="radius-100"/>
+                                                    <img src={ job.jobPhoto ?? job.employerDetails.employerLogo } alt="Company Logo" className="radius-100"/>
                                                 </div>
                                                 <div>
                                                     <h4 className="mb-5">{ job.employer }</h4>
@@ -835,8 +1022,15 @@ export default function JobDetails() {
                                     </div>
                                     <div className="card-body pt-15">
                                         <div className="mb-15 text-start">
-                                            <h4 className="mb-5">Full Job Description</h4>
+                                            <h4 className="mb-5 border-bottom">Description</h4>
                                             <HtmlRenderer html={job.jobDescription} />
+                                        </div>
+                                        <div className="mb-15 text-start">
+                                            <h4 className="mb-5 border-bottom">Responsibility</h4>
+                                            <HtmlRenderer html={job.jobResponsibility} />
+                                        </div><div className="mb-15 text-start">
+                                            <h4 className="mb-5 border-bottom">Requirements</h4>
+                                            <HtmlRenderer html={job.jobRequirement} />
                                         </div>
                                     </div>
                                 </div>
@@ -857,6 +1051,9 @@ export default function JobDetails() {
                                                 <p className="mb-5"><strong>Expiration:</strong> {(new Date(job.jobExpiration)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</p>
                                             )
                                         }
+                                        <p className="mb-5"><strong>Sector:</strong> {job.jobSector}</p>
+                                        <p className="mb-5"><strong>Category:</strong> {job.jobCategory}</p>
+                                        <p className="mb-5"><strong>Pay:</strong> {job.isPaid ? `${job.currency} ${job.jobAmount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2})}` : 'UnPaid Role'}</p>
                                         <p className="mb-5"><strong>Total Applications:</strong> 0</p>
                                     </div>
                                 </div>

@@ -26,6 +26,7 @@ import Hashids from "hashids";
 import { fetchJobTypes } from "../../utils/JobTypeRequests";
 import { fetchJobCategories } from "../../utils/JobCategoryRequests";
 import { fetchWorkModes } from "../../utils/WorkModeRequests";
+import { fetchCurrencies } from "../../utils/CurrencyRequests";
 
 interface CountryData {
   countryId: number;
@@ -65,7 +66,7 @@ interface JobData {
   publishedDate: string;
   dateCreated: string;
   jobExpiration: string;
-  jobAmount: string;
+  jobAmount: number;
   jobResponsibility: string;
   jobRequirement: string;
   jobCategoryId: string;
@@ -76,6 +77,7 @@ interface JobData {
   jobViewScope: string;
   grade: string;
   jobPhoto: string;
+  currency: string;
 }
 
 interface JobFormData {
@@ -88,7 +90,8 @@ interface JobFormData {
   StateId: string;
   CityId: string;
   JobExpiration: string;
-  JobAmount: string;
+  JobAmount: number;
+  Currency: string;
   JobResponsibility: string;
   JobRequirement: string;
   JobCategoryId: string;
@@ -153,6 +156,15 @@ interface WorkModeData {
   modeName: string;
 }
 
+interface CurrencyData {
+    currencyId: number;
+    name: string;
+    code: string;
+    symbol: string;
+    isActive: boolean;
+    dateCreated: string;
+}
+
 export default function JobMgt() {
     const [addModalState, setAddModalState] = useState(false);
     const [editModalState, setEditModalState] = useState(false);
@@ -187,6 +199,7 @@ export default function JobMgt() {
     const [jobTypes, setJobTypes] = useState<JobTypeData[]>([]);
     const [workModes, setWorkModes] = useState<WorkModeData[]>([]);
     const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
+    const [currencyData, setCurrencyData] = useState<CurrencyData[]>([]);
     const selectedCountry = useWatch({
         control,
         name: 'CountryId',
@@ -212,6 +225,16 @@ export default function JobMgt() {
         control: editControl,
         name: 'JobSectorId',
     });
+    const jobAmount = useWatch({
+        control,
+        name: 'JobAmount',
+        defaultValue: 0
+    })
+    const editJobAmount = useWatch({
+        control: editControl,
+        name: 'JobAmount',
+        defaultValue: 0
+    })
 
     useEffect(() => {
         fetchAllJobs({ pageNumber, limit, ...filters })
@@ -233,6 +256,28 @@ export default function JobMgt() {
     }, [pageNumber, limit, filters]);
 
     useEffect(() => {
+        setValue('JobAmount', 0);
+    }, [setValue])
+
+    useEffect(() => {
+        fetchCurrencies()
+        .then(res => {
+        if (res.status === 200) {
+            res.json()
+            .then(data => {
+                setCurrencyData(data.data);
+            })
+        } else {
+            res.text()
+            .then(data => {
+            console.log(JSON.parse(data));
+            })
+        }
+        })
+        .catch((err) => console.log(err))
+    }, []);
+
+    useEffect(() => {
         if (jobEdit) {
             editSetValue('JobTitle', jobEdit.jobTitle);
             editSetValue('JobSectorId', jobEdit.jobSectorId);
@@ -248,6 +293,7 @@ export default function JobMgt() {
             editSetValue('JobResponsibility', jobEdit.jobResponsibility);
             editSetValue('JobRequirement', jobEdit.jobRequirement);
             editSetValue('WorkModeId', jobEdit.workModeId);
+            editSetValue('Currency', jobEdit.currency);
         }
     }, [jobEdit, editSetValue]);
 
@@ -529,7 +575,7 @@ export default function JobMgt() {
             !errors.Grade && !errors.JobAmount &&
             !errors.JobResponsibility && !errors.JobRequirement &&
             !errors.JobCategoryId && !errors.WorkModeId &&
-            !errors.JobPhoto && !errors.IsPaid
+            !errors.JobPhoto && !errors.IsPaid && !errors.Currency
         ) {
             const loader = document.getElementById('query-loader');
             const text = document.getElementById('query-text');
@@ -544,7 +590,10 @@ export default function JobMgt() {
             formData.append("JobExpiration", data.JobExpiration);
             formData.append("JobViewScope", data.JobViewScope);
             formData.append("Grade", String(data.Grade));
-            formData.append("JobAmount", data.JobAmount);
+            formData.append("JobAmount", `${data.JobAmount}`);
+            if (data.Currency && data.Currency !== "") {
+                formData.append("Currency", data.Currency);
+            }
             formData.append("IsPaid", `${Number(data.JobAmount) > 0}`);
             formData.append("JobTitle", data.JobTitle);
             formData.append("CountryId", data.CountryId);
@@ -588,18 +637,22 @@ export default function JobMgt() {
                 text.style.display = 'none';
             }
             const formData = new FormData();
-            if (!data.JobExpiration || data.JobExpiration != ""){
+            if (data.JobExpiration || data.JobExpiration != ""){
                 formData.append("JobExpiration", data.JobExpiration);
             }
             formData.append("JobViewScope", data.JobViewScope);
             formData.append("Grade", String(data.Grade));
-            formData.append("JobAmount", data.JobAmount);
+            formData.append("JobAmount", `${data.JobAmount}`);
+            formData.append("Curency", data.Currency);
             formData.append("IsPaid", `${Number(data.JobAmount) > 0}`);
             formData.append("JobTitle", data.JobTitle);
             formData.append("CountryId", data.CountryId);
             formData.append("JobCategoryId", data.JobCategoryId);
             if (!data.JobPhoto || data.JobPhoto != ""){
                 formData.append("JobPhoto", data.JobPhoto[0]);
+            }
+            if (data.Currency && data.Currency !== "") {
+                formData.append("Currency", data.Currency);
             }
             formData.append("WorkModeId", data.WorkModeId);
             formData.append("JobResponsibility", data.JobResponsibility);
@@ -657,7 +710,7 @@ export default function JobMgt() {
                         </div>
                         <div className="mt-4">
                             <div className="row gy-15 text-start">
-                                <div className="col-xl-6">
+                                <div className="col-xl-12">
                                     <label className="form-label">Job Title</label>
                                     <input
                                         type="text"
@@ -887,21 +940,6 @@ export default function JobMgt() {
                                     <p className='error-msg'>{errors.JobPhoto?.message}</p>
                                 </div>
                                 <div className="col-xl-6">
-                                    <label className="form-label">Payment Amount</label>
-                                    <input
-                                        type="number"
-                                        className="form-control"
-                                        placeholder="Payment Amount"
-                                        {
-                                            ...register('JobAmount',
-                                                {
-                                                    required: 'Required'
-                                                }
-                                            )
-                                        } />
-                                    <p className='error-msg'>{errors.JobAmount?.message}</p>
-                                </div>
-                                <div className="col-xl-6">
                                     <label className="form-label">Expected Grade</label>
                                     <input
                                         type="text"
@@ -915,6 +953,42 @@ export default function JobMgt() {
                                             )
                                         } />
                                     <p className='error-msg'>{errors.Grade?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
+                                    <label className="form-label">Currency</label>
+                                    <select
+                                        className="form-select"
+                                        {
+                                            ...register('Currency',
+                                                {
+                                                    required: (jobAmount && jobAmount > 0) ? 'Required' : false,
+                                                }
+                                            )
+                                        }>
+                                        <option value="">Select Currency</option>
+                                        {
+                                            currencyData.map((data, index) => (
+                                                <option key={index} value={data.code}>{data.code}</option>
+                                            ))
+                                        }
+                                    </select>
+                                    <p className='error-msg'>{errors.Currency?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
+                                    <label className="form-label">Payment Amount</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="Payment Amount"
+                                        {
+                                            ...register('JobAmount',
+                                                {
+                                                    required: 'Required',
+                                                    validate: (value) => (value && value < 0) ? 'Cannot be less than 0' : true
+                                                }
+                                            )
+                                        } />
+                                    <p className='error-msg'>{errors.JobAmount?.message}</p>
                                 </div>
                                 <div className="col-xl-12">
                                     <label className="form-label">Job Description</label>
@@ -1221,6 +1295,26 @@ export default function JobMgt() {
                                             <p className='error-msg'>{editErrors.JobPhoto?.message}</p>
                                         </div>
                                         <div className="col-xl-6">
+                                            <label className="form-label">Currency</label>
+                                            <select
+                                                className="form-select"
+                                                {
+                                                    ...register('Currency',
+                                                        {
+                                                            required: (editJobAmount && editJobAmount > 0) ? 'Required' : false,
+                                                        }
+                                                    )
+                                                }>
+                                                <option value="">Select Currency</option>
+                                                {
+                                                    currencyData.map((data, index) => (
+                                                        <option key={index} value={data.code}>{data.code}</option>
+                                                    ))
+                                                }
+                                            </select>
+                                            <p className='error-msg'>{errors.Currency?.message}</p>
+                                        </div>
+                                        <div className="col-xl-6">
                                             <label className="form-label">Payment Amount</label>
                                             <input
                                                 type="number"
@@ -1229,7 +1323,8 @@ export default function JobMgt() {
                                                 {
                                                     ...regEdit('JobAmount',
                                                         {
-                                                            required: 'Required'
+                                                            required: 'Required',
+                                                            validate: (value) => (value && value < 0) ? 'Cannot be less than 0' : true
                                                         }
                                                     )
                                                 } />
