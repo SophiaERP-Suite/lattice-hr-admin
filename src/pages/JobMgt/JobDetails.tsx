@@ -90,8 +90,6 @@ export default function JobDetails() {
     const editSelectedState = useWatch({ control: editControl, name: 'StateId' });
     const editSelectedSector = useWatch({ control: editControl, name: 'JobSectorId' });
 
-    // Guard flag: true while programmatically pre-filling the edit form.
-    // Cascade useEffects check this so they don't wipe dependent values during pre-fill.
     const isPopulatingEdit = useRef(false);
 
     const BASE_URL = "http://localhost:5127";
@@ -214,14 +212,12 @@ export default function JobDetails() {
         if (job) populateEditForm(job);
     }, [job]);
 
-    // Also re-populate when the modal opens (in case job was already loaded)
+
     useEffect(() => {
         if (editModalState && job) populateEditForm(job);
     }, [editModalState]);
 
     // ─── Cascade useEffects ───────────────────────────────────────────────────
-    // Each skips its reset logic while pre-fill is in progress.
-    // Resets happen only on genuine user-driven changes.
 
     useEffect(() => {
         if (isPopulatingEdit.current) return;

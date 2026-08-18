@@ -7,6 +7,27 @@ const authHeaders = () => ({
   "Content-Type": "application/json",
 });
 
+export const getAllTimesheetsForAdmin = async (
+  page = 1,
+  pageSize = 10,
+  status?: string,
+  search?: string
+) => {
+  const params = new URLSearchParams({
+    page: String(page),
+    pageSize: String(pageSize),
+    ...(status ? { status } : {}),
+    ...(search ? { searchTerm: search } : {}),
+  });
+  const res = await fetch(`${BASE_URL}/timesheet/admin?${params}`, {
+    method: "GET",
+    headers: authHeaders()
+  });
+
+  const data = await res.json();
+  return data;
+};
+
 export const getAllTimesheets = async (
   page = 1,
   pageSize = 10,

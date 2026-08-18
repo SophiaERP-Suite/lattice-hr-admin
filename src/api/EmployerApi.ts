@@ -11,6 +11,16 @@ export const getEmployerDetails = async () => {
   return response.json();
 };
 
+export const getRecentEmployers = async (count: number) => {
+  const response = await fetch(`${BaseURL}/employers/${count}/recentEmployers/admin`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.json();
+};
+
 export const getOrganizationEmployees = async (filters: {
   page?: number;
   pageSize?: number;

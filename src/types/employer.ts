@@ -31,3 +31,13 @@ export interface EmployerDetailsDto {
 
   user: UserDetailsDto;
 }
+
+
+export interface RecentEmployers {
+  employerId: number;
+  employerLogo: string;
+  employerName: string;
+  totalWorkers: number;
+  totalJobs: number;
+  dateCreated: string;
+}

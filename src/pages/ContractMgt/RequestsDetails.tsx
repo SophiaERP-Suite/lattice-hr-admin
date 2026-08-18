@@ -1,23 +1,25 @@
 import {
-  Calendar,
-  CheckCheck,
-  ChevronRight,
-  Eye,
-  Mail,
-  PenLine,
-  Phone,
-  Plus,
-  ReceiptText,
-  SendHorizonal,
-  Trash2,
-  X,
+    Calendar,
+    CheckCheck,
+    ChevronRight,
+    Eye,
+    Mail,
+    PenLine,
+    Phone,
+    Plus,
+    ReceiptText,
+    SendHorizonal,
+    Trash2,
+    X,
+    Upload,
+    FileText,
 } from "lucide-react";
 import { NavLink, useParams } from "react-router-dom";
 import Hashids from "hashids";
 import { useEffect, useRef, useState } from "react";
 import Tippy from "@tippyjs/react";
 import { toast, ToastContainer } from "react-toastify";
-import { createNewContract, deleteContractRequestMessage, getContractRequestById, sendContractRequestMessage, updateContractRequestMessage } from "../../utils/ContractRequests";
+import { createNewContract, deleteContractRequestMessage, getContractRequestById, sendContractRequestMessage, updateContractRequestMessage, uploadContractPdf } from "../../utils/ContractRequests";
 import HtmlRenderer from "../../layout/HTMLRenderer";
 import { Controller, useFieldArray, useForm, useWatch } from "react-hook-form";
 import RichTextEditor from "../../layout/RichTextEditor";
@@ -27,12 +29,12 @@ import { fetchResponsibilityTypes } from "../../utils/ResponsibilityTypeRequests
 import { fetchCurrencies } from "../../utils/CurrencyRequests";
 
 interface MessageData {
-  messageId : number;
-  message : string;
-  edited : string;
-  deleted : string;
-  sender : string;
-  dateCreated : string;
+    messageId: number;
+    message: string;
+    edited: string;
+    deleted: string;
+    sender: string;
+    dateCreated: string;
 }
 
 interface ResponsibilitiesData {
@@ -51,16 +53,16 @@ interface ContractData {
 }
 
 interface RequestData {
-  requestId : string;
-  employerId : string;
-  employer : string;
-  employerMail : string;
-  employerPhone : string;
-  employerLogo : string;
-  description : string;
-  dateCreated : string;
-  messages : MessageData[];
-  contract: ContractData;
+    requestId: string;
+    employerId: string;
+    employer: string;
+    employerMail: string;
+    employerPhone: string;
+    employerLogo: string;
+    description: string;
+    dateCreated: string;
+    messages: MessageData[];
+    contract: ContractData;
 }
 
 interface MessageFormData {
@@ -68,9 +70,9 @@ interface MessageFormData {
 }
 
 interface ResponsibilityTypeData {
-  typeId: number;
-  isEnabled: boolean;
-  typeName: string;
+    typeId: number;
+    isEnabled: boolean;
+    typeName: string;
 }
 
 interface ResponsibilityTypeFormData {
@@ -95,6 +97,14 @@ interface CurrencyData {
     dateCreated: string;
 }
 
+interface PdfUploadData {
+    pdfFile: FileList;
+    contractName: string;
+    expiryDate: string;
+    amount: string;
+    currency: string;
+}
+
 export default function RequestDetails() {
     const { id } = useParams();
     const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
@@ -117,6 +127,11 @@ export default function RequestDetails() {
         name: 'Responsibilities'
     });
     const [currencyData, setCurrencyData] = useState<CurrencyData[]>([]);
+    const [uploadModalState, setUploadModalState] = useState(false);
+    const [uploadMethod, setUploadMethod] = useState<'template' | 'pdf'>('template');
+    const [uploadingPdf, setUploadingPdf] = useState(false);
+    const { control: pdfControl, handleSubmit: handlePdfSubmit, register: pdfRegister, reset: pdfReset, formState: { errors: pdfErrors } } = useForm<PdfUploadData>();
+    const [selectedPdfFile, setSelectedPdfFile] = useState<File | null>(null);
 
     const verifyMessageValidity = (message: string) => {
         return message && message.trim() !== '' && message !== '<p></p>'
@@ -132,20 +147,20 @@ export default function RequestDetails() {
 
     useEffect(() => {
         fetchCurrencies()
-        .then(res => {
-        if (res.status === 200) {
-            res.json()
-            .then(data => {
-                setCurrencyData(data.data);
+            .then(res => {
+                if (res.status === 200) {
+                    res.json()
+                        .then(data => {
+                            setCurrencyData(data.data);
+                        })
+                } else {
+                    res.text()
+                        .then(data => {
+                            console.log(JSON.parse(data));
+                        })
+                }
             })
-        } else {
-            res.text()
-            .then(data => {
-            console.log(JSON.parse(data));
-            })
-        }
-        })
-        .catch((err) => console.log(err))
+            .catch((err) => console.log(err))
     }, []);
 
     useEffect(() => {
@@ -163,43 +178,43 @@ export default function RequestDetails() {
 
     useEffect(() => {
         fetchResponsibilityTypes()
-        .then(res => {
-        if (res.status === 200) {
-            res.json()
-            .then(data => {
-                setResponsibilityTypes(data.data);
+            .then(res => {
+                if (res.status === 200) {
+                    res.json()
+                        .then(data => {
+                            setResponsibilityTypes(data.data);
+                        })
+                } else {
+                    res.text()
+                        .then(data => {
+                            console.log(JSON.parse(data));
+                        })
+                }
             })
-        } else {
-            res.text()
-            .then(data => {
-            console.log(JSON.parse(data));
-            })
-        }
-        })
-        .catch((err) => console.log(err))
+            .catch((err) => console.log(err))
     }, []);
-    
+
     useEffect(() => {
         getContractRequestById(hashedId)
-        .then(res => {
-            if (res.status === 200) {
-                res.json()
-                .then(data => {
-                    console.log(data);
-                    setRequestDetails(data.data);
-                })
-            } else {
-                res.text()
-                .then(data => {
-                    console.log(JSON.parse(data));
-                })
-            }
-        })
+            .then(res => {
+                if (res.status === 200) {
+                    res.json()
+                        .then(data => {
+                            console.log(data);
+                            setRequestDetails(data.data);
+                        })
+                } else {
+                    res.text()
+                        .then(data => {
+                            console.log(JSON.parse(data));
+                        })
+                }
+            })
     }, [hashedId]);
 
     useEffect(() => {
         if (responsibilityTypes.length > 0) {
-            const formatted  = responsibilityTypes.map(data => ({
+            const formatted = responsibilityTypes.map(data => ({
                 TypeId: data.typeId,
                 Handler: "",
                 TypeName: data.typeName
@@ -224,11 +239,11 @@ export default function RequestDetails() {
     }
 
     useEffect(() => {
-      if (verifyMessageValidity(messageText)) {
-        setColor('rgb(20, 147, 255)')
-      } else {
-        setColor('#a5a5a5');
-      }
+        if (verifyMessageValidity(messageText)) {
+            setColor('rgb(20, 147, 255)')
+        } else {
+            setColor('#a5a5a5');
+        }
     }, [messageText]);
 
     const sendMessage = async () => {
@@ -239,9 +254,9 @@ export default function RequestDetails() {
             data.append('Sender', 'Admin');
             const res = await sendContractRequestMessage(hashedId, data);
             handleCreateEmployee(res, null, null, { toast }, reset)
-            .finally(() => refetchRequest())
+                .finally(() => refetchRequest())
         }
-        
+
     }
 
     const editMessage = async () => {
@@ -252,82 +267,162 @@ export default function RequestDetails() {
             data.append('Message', editMessageText);
             const res = await updateContractRequestMessage(hashedId, data, selectedMessage.messageId);
             handleCreateEmployee(res, null, null, { toast }, editReset)
-            .finally(() => {
-                refetchRequest();
-                setEditState(false);
-                setSelectedMessage(null);
-            })
+                .finally(() => {
+                    refetchRequest();
+                    setEditState(false);
+                    setSelectedMessage(null);
+                })
         }
-        
+
     }
 
     const deleteMessage = async () => {
         if (selectedMessage && hashedId) {
             const res = await deleteContractRequestMessage(hashedId, selectedMessage.messageId);
             handleCreateEmployee(res, null, null, { toast }, editReset)
-            .finally(() => {
-                refetchRequest();
-                setEditState(false);
-                setDelModalState(false)
-                setSelectedMessage(null);
-            })
+                .finally(() => {
+                    refetchRequest();
+                    setEditState(false);
+                    setDelModalState(false)
+                    setSelectedMessage(null);
+                })
         }
-        
+
     }
 
     const submitContract = async (data: ContractFormData) => {
-        if (isValid && hashedId) {
-            const loader = document.getElementById('query-loader');
-            const text = document.getElementById('query-text');
-            if (loader) {
-                loader.style.display = 'flex';
+        try {
+
+            if (isValid && hashedId) {
+                const loader = document.getElementById('query-loader');
+                const text = document.getElementById('query-text');
+                if (loader) {
+                    loader.style.display = 'flex';
+                }
+                if (text) {
+                    text.style.display = 'none';
+                }
+                const responsibilities = data.Responsibilities.filter(data => data.Handler !== 'NIL');
+                const reqData = {
+                    ...data,
+                    Responsibilities: responsibilities
+                }
+                const res = await createNewContract(hashedId, reqData);
+                handleCreateEmployee(res, null, null, { toast }, contractReset)
+                    .finally(() => {
+                        refetchRequest();
+                        setAddModalState(false);
+                    })
             }
-            if (text) {
-                text.style.display = 'none';
-            }
-            const responsibilities = data.Responsibilities.filter(data => data.Handler !== 'NIL');
-            const reqData = {
-                ...data,
-                Responsibilities: responsibilities
-            }
-            const res = await createNewContract(hashedId, reqData);
-            handleCreateEmployee(res, null, null, { toast }, contractReset)
-            .finally(() => {
-                refetchRequest();
-                setAddModalState(false);
-            })
-        }
+        } catch (error) {
+            console.error('Error creating contract:', error);
+        };
     }
+
+    const submitContractPdf = async (data: PdfUploadData) => {
+        try {
+            if (hashedId && data.pdfFile && data.pdfFile[0]) {
+                setUploadingPdf(true);
+                const formData = new FormData();
+                formData.append('UploadedContract', data.pdfFile[0]);
+                formData.append('ContractName', data.contractName);
+                formData.append('ExpiryDate', data.expiryDate);
+                formData.append('Amount', data.amount);
+                formData.append('Currency', data.currency);
+                formData.append('Content', "");
+
+                try {
+                    const res = await uploadContractPdf(hashedId, formData);
+                    await handleCreateEmployee(res, null, null, { toast }, pdfReset);
+                    await refetchRequest();
+                    setUploadModalState(false);
+                    setSelectedPdfFile(null);
+                    setUploadMethod('template');
+                    pdfReset();
+                } catch (error) {
+                    console.error('Error uploading PDF:', error);
+                    toast.error('Failed to upload PDF contract');
+                } finally {
+                    setUploadingPdf(false);
+                }
+            } else {
+                toast.error('Please select a PDF file');
+            }
+        } catch (error) {
+            console.error(error)
+        }
+    };
+
+    const handlePdfFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            if (file.type !== 'application/pdf') {
+                toast.error('Please upload a valid PDF file');
+                e.target.value = '';
+                setSelectedPdfFile(null);
+                return;
+            }
+            if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                toast.error('File size should be less than 10MB');
+                e.target.value = '';
+                setSelectedPdfFile(null);
+                return;
+            }
+            setSelectedPdfFile(file);
+        }
+    };
 
     return (
         <div className="container-fluid">
             <ToastContainer />
-            <Modal isOpen={addModalState} onRequestClose={() => { setAddModalState(false); }}
-                    style={{
+
+            {/* PDF Upload Modal */}
+            <Modal isOpen={uploadModalState} onRequestClose={() => { setUploadModalState(false); setUploadMethod('template'); }}
+                style={{
                     content: {
-                    width: 'fit-content',
-                    height: 'fit-content',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    backgroundColor: 'rgb(255 255 255)',
-                    borderRadius: '0.5rem',
-                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                        width: 'fit-content',
+                        height: 'fit-content',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        backgroundColor: 'rgb(255 255 255)',
+                        borderRadius: '0.5rem',
+                        boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+                        minWidth: '500px'
                     },
                     overlay: {
-                    backgroundColor: 'rgba(255, 255, 255, 0.7)'
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)'
                     }
                 }}
             >
-                
                 <div className="h-fit w-100 overflow-auto" style={{ maxHeight: '70vh' }}>
-                    <form noValidate onSubmit={handleSubmit(submitContract)}>
-                        <div className="d-flex justify-content-between border-bottom">
-                            <h1 className="modal-title fs-16" id="addNewTimeSheetLabel">Create New Contract</h1>
-                            <button type="button" className="btn-close"  onClick={() => setAddModalState(false)}></button>
-                        </div>
-                        <div className="mt-4">
-                            <div className="row gy-15">
+                    <div className="d-flex justify-content-between border-bottom mb-20">
+                        <h1 className="modal-title fs-16">Create New Contract</h1>
+                        <button type="button" className="btn-close" onClick={() => { setUploadModalState(false); setUploadMethod('template'); }}></button>
+                    </div>
+
+                    {/* Method Selection Tabs */}
+                    <div className="d-flex gap-10">
+                        <button
+                            type="button"
+                            className={`btn ${uploadMethod === 'template' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                            onClick={() => setUploadMethod('template')}
+                        >
+                            Use Template Form
+                        </button>
+                        <button
+                            type="button"
+                            className={`btn ${uploadMethod === 'pdf' ? 'btn-primary' : 'btn-outline-secondary'}`}
+                            onClick={() => setUploadMethod('pdf')}
+                        >
+                            Upload PDF Contract
+                        </button>
+                    </div>
+
+                    {/* Template Form Method */}
+                    {uploadMethod === 'template' && (
+                        <form noValidate onSubmit={handleSubmit(submitContract)}>
+                            <div className="row gy-15 mt-15">
                                 <div className="col-xl-12">
                                     <label className="form-label">Content</label>
                                     <Controller
@@ -335,10 +430,10 @@ export default function RequestDetails() {
                                         control={contractControl}
                                         rules={{ required: 'Required' }}
                                         render={({ field }) => (
-                                        <RichTextEditor
-                                            value={field.value}
-                                            onChange={field.onChange}
-                                        />
+                                            <RichTextEditor
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                            />
                                         )}
                                     />
                                     <p className='error-msg'>{errors.Content?.message}</p>
@@ -351,10 +446,10 @@ export default function RequestDetails() {
                                                 <input type="hidden" {...register(`Responsibilities.${index}.TypeId`)} />
                                                 <select className="form-select" id="jobSector" {
                                                     ...register(`Responsibilities.${index}.Handler`,
-                                                                {
-                                                                    required: 'Required'
-                                                                }
-                                                        )
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
                                                 }>
                                                     <option value="">Select Handler</option>
                                                     <option value="Admin">Admin</option>
@@ -373,11 +468,11 @@ export default function RequestDetails() {
                                         className="form-control"
                                         placeholder="Amount"
                                         {
-                                            ...register('Amount',
-                                                {
-                                                    required: 'Required'
-                                                }
-                                            )
+                                        ...register('Amount',
+                                            {
+                                                required: 'Required'
+                                            }
+                                        )
                                         } />
                                     <p className='error-msg'>{errors.Amount?.message}</p>
                                 </div>
@@ -386,11 +481,11 @@ export default function RequestDetails() {
                                     <select
                                         className="form-select"
                                         {
-                                            ...register('Currency',
-                                                {
-                                                    required: 'Required'
-                                                }
-                                            )
+                                        ...register('Currency',
+                                            {
+                                                required: 'Required'
+                                            }
+                                        )
                                         }>
                                         <option value="">Select Currency</option>
                                         {
@@ -408,11 +503,247 @@ export default function RequestDetails() {
                                         className="form-control"
                                         placeholder="Expiry Date"
                                         {
-                                            ...register('ExpiryDate',
-                                                {
-                                                    required: 'Required'
+                                        ...register('ExpiryDate',
+                                            {
+                                                required: 'Required'
+                                            }
+                                        )
+                                        } />
+                                    <p className='error-msg'>{errors.ExpiryDate?.message}</p>
+                                </div>
+                            </div>
+                            <div className="mt-15">
+                                <div className="d-flex justify-content-end gap-10 mt-20">
+                                    <button type="button" className="btn btn-danger" onClick={() => setUploadModalState(false)}>
+                                        <X size={18} className="mr-2" /> Cancel
+                                    </button>
+                                    <button type="submit" className="btn btn-success">
+                                        <div className="dots" id="query-loader">
+                                            <div className="dot"></div>
+                                            <div className="dot"></div>
+                                            <div className="dot"></div>
+                                        </div>
+                                        <span id="query-text">
+                                            <CheckCheck size={18} className="mr-2" /> Create Contract
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    )}
+
+                    {/* PDF Upload Method */}
+                    {uploadMethod === 'pdf' && (
+                        <form className="mt-25" noValidate onSubmit={handlePdfSubmit(submitContractPdf)}>
+                            <div className="row gy-15">
+                                <div className="col-xl-12">
+                                    <label className="form-label">Contract Name *</label>
+                                    <input
+                                        type="text"
+                                        className="form-control"
+                                        placeholder="Enter contract name"
+                                        {...pdfRegister('contractName', { required: 'Contract name is required' })}
+                                    />
+                                    <p className='error-msg'>{pdfErrors.contractName?.message}</p>
+                                </div>
+
+                                <div className="col-xl-12">
+                                    <label className="form-label">Upload PDF Contract *</label>
+                                    <div className="border rounded p-3 text-center" style={{ borderStyle: 'dashed' }}>
+                                        <input
+                                            type="file"
+                                            className="form-control"
+                                            accept=".pdf"
+                                            {...pdfRegister('pdfFile', {
+                                                required: 'PDF file is required',
+                                                validate: {
+                                                    fileType: (value) => value && value[0]?.type === 'application/pdf' || 'Please upload a PDF file',
+                                                    fileSize: (value) => value && value[0]?.size <= 10 * 1024 * 1024 || 'File size must be less than 10MB'
                                                 }
-                                            )
+                                            })}
+                                            onChange={handlePdfFileChange}
+                                        />
+                                        {selectedPdfFile && (
+                                            <div className="mt-2 text-success">
+                                                <FileText size={16} className="me-1" />
+                                                Selected: {selectedPdfFile.name} ({(selectedPdfFile.size / 1024).toFixed(2)} KB)
+                                            </div>
+                                        )}
+                                    </div>
+                                    <p className='error-msg'>{pdfErrors.pdfFile?.message}</p>
+                                </div>
+
+                                <div className="col-xl-6">
+                                    <label className="form-label">Contract Amount *</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="Enter amount"
+                                        step="0.01"
+                                        {...pdfRegister('amount', { required: 'Amount is required', min: 0 })}
+                                    />
+                                    <p className='error-msg'>{pdfErrors.amount?.message}</p>
+                                </div>
+
+                                <div className="col-xl-6">
+                                    <label className="form-label">Currency *</label>
+                                    <select className="form-select" {...pdfRegister('currency', { required: 'Currency is required' })}>
+                                        <option value="">Select Currency</option>
+                                        {currencyData.map((data, index) => (
+                                            <option key={index} value={data.code}>{data.code} - {data.name}</option>
+                                        ))}
+                                    </select>
+                                    <p className='error-msg'>{pdfErrors.currency?.message}</p>
+                                </div>
+
+                                <div className="col-xl-12">
+                                    <label className="form-label">Expiry Date *</label>
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        {...pdfRegister('expiryDate', { required: 'Expiry date is required' })}
+                                    />
+                                    <p className='error-msg'>{pdfErrors.expiryDate?.message}</p>
+                                </div>
+                            </div>
+
+                            <div className="d-flex justify-content-end gap-10 mt-20">
+                                <button type="button" className="btn btn-danger" onClick={() => { setUploadModalState(false); setUploadMethod('template'); }}>
+                                    <X size={18} className="mr-2" /> Cancel
+                                </button>
+                                <button type="submit" className="btn btn-success" disabled={uploadingPdf}>
+                                    {uploadingPdf ? (
+                                        <>
+                                            <div className="dots d-inline-flex me-2">
+                                                <div className="dot"></div>
+                                                <div className="dot"></div>
+                                                <div className="dot"></div>
+                                            </div>
+                                            Uploading...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Upload size={18} className="mr-2" /> Upload & Create Contract
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    )}
+                </div>
+            </Modal>
+
+            <Modal isOpen={addModalState} onRequestClose={() => { setAddModalState(false); }}
+                style={{
+                    content: {
+                        width: 'fit-content',
+                        height: 'fit-content',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        backgroundColor: 'rgb(255 255 255)',
+                        borderRadius: '0.5rem',
+                        boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                    },
+                    overlay: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)'
+                    }
+                }}
+            >
+
+                <div className="h-fit w-100 overflow-auto" style={{ maxHeight: '70vh' }}>
+                    <form noValidate onSubmit={handleSubmit(submitContract)}>
+                        <div className="d-flex justify-content-between border-bottom">
+                            <h1 className="modal-title fs-16" id="addNewTimeSheetLabel">Create New Contract</h1>
+                            <button type="button" className="btn-close" onClick={() => setAddModalState(false)}></button>
+                        </div>
+                        <div className="mt-4">
+                            <div className="row gy-15">
+                                <div className="col-xl-12">
+                                    <label className="form-label">Content</label>
+                                    <Controller
+                                        name="Content"
+                                        control={contractControl}
+                                        rules={{ required: 'Required' }}
+                                        render={({ field }) => (
+                                            <RichTextEditor
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                            />
+                                        )}
+                                    />
+                                    <p className='error-msg'>{errors.Content?.message}</p>
+                                </div>
+                                {
+                                    fields.map((field, index) => (
+                                        <div className="col-xl-12 text-start" key={index}>
+                                            <div>
+                                                <label htmlFor="type" className="form-label">{(field as any).TypeName}</label>
+                                                <input type="hidden" {...register(`Responsibilities.${index}.TypeId`)} />
+                                                <select className="form-select" id="jobSector" {
+                                                    ...register(`Responsibilities.${index}.Handler`,
+                                                        {
+                                                            required: 'Required'
+                                                        }
+                                                    )
+                                                }>
+                                                    <option value="">Select Handler</option>
+                                                    <option value="Admin">Admin</option>
+                                                    <option value="Client">Client</option>
+                                                    <option value="NIL">Not In Contract</option>
+                                                </select>
+                                                <p className='error-msg'>{errors.Responsibilities?.[index]?.Handler?.message}</p>
+                                            </div>
+                                        </div>
+                                    ))
+                                }
+                                <div className="col-xl-6">
+                                    <label className="form-label">Package Price</label>
+                                    <input
+                                        type="number"
+                                        className="form-control"
+                                        placeholder="Amount"
+                                        {
+                                        ...register('Amount',
+                                            {
+                                                required: 'Required'
+                                            }
+                                        )
+                                        } />
+                                    <p className='error-msg'>{errors.Amount?.message}</p>
+                                </div>
+                                <div className="col-xl-6">
+                                    <label className="form-label">Currency</label>
+                                    <select
+                                        className="form-select"
+                                        {
+                                        ...register('Currency',
+                                            {
+                                                required: 'Required'
+                                            }
+                                        )
+                                        }>
+                                        <option value="">Select Currency</option>
+                                        {
+                                            currencyData.map((data, index) => (
+                                                <option key={index} value={data.code}>{data.code}</option>
+                                            ))
+                                        }
+                                    </select>
+                                    <p className='error-msg'>{errors.Currency?.message}</p>
+                                </div>
+                                <div className="col-xl-12">
+                                    <label className="form-label">Expiry Date</label>
+                                    <input
+                                        type="date"
+                                        className="form-control"
+                                        placeholder="Expiry Date"
+                                        {
+                                        ...register('ExpiryDate',
+                                            {
+                                                required: 'Required'
+                                            }
+                                        )
                                         } />
                                     <p className='error-msg'>{errors.ExpiryDate?.message}</p>
                                 </div>
@@ -440,20 +771,20 @@ export default function RequestDetails() {
             </Modal>
             <Modal isOpen={delModalState} onRequestClose={() => { setDelModalState(false); }}
                 style={{
-                content: {
-                width: 'fit-content',
-                height: 'fit-content',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                backgroundColor: 'rgb(255 255 255)',
-                borderRadius: '0.5rem',
-                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
-                },
-                overlay: {
-                backgroundColor: 'rgba(255, 255, 255, 0.7)'
-                }
-            }}
+                    content: {
+                        width: 'fit-content',
+                        height: 'fit-content',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        backgroundColor: 'rgb(255 255 255)',
+                        borderRadius: '0.5rem',
+                        boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                    },
+                    overlay: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)'
+                    }
+                }}
             >
                 {
                     selectedMessage && (
@@ -483,7 +814,7 @@ export default function RequestDetails() {
                         </div>
                     )
                 }
-                
+
             </Modal>
             <div className="row">
                 <div className="col-xl-12">
@@ -496,7 +827,7 @@ export default function RequestDetails() {
                                         Request Details
                                     </NavLink>
                                 </li>
-                                 <li className="mb-2">
+                                <li className="mb-2">
                                     <ChevronRight size={15} />
                                 </li>
                                 <li className="active breadcrumb-item" aria-current="page">
@@ -521,19 +852,19 @@ export default function RequestDetails() {
                         <>
                             <div className="col-xxl-3 col-xl-5 col-lg-5">
                                 <div className="sidebar-sticky">
-                                    <div className="card" style={{ height: '75vh', overflowY: 'auto'}}>
+                                    <div className="card" style={{ height: '75vh', overflowY: 'auto' }}>
                                         <div className="company-info">
                                             <div className="company-logo">
-                                                <img src={requestDetails.employerLogo} alt="image not found" />
+                                                <img src={requestDetails.employerLogo ? requestDetails.employerLogo : "https://img.icons8.com/fluency/120/image--v1.png"} alt="image not found" />
                                             </div>
-                                            <h2 className="company-name mb-15">{ requestDetails.employer }</h2>
+                                            <h2 className="company-name mb-15">{requestDetails.employer}</h2>
 
                                             <div className="company-info-list mb-15">
                                                 <ul>
-                                                    <li style={{ flexWrap: 'nowrap', alignItems: 'start' }}><span><Mail /></span> <Tippy content="Company Mail"><span style={{ textWrap: 'wrap'}}>{requestDetails.employerMail ?? 'None Provided'}</span></Tippy></li>
-                                                    <li style={{ flexWrap: 'nowrap', alignItems: 'start' }}><span><Phone /></span> <Tippy content="Company Phone"><span style={{ textWrap: 'wrap'}}>{requestDetails.employerPhone ?? 'None Provided'}</span></Tippy></li>
-                                                    <li style={{ flexWrap: 'nowrap', alignItems: 'start' }}><span><Calendar /></span> <Tippy content="Request Date"><span style={{ textWrap: 'wrap'}}>{new Date(requestDetails.dateCreated).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span></Tippy></li>
-                                                    <li style={{ flexWrap: 'nowrap', alignItems: 'start' }}><span><ReceiptText /></span> <Tippy content="Contract Signed"><span style={{ textWrap: 'wrap'}}>{requestDetails.employerPhone ?? 'None Provided'}</span></Tippy></li>
+                                                    <li style={{ flexWrap: 'nowrap', alignItems: 'start' }}><span><Mail /></span> <Tippy content="Company Mail"><span style={{ textWrap: 'wrap' }}>{requestDetails.employerMail || 'None Provided'}</span></Tippy></li>
+                                                    <li style={{ flexWrap: 'nowrap', alignItems: 'start' }}><span><Phone /></span> <Tippy content="Company Phone"><span style={{ textWrap: 'wrap' }}>{requestDetails.employerPhone || 'None Provided'}</span></Tippy></li>
+                                                    <li style={{ flexWrap: 'nowrap', alignItems: 'start' }}><span><Calendar /></span> <Tippy content="Request Date"><span style={{ textWrap: 'wrap' }}>{new Date(requestDetails.dateCreated).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span></Tippy></li>
+                                                    <li style={{ flexWrap: 'nowrap', alignItems: 'start' }}><span><ReceiptText /></span> <Tippy content="Contract Signed"><span style={{ textWrap: 'wrap' }}>{requestDetails.employerPhone || 'None Provided'}</span></Tippy></li>
                                                 </ul>
                                             </div>
                                             <div className="card-body pt-15">
@@ -547,7 +878,7 @@ export default function RequestDetails() {
                                 </div>
                             </div>
                             <div className="col-xxl-9 col-xl-7 col-lg-7">
-                                <div className="card" style={{ height: '75vh'}}>
+                                <div className="card" style={{ height: '75vh' }}>
                                     <div className="card-header justify-content-between gap-25 flex-wrap mb-25">
                                         <h4 className="">Messages ({requestDetails.messages.length})</h4>
                                         {
@@ -556,15 +887,15 @@ export default function RequestDetails() {
                                                     <Eye size={18} className="mr-2" /> Preview Contract
                                                 </NavLink>
                                             ) : (
-                                                <button type="button" className="btn btn-success" onClick={() => setAddModalState(true)}>
+                                                <button type="button" className="btn btn-success" onClick={() => setUploadModalState(true)}>
                                                     <Plus size={18} className="mr-2" /> Create Contract
                                                 </button>
                                             )
                                         }
-                                        
+
                                     </div>
                                     <div className="card-body overflow-y-auto" ref={containerRef}>
-                                        <p className="text-center" style={{ fontSize: '12px'}}>This is the start of this conversation</p>
+                                        <p className="text-center" style={{ fontSize: '12px' }}>This is the start of this conversation</p>
                                         {
                                             requestDetails.messages.map((data, index) => (
                                                 <div key={index} className={`d-flex align-items-center mb-4 ${data.sender === 'Admin' ? 'justify-content-end' : 'justify-content-start'}`}>
@@ -576,18 +907,18 @@ export default function RequestDetails() {
                                                                     control={editControl}
                                                                     rules={{ required: 'Required' }}
                                                                     render={({ field }) => (
-                                                                    <RichTextEditor
-                                                                        value={field.value}
-                                                                        onChange={field.onChange}
-                                                                        width85={true}
-                                                                        showToolbarToggle={true}
-                                                                        toolbarVisible={false}
-                                                                        maxHeight="100px"
-                                                                    />
+                                                                        <RichTextEditor
+                                                                            value={field.value}
+                                                                            onChange={field.onChange}
+                                                                            width85={true}
+                                                                            showToolbarToggle={true}
+                                                                            toolbarVisible={false}
+                                                                            maxHeight="100px"
+                                                                        />
                                                                     )}
                                                                 />
                                                                 <div className="d-flex justify-content-end">
-                                                                    <button type="button" onClick={() => {setEditState(false); setSelectedMessage(null);} }>
+                                                                    <button type="button" onClick={() => { setEditState(false); setSelectedMessage(null); }}>
                                                                         <X size={15} className="me-1" />
                                                                     </button>
                                                                     <button type="button" onClick={() => editMessage()}>
@@ -596,30 +927,30 @@ export default function RequestDetails() {
                                                                 </div>
                                                             </div>
                                                         ) : (
-                                                            <div className={`d-flex ${data.sender === 'Admin' ? '' : 'flex-row-reverse' }`}>
+                                                            <div className={`d-flex ${data.sender === 'Admin' ? '' : 'flex-row-reverse'}`}>
                                                                 {
-                                                                    (oneHourAgo(data.dateCreated) && data.sender === 'Admin' && !data.deleted ) && (
+                                                                    (oneHourAgo(data.dateCreated) && data.sender === 'Admin' && !data.deleted) && (
                                                                         <div>
                                                                             <Tippy content="Edit">
                                                                                 <button
                                                                                     type="button"
                                                                                     className={`text-black mx-2`}
-                                                                                    onClick={() => {setSelectedMessage(data); setEditState(true)}}
-                                                                                    >
+                                                                                    onClick={() => { setSelectedMessage(data); setEditState(true) }}
+                                                                                >
                                                                                     <PenLine size={12} />
                                                                                 </button>
                                                                             </Tippy>
-                                                                            
+
                                                                             <Tippy content="Delete">
                                                                                 <button
                                                                                     type="button"
                                                                                     className={`text-black mx-2`}
-                                                                                    onClick={() => {setSelectedMessage(data); setDelModalState(true)}}
-                                                                                    >
+                                                                                    onClick={() => { setSelectedMessage(data); setDelModalState(true) }}
+                                                                                >
                                                                                     <Trash2 size={12} />
                                                                                 </button>
                                                                             </Tippy>
-                                                                            
+
                                                                         </div>
                                                                     )
                                                                 }
@@ -627,17 +958,17 @@ export default function RequestDetails() {
                                                                     <div className={`p-2 rounded ${(data.sender === 'Admin' && !data.deleted) ? 'bg-info all-color-white' : 'bg-gray all-color-black'} ${data.deleted && 'all-color-black bg-white border'}`} style={{ maxWidth: '30rem' }}>
                                                                         {
                                                                             data.deleted
-                                                                            ? <p style={{ fontSize: '13px'}}>This message was deleted</p>
-                                                                            : <HtmlRenderer html={data.message} />
+                                                                                ? <p style={{ fontSize: '13px' }}>This message was deleted</p>
+                                                                                : <HtmlRenderer html={data.message} />
                                                                         }
-                                                                        
+
                                                                     </div>
-                                                                    <p style={{ fontSize: '10px'}}>{`${data.edited ? 'Edited' : ''} ${new Date(data.dateCreated).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'})}`}</p>
+                                                                    <p style={{ fontSize: '10px' }}>{`${data.edited ? 'Edited' : ''} ${new Date(data.dateCreated).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`}</p>
                                                                 </div>
                                                             </div>
                                                         )
                                                     }
-                                                    
+
                                                 </div>
                                             ))
                                         }
@@ -648,32 +979,32 @@ export default function RequestDetails() {
                                             control={control}
                                             rules={{ required: 'Required' }}
                                             render={({ field }) => (
-                                            <RichTextEditor
-                                                value={field.value}
-                                                onChange={field.onChange}
-                                                rounded={true}
-                                                width85={true}
-                                                showToolbarToggle={true}
-                                                toolbarVisible={false}
-                                            />
+                                                <RichTextEditor
+                                                    value={field.value}
+                                                    onChange={field.onChange}
+                                                    rounded={true}
+                                                    width85={true}
+                                                    showToolbarToggle={true}
+                                                    toolbarVisible={false}
+                                                />
                                             )}
                                         />
                                         <div className="py-2 px-2">
                                             <button type="button"
                                                 disabled={!verifyMessageValidity(messageText)}
                                                 onClick={() => sendMessage()}
-                                                >
+                                            >
                                                 <SendHorizonal color={color} />
                                             </button>
                                         </div>
-                                        
+
                                     </div>
                                 </div>
                             </div>
                         </>
                     )
                 }
-                    
+
             </div>
         </div>
     )

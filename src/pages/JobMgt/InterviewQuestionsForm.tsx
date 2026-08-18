@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useParams, useNavigate, Link, NavLink } from "react-router-dom";
+import { useParams, NavLink } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Plus, Trash2, ChevronRight, X, CheckCheck, Pen, CircleQuestionMark } from "lucide-react";
 import { toast, ToastContainer } from "react-toastify";
@@ -13,7 +13,6 @@ import { GetAllQuestions, UpdateQuestion, CreateInterview, DeleteQuestion } from
 type ModalType = "delete" | null;
 
 const InterviewQuestionsPageLocal = () => {
-  const navigate = useNavigate();
   const params = useParams();
   const [questions, setQuestions] = useState<InterviewQuestion[]>([]);
   const [showForm, setShowForm] = useState(false);

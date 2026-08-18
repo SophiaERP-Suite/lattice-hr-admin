@@ -18,7 +18,9 @@ export interface TimesheetLine {
 export interface Timesheet {
   timesheetId: number;
   jobSeekerId: number;
+  employerId: number;
   employeeName: string;
+  employerName: string;
   employeeAvatar: string;
   periodStartDate: string;
   periodEndDate: string;
@@ -45,6 +47,14 @@ export interface Timesheet {
 }
 
 export interface TimesheetPagedDto {
+  items: Timesheet[];
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+}
+
+export interface GeneralTimesheetPagedDto {
   items: Timesheet[];
   page: number;
   pageSize: number;

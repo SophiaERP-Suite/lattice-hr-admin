@@ -663,7 +663,7 @@ export default function ClientMgt() {
                                                     <td>
                                                         <div className="d-flex-items gap-10">
                                                             <div className="avatar avatar-md radius-100">
-                                                                <img className="radius-100" src={data.employerLogo != "" ? data.employerLogo : "https://img.icons8.com/fluency/60/image--v1.png"} alt="image not found" />
+                                                                <img className="radius-100" src={data.employerLogo != "" ? data.employerLogo : import.meta.env.NO_IMAGE_URL} alt="image not found" />
                                                             </div>
                                                             <h6 className="cursor-pointer">{data.businessName}</h6>
                                                         </div>

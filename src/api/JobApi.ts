@@ -254,6 +254,16 @@ export const GetMyJobs = async (page: number, pageSize: number) => {
   return response.json();
 };
 
+export const GetRecentJobs = async (count: number) => {
+  const response = await fetch(`${BaseURL}/jobs/${count}/recentJobs`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.json();
+};
+
 export const GetJob = async (jobId: number) => {
   const response = await fetch(`${BaseURL}/jobs/${jobId}`, {
     method: "GET",

@@ -43,6 +43,11 @@ import EmployerTimesheets from "../pages/timesheet/GeneralTimeSheet";
 import EmployeeTimesheets from "../pages/timesheet/TimeSheet";
 import EmployeeLeaveRequests from "../pages/Leave/LeaveRequest";
 import InterviewQuestionsPageLocal from "../pages/JobMgt/InterviewQuestionsForm";
+import AllEmployeeTimesheets from "../pages/GeneralTimeSheet/TimeSheet";
+import TaxMgt from "../pages/ControlPanel/TaxMgt";
+import AllInvoices from "../pages/invoice/Invoice";
+import InvoiceDetail from "../pages/invoice/InvoiceDetails";
+import Payment from "../pages/Payslips/Payment";
 
 function AppRoutes() {
   return (
@@ -59,6 +64,10 @@ function AppRoutes() {
         <Route path="ClientMgt/WorkerDetails/:jobSeekerId/:clientId" element={<WorkerDetails />} />
         {/* <Route path="WorkerMgt/:id" element={<WorkerDetails />} /> */}
         <Route path="ComplianceMgt" element={<ComplianceMgt />} />
+        <Route path="Timesheet" element={<AllEmployeeTimesheets />} />
+        <Route path="Payslips" element={<Payment />} />
+        <Route path="Invoices" element={<AllInvoices />} />
+        <Route path="InvoiceDetails/:id" element={<InvoiceDetail />} />
         <Route path="JobMgt" element={<JobMgt />} />
         <Route path="JobMgt/:id/:clientId" element={<JobDetails />} />
         <Route path="RevenueMgt" element={<FinanceMgt />} />
@@ -67,7 +76,6 @@ function AppRoutes() {
         <Route path="Packages" element={<Packages />} />
         <Route path="Packages/:id" element={<PackageDetails />} />
         <Route path="Contracts" element={<Contracts />} />
-        <Route path="Contracts" element={<Contracts />} />
         <Route path="Contracts/Requests/:id" element={<RequestDetails />} />
         <Route path="Contracts/:id" element={<ContractDetails />} />
         <Route path="ControlPanel" element={<ControlPanel />} />
@@ -75,6 +83,7 @@ function AppRoutes() {
         <Route path="ControlPanel/UserMgt" element={<UserMgt />} />
         <Route path="ControlPanel/IndustryMgt" element={<IndustryMgt />} />
         <Route path="ControlPanel/CurrencyMgt" element={<CurrencyMgt />} />
+        <Route path="ControlPanel/TaxMgt" element={<TaxMgt />} />
         <Route path="ControlPanel/JobSectorMgt" element={<JobSectorMgt />} />
         <Route path="ControlPanel/JobTypeMgt" element={<JobTypeMgt />} />
         <Route path="ControlPanel/ServiceTypeMgt" element={<ServiceTypeMgt />} />

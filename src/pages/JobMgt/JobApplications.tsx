@@ -3,9 +3,11 @@ import { NavLink, useParams } from "react-router-dom";
 import Hashids from "hashids";
 import { toast, ToastContainer } from "react-toastify";
 import { AlertCircle, Eye, Search, Users, MapPin, Calendar, Download, Briefcase, ChevronRight } from "lucide-react";
-import type { CityData, JobData, StateData } from "./JobMgt";
+
 import { fetchCitiesByStateId, fetchStatesByCountryId } from "../../utils/LocationRequests";
 import { getJobById, GetMyFilteredJobsApplications, JobApplications } from "../../utils/JobRequests";
+import type { JobData } from "../../types/jobData";
+import type { CityData, StateData } from "../../types/location";
 
 export type JobApplicationStatus =
   | "pending"
