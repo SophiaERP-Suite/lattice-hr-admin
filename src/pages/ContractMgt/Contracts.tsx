@@ -1,11 +1,11 @@
 import {
-  ChevronRight,
-  Eye,
-  FolderOpenDot,
-  FolderOutput,
-  Plus,
-  ReceiptText,
-  ShieldX,
+    ChevronRight,
+    Eye,
+    FolderOpenDot,
+    FolderOutput,
+    Plus,
+    ReceiptText,
+    ShieldX,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ToastContainer } from 'react-toastify';
@@ -44,8 +44,8 @@ interface ContractData {
     employerId: number;
     employer: string;
     employerLogo: string;
-    employerMail : string;
-    employerPhone : string;
+    employerMail: string;
+    employerPhone: string;
     dateCreated: string;
     signed: boolean;
     responsibilities: ResponsibilitiesData[];
@@ -62,9 +62,9 @@ export default function Contracts() {
     const [pageNumber, setPageNumber] = useState(1);
     const limit = 10;
     const { register, control } = useForm<ContractRequestFilter>();
-    const filters = useWatch({control});
+    const filters = useWatch({ control });
     const { register: cRegister, control: cControl } = useForm<ContractRequestFilter>();
-    const cFilters = useWatch({control: cControl});
+    const cFilters = useWatch({ control: cControl });
     const hashIds = new Hashids('LatticeHumanResourceEncode', 10);
 
     useEffect(() => {
@@ -73,22 +73,22 @@ export default function Contracts() {
             limit: reqLimit,
             ...filters
         })
-        .then(res => {
-        if (res.status === 200) {
-            res.json()
-            .then(data => {
-                console.log(data);
-                setContractRequests(data.data.requests);
-                setTotalRequests(data.data.totalCount);
-                setTotalExpired(data.data.totalExpired);
+            .then(res => {
+                if (res.status === 200) {
+                    res.json()
+                        .then(data => {
+                            console.log(data);
+                            setContractRequests(data.data.requests);
+                            setTotalRequests(data.data.totalCount);
+                            setTotalExpired(data.data.totalExpired);
+                        })
+                } else {
+                    res.text()
+                        .then(data => {
+                            console.log(JSON.parse(data));
+                        })
+                }
             })
-        } else {
-            res.text()
-            .then(data => {
-                console.log(JSON.parse(data));
-            })
-        }
-        })
     }, [reqPageNumber, reqLimit, filters]);
 
     useEffect(() => {
@@ -97,22 +97,22 @@ export default function Contracts() {
             limit,
             ...cFilters
         })
-        .then(res => {
-        if (res.status === 200) {
-            res.json()
-            .then(data => {
-                console.log(data);
-                setContracts(data.data.contracts);
-                setTotalContracts(data.data.totalCount);
-                setTotalExpired(data.data.totalExpired);
+            .then(res => {
+                if (res.status === 200) {
+                    res.json()
+                        .then(data => {
+                            console.log(data);
+                            setContracts(data.data.contracts);
+                            setTotalContracts(data.data.totalCount);
+                            setTotalExpired(data.data.totalExpired);
+                        })
+                } else {
+                    res.text()
+                        .then(data => {
+                            console.log(JSON.parse(data));
+                        })
+                }
             })
-        } else {
-            res.text()
-            .then(data => {
-                console.log(JSON.parse(data));
-            })
-        }
-        })
     }, [pageNumber, limit, cFilters]);
 
     return (
@@ -145,7 +145,7 @@ export default function Contracts() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-info-transparent text-info">
-                                <ReceiptText size={42}/>
+                                <ReceiptText size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Total Contracts</span>
@@ -158,7 +158,7 @@ export default function Contracts() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-warning-transparent text-warning">
-                                <FolderOpenDot size={42}/>
+                                <FolderOpenDot size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Total Requests</span>
@@ -171,11 +171,11 @@ export default function Contracts() {
                     <div className="card">
                         <div className="card-body d-flex align-center gap-16">
                             <div className="avatar avatar-xl bg-danger-transparent text-danger">
-                                <ShieldX size={42}/>
+                                <ShieldX size={42} />
                             </div>
                             <div className="card-content">
                                 <span className="d-block fs-16 mb-5">Expired / Inactive</span>
-                                <h2 className="mb-5">{ totalExpired }</h2>
+                                <h2 className="mb-5">{totalExpired}</h2>
                             </div>
                         </div>
                     </div>
@@ -229,23 +229,23 @@ export default function Contracts() {
                                                     contracts.map((data, index) => (
                                                         <tr key={index}>
                                                             <td>
-                                                                { index + 1}
+                                                                {index + 1}
                                                             </td>
                                                             <td>
                                                                 <NavLink to={`/ClientMgt/${hashIds.encode(data.employerId)}`} className="d-flex-items gap-10">
                                                                     <div className="avatar avatar-md radius-100">
-                                                                        <img className="radius-100" src={data.employerLogo} alt="image not found"/>
+                                                                        <img className="radius-100" src={data.employerLogo ? data.employerLogo : 'https://img.icons8.com/fluency/60/image--v1.png'} alt="image not found" />
                                                                     </div>
-                                                                    <h6 className="cursor-pointer">{ data.employer }</h6>
+                                                                    <h6 className="cursor-pointer">{data.employer}</h6>
                                                                 </NavLink>
                                                             </td>
                                                             <td>
-                                                                { data.signed
+                                                                {data.signed
                                                                     ? <span className="badge bg-label-success">Signed</span>
                                                                     : <span className="badge bg-label-warning">Not Signed</span>}
                                                             </td>
                                                             <td>
-                                                                {`${data.currency} ${data.amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2})}`}
+                                                                {`${data.currency} ${data.amount.toLocaleString('en-NG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
                                                             </td>
                                                             <td>
                                                                 {new Date(data.dateCreated).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
@@ -265,21 +265,21 @@ export default function Contracts() {
                                         {
                                             contracts.length === 0 ?
                                                 <div className="py-4 whitespace-nowrap w-full">
-                                                <span className="px-6 py-4 text-left font-medium text-black">There hasn't been any contract added</span>
+                                                    <span className="px-6 py-4 text-left font-medium text-black">There hasn't been any contract added</span>
                                                 </div> : <></>
                                         }
                                     </div>
                                     <div className="d-flex justify-content-between mt-4">
                                         <div className="flex justify-content-center align-items-center mb-1">
                                             <p className="text-black">
-                                                Showing { contracts.length > 0 ? ((pageNumber * limit) - limit) + 1 : 0 } to { contracts.length > 0 ? (((pageNumber * limit) - limit) + 1) + (contracts.length - 1) : 0 } of { totalContracts } entries
+                                                Showing {contracts.length > 0 ? ((pageNumber * limit) - limit) + 1 : 0} to {contracts.length > 0 ? (((pageNumber * limit) - limit) + 1) + (contracts.length - 1) : 0} of {totalContracts} entries
                                             </p>
                                         </div>
                                         <div className="d-inline-flex flex-wrap">
                                             {
                                                 pageNumber > 1 && <a
                                                     href="#"
-                                                    onClick={() => { if (pageNumber > 1) {setPageNumber(pageNumber - 1);} }}
+                                                    onClick={() => { if (pageNumber > 1) { setPageNumber(pageNumber - 1); } }}
                                                     className="border-top border-bottom border-start text-primary border-secondary px-2 py-1 rounded-start"
                                                 >
                                                     Previous
@@ -289,18 +289,18 @@ export default function Contracts() {
                                                 href="#"
                                                 className="border border-secondary text-white bg-primary px-4 py-1 cursor-pointer"
                                             >
-                                                { pageNumber }
+                                                {pageNumber}
                                             </a>
                                             {
                                                 (pageNumber * limit) < totalContracts && <a
-                                                href="#"
-                                                onClick={() => { setPageNumber(pageNumber + 1); }}
-                                                className="border-end border-top border-bottom text-primary border-secondary px-4 py-1 rounded-end"
+                                                    href="#"
+                                                    onClick={() => { setPageNumber(pageNumber + 1); }}
+                                                    className="border-end border-top border-bottom text-primary border-secondary px-4 py-1 rounded-end"
                                                 >
                                                     Next
                                                 </a>
                                             }
-                                            
+
                                         </div>
                                     </div>
                                 </div>
@@ -338,18 +338,18 @@ export default function Contracts() {
                                                     contractRequests.map((data, index) => (
                                                         <tr key={index}>
                                                             <td>
-                                                                { index + 1}
+                                                                {index + 1}
                                                             </td>
                                                             <td>
                                                                 <NavLink to={`/ClientMgt/${hashIds.encode(data.employerId)}`} className="d-flex-items gap-10">
                                                                     <div className="avatar avatar-md radius-100">
-                                                                        <img className="radius-100" src={data.employerLogo} alt="image not found"/>
+                                                                        <img className="radius-100" src={data.employerLogo ? data.employerLogo : import.meta.env.NO_IMAGE_URL} alt="image not found" />
                                                                     </div>
-                                                                    <h6 className="cursor-pointer">{ data.employer }</h6>
+                                                                    <h6 className="cursor-pointer">{data.employer}</h6>
                                                                 </NavLink>
                                                             </td>
                                                             <td>
-                                                                { data.contractSigned
+                                                                {data.contractSigned
                                                                     ? <span className="badge bg-label-success">Signed</span>
                                                                     : <span className="badge bg-label-warning">None Signed</span>}
                                                             </td>
@@ -371,21 +371,21 @@ export default function Contracts() {
                                         {
                                             contractRequests.length === 0 ?
                                                 <div className="py-4 whitespace-nowrap w-full">
-                                                <span className="px-6 py-4 text-left font-medium text-black">There hasn't been any contract requests</span>
+                                                    <span className="px-6 py-4 text-left font-medium text-black">There hasn't been any contract requests</span>
                                                 </div> : <></>
                                         }
                                     </div>
                                     <div className="d-flex justify-content-between mt-4">
                                         <div className="flex justify-content-center align-items-center mb-1">
                                             <p className="text-black">
-                                                Showing { contractRequests.length > 0 ? ((reqPageNumber * reqLimit) - reqLimit) + 1 : 0 } to { contractRequests.length > 0 ? (((reqPageNumber * reqLimit) - reqLimit) + 1) + (contractRequests.length - 1) : 0 } of { totalRequests } entries
+                                                Showing {contractRequests.length > 0 ? ((reqPageNumber * reqLimit) - reqLimit) + 1 : 0} to {contractRequests.length > 0 ? (((reqPageNumber * reqLimit) - reqLimit) + 1) + (contractRequests.length - 1) : 0} of {totalRequests} entries
                                             </p>
                                         </div>
                                         <div className="d-inline-flex flex-wrap">
                                             {
                                                 reqPageNumber > 1 && <a
                                                     href="#"
-                                                    onClick={() => { if (reqPageNumber > 1) {setReqPageNumber(reqPageNumber - 1);} }}
+                                                    onClick={() => { if (reqPageNumber > 1) { setReqPageNumber(reqPageNumber - 1); } }}
                                                     className="border-top border-bottom border-start text-primary border-secondary px-2 py-1 rounded-start"
                                                 >
                                                     Previous
@@ -395,18 +395,18 @@ export default function Contracts() {
                                                 href="#"
                                                 className="border border-secondary text-white bg-primary px-4 py-1 cursor-pointer"
                                             >
-                                                { reqPageNumber }
+                                                {reqPageNumber}
                                             </a>
                                             {
                                                 (reqPageNumber * reqLimit) < totalRequests && <a
-                                                href="#"
-                                                onClick={() => { setReqPageNumber(reqPageNumber + 1); }}
-                                                className="border-end border-top border-bottom text-primary border-secondary px-4 py-1 rounded-end"
+                                                    href="#"
+                                                    onClick={() => { setReqPageNumber(reqPageNumber + 1); }}
+                                                    className="border-end border-top border-bottom text-primary border-secondary px-4 py-1 rounded-end"
                                                 >
                                                     Next
                                                 </a>
                                             }
-                                            
+
                                         </div>
                                     </div>
                                 </div>

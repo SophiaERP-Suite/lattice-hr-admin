@@ -3,7 +3,7 @@ import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
 import { useEffect, useState } from 'react';
 import { PenLine } from 'lucide-react';
- 
+
 interface RichTextEditorProps {
   value: string;
   onChange: (value: string) => void;
@@ -14,7 +14,7 @@ interface RichTextEditorProps {
   minHeight?: string;
   maxHeight?: string;
 }
- 
+
 export default function RichTextEditor({
   value,
   onChange,
@@ -46,24 +46,24 @@ export default function RichTextEditor({
       onChange(editor.getHTML());
     },
   });
- 
+
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value);
     }
   }, [value, editor]);
- 
+
   if (!editor) return null;
- 
+
   const btn = (active: boolean) =>
-    `btn btn-sm ${active ? 'btn-secondary' : 'btn-outline-secondary'} me-1 mb-1`;
- 
+    `btn btn-sm ${active ? 'btn-secondary' : 'btn-outline-dark'} me-1 mb-1`;
+
   return (
     <div className={`d-flex flex-column`} style={{ width: '100%' }}>
- 
+
       {/* Toggle Toolbar Button */}
-      
- 
+
+
       {/* Toolbar */}
       <div className="rounded bg-white">
         {showToolbarToggle && (
@@ -78,7 +78,7 @@ export default function RichTextEditor({
 
         {
           showToolBar && (
-              <button
+            <button
               type="button"
               className={btn(editor.isActive('bold'))}
               onClick={() => editor.chain().focus().toggleBold().run()}
@@ -87,7 +87,7 @@ export default function RichTextEditor({
             </button>
           )
         }
-        
+
         {
           showToolBar && (
             <button
@@ -115,12 +115,12 @@ export default function RichTextEditor({
         {
           showToolBar && (
             <button
-            type="button"
-            className={btn(editor.isActive('heading', { level: 1 }))}
-            onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-          >
-            H1
-          </button>
+              type="button"
+              className={btn(editor.isActive('heading', { level: 1 }))}
+              onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+            >
+              H1
+            </button>
           )
         }
 
@@ -151,27 +151,27 @@ export default function RichTextEditor({
           showToolBar && (
             <button
               type="button"
-              className="btn btn-sm btn-outline-secondary me-1"
+              className="btn btn-sm btn-outline-dark me-1"
               onClick={() => editor.chain().focus().undo().run()}
             >
               ↺
             </button>
           )
         }
-        
+
 
         {
           showToolBar && (
             <button
               type="button"
-              className="btn btn-sm btn-outline-secondary me-1"
+              className="btn btn-sm btn-outline-dark me-1"
               onClick={() => editor.chain().focus().redo().run()}
             >
               ↻
             </button>
           )
         }
-        
+
 
         {
           showToolBar && (
@@ -184,9 +184,9 @@ export default function RichTextEditor({
             </button>
           )
         }
-        
+
       </div>
- 
+
       <EditorContent editor={editor} />
     </div>
   );

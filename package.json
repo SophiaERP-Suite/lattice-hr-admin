@@ -10,12 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@floating-ui/dom": "^1.7.6",
     "@tippyjs/react": "^4.2.6",
     "@tiptap/extension-placeholder": "^3.18.0",
     "@tiptap/extension-underline": "^3.18.0",
     "@tiptap/react": "^3.18.0",
     "@tiptap/starter-kit": "^3.18.0",
     "apexcharts": "^5.3.6",
+    "dayjs": "^1.11.20",
     "desandro-matches-selector": "^2.0.2",
     "dompurify": "^3.3.1",
     "ev-emitter": "^2.1.2",

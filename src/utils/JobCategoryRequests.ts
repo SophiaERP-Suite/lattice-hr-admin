@@ -1,4 +1,4 @@
-const BaseURL = "http://localhost:5127";
+const BaseURL = import.meta.env.VITE_API_URL ?? "http://localhost:5127";
 
 export const fetchJobCategories = async (jobSectorId: number) => {
   const response = await fetch(`${BaseURL}/job-categories/${jobSectorId}`, {
@@ -8,7 +8,7 @@ export const fetchJobCategories = async (jobSectorId: number) => {
 }
 
 export const fetchAllJobCategories = async (filterData: object) => {
-  
+
   const params = new URLSearchParams();
   Object.entries(filterData).forEach(([key, value]) => {
     if (value !== null && value !== undefined && value !== "") {

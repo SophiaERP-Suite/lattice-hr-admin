@@ -86,41 +86,41 @@ export default function CandidatesMgt() {
             </div>
             <div className="col-12 col-lg-4 col-md-6">
                 <div className="card">
-                <div className="card-body d-flex align-center gap-16">
-                    <div className="avatar avatar-xl bg-primary-transparent text-primary">
-                        <Briefcase size={42}/>
+                    <div className="card-body d-flex align-center gap-16">
+                        <div className="avatar avatar-xl bg-primary-transparent text-primary">
+                            <Briefcase size={42} />
+                        </div>
+                        <div className="card-content">
+                            <span className="d-block fs-16 mb-5">Total Candidates</span>
+                            <h2 className="mb-5">{totalCandidates.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</h2>
+                        </div>
                     </div>
-                    <div className="card-content">
-                        <span className="d-block fs-16 mb-5">Total Candidates</span>
-                        <h2 className="mb-5">{totalCandidates.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</h2>
-                    </div>
-                </div>
                 </div>
             </div>
             <div className="col-12 col-lg-4 col-md-6">
                 <div className="card">
-                <div className="card-body d-flex align-center gap-16">
-                    <div className="avatar avatar-xl bg-success-transparent text-success">
-                    <FolderOpenDot size={42}/>
+                    <div className="card-body d-flex align-center gap-16">
+                        <div className="avatar avatar-xl bg-success-transparent text-success">
+                            <FolderOpenDot size={42} />
+                        </div>
+                        <div className="card-content">
+                            <span className="d-block fs-16 mb-5">Active Candidates</span>
+                            <h2 className="mb-5">{totalActive.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</h2>
+                        </div>
                     </div>
-                    <div className="card-content">
-                        <span className="d-block fs-16 mb-5">Active Candidates</span>
-                        <h2 className="mb-5">{totalActive.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</h2>
-                    </div>
-                </div>
                 </div>
             </div>
             <div className="col-12 col-lg-4 col-md-6">
                 <div className="card">
-                <div className="card-body d-flex align-center gap-16">
-                    <div className="avatar avatar-xl bg-danger-transparent text-danger">
-                    <Gauge size={42}/>
+                    <div className="card-body d-flex align-center gap-16">
+                        <div className="avatar avatar-xl bg-danger-transparent text-danger">
+                            <Gauge size={42} />
+                        </div>
+                        <div className="card-content">
+                            <span className="d-block fs-16 mb-5">Inactive Candidates</span>
+                            <h2 className="mb-5">{totalInactive.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</h2>
+                        </div>
                     </div>
-                    <div className="card-content">
-                    <span className="d-block fs-16 mb-5">Inactive Candidates</span>
-                    <h2 className="mb-5">{totalInactive.toLocaleString('en-NG', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}</h2>
-                    </div>
-                </div>
                 </div>
             </div>
             <div className="col-xl-12">
@@ -160,22 +160,22 @@ export default function CandidatesMgt() {
                                             return (
                                                 <tr key={index}>
                                                     <td>
-                                                        { index + 1}
+                                                        {index + 1}
                                                     </td>
                                                     <td>
                                                         <div className="d-flex-items gap-10">
                                                             <div className="avatar avatar-md radius-100">
-                                                                <img className="radius-100" src={data.profilePhoto.startsWith('/') ? `http://localhost:5127/${data.profilePhoto}` : data.profilePhoto} alt="Candidate Image"/>
+                                                                <img className="radius-100" src={data.profilePhoto ? data.profilePhoto.startsWith('/') ? `http://localhost:5127/${data.profilePhoto}` : data.profilePhoto : import.meta.env.NO_IMAGE_URL} alt="Candidate Image" />
                                                             </div>
                                                             <h6 className="cursor-pointer">{`${data.firstName} ${data.lastName}`}</h6>
                                                         </div>
                                                     </td>
-                                                    <td><a href={`mailto:${data.email}`} className="text-start" data-cfemail="bad9d5d4cedbd9cefadbd9d7df94d9d5d7">{ data.email }</a></td>
-                                                    <td>{ data.phone }</td>
-                                                    <td>{ (new Date(data.dateOfBirth)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) }</td>
-                                                    <td>{ data.gender }</td>
+                                                    <td><a href={`mailto:${data.email}`} className="text-start" data-cfemail="bad9d5d4cedbd9cefadbd9d7df94d9d5d7">{data.email}</a></td>
+                                                    <td>{data.phone}</td>
+                                                    <td>{(new Date(data.dateOfBirth)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
+                                                    <td>{data.gender}</td>
                                                     <td>Location</td>
-                                                    <td>{ (new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) }</td>
+                                                    <td>{(new Date(data.dateCreated)).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</td>
                                                     <td>
                                                         <div className="d-flex-items gap-10">
                                                             <NavLink to={`/CandidateMgt/${hashIds.encode(data.userId)}`} className="btn-icon btn-info-light">
@@ -192,7 +192,7 @@ export default function CandidatesMgt() {
                             {
                                 candidates.length === 0 ?
                                     <div className="py-4 whitespace-nowrap w-full">
-                                    <span className="px-6 py-4 text-left font-medium text-black">There hasn't been any candidate sign up</span>
+                                        <span className="px-6 py-4 text-left font-medium text-black">There hasn't been any candidate sign up</span>
                                     </div> : <></>
                             }
                         </div>
@@ -200,14 +200,14 @@ export default function CandidatesMgt() {
                     <div className="d-flex justify-content-between mt-4">
                         <div className="flex justify-content-center align-items-center mb-1">
                             <p className="text-black">
-                                Showing { candidates.length > 0 ? ((pageNumber * limit) - limit) + 1 : 0 } to { candidates.length > 0 ? (((pageNumber * limit) - limit) + 1) + (candidates.length - 1) : 0 } of { totalCandidates } entries
+                                Showing {candidates.length > 0 ? ((pageNumber * limit) - limit) + 1 : 0} to {candidates.length > 0 ? (((pageNumber * limit) - limit) + 1) + (candidates.length - 1) : 0} of {totalCandidates} entries
                             </p>
                         </div>
                         <div className="d-inline-flex flex-wrap">
                             {
                                 pageNumber > 1 && <a
                                     href="#"
-                                    onClick={() => { if (pageNumber > 1) {setPageNumber(pageNumber - 1);} }}
+                                    onClick={() => { if (pageNumber > 1) { setPageNumber(pageNumber - 1); } }}
                                     className="border-top border-bottom border-start text-primary border-secondary px-2 py-1 rounded-start"
                                 >
                                     Previous
@@ -217,18 +217,18 @@ export default function CandidatesMgt() {
                                 href="#"
                                 className="border border-secondary text-white bg-primary px-4 py-1 cursor-pointer"
                             >
-                                { pageNumber }
+                                {pageNumber}
                             </a>
                             {
                                 (pageNumber * limit) < totalCandidates && <a
-                                href="#"
-                                onClick={() => { setPageNumber(pageNumber + 1); }}
-                                className="border-end border-top border-bottom text-primary border-secondary px-4 py-1 rounded-end"
+                                    href="#"
+                                    onClick={() => { setPageNumber(pageNumber + 1); }}
+                                    className="border-end border-top border-bottom text-primary border-secondary px-4 py-1 rounded-end"
                                 >
                                     Next
                                 </a>
                             }
-                            
+
                         </div>
                     </div>
                 </div>

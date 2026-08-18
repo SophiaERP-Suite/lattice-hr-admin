@@ -1,4 +1,21 @@
-const BaseURL = "http://localhost:5127";
+const BaseURL = import.meta.env.VITE_API_URL ?? "http://localhost:5127";
+
+export const uploadContractPdf = async (requestId: number, formData: FormData) => {
+  try {
+    const token = localStorage.getItem('accessToken');
+    const response = await fetch(`${BaseURL}/contracts/${requestId}`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.error('Error uploading PDF contract:', error);
+    throw error;
+  }
+};
 
 export const fetchAllContractRequests = async (filterData: object) => {
   const token = localStorage.getItem('accessToken');

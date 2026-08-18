@@ -27,6 +27,9 @@ import {
   ArrowUp,
   Users,
   ReceiptText,
+  CircleAlertIcon,
+  CircleDollarSign,
+  FileText,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import Modal from 'react-modal';
@@ -35,57 +38,67 @@ const sidebarMenus = [
   {
     label: "Dashboard",
     path: "/Dashboard",
-    icon: (<LayoutDashboard style={{ color: "#000"}} />)
+    icon: (<LayoutDashboard style={{ color: "#000" }} />)
   },
   {
     label: "Candidate",
     path: "/CandidateMgt",
-    icon: (<BookUser style={{ color: "#000"}} />)
+    icon: (<BookUser style={{ color: "#000" }} />)
   },
   {
     label: "Client",
     path: "/ClientMgt",
-    icon: (<Users style={{ color: "#000"}} />)
+    icon: (<Users style={{ color: "#000" }} />)
   },
   {
     label: "Workers",
     path: "/WorkerMgt",
-    icon: (<ListChecks style={{ color: "#000"}} />)
+    icon: (<ListChecks style={{ color: "#000" }} />)
   },
   {
-    label: "Timesheet & Payslip",
+    label: "Timesheet",
     path: "/Timesheet",
-    icon: (<ClipboardClock style={{ color: "#000"}} />)
+    icon: (<ClipboardClock style={{ color: "#000" }} />)
+  },
+  {
+    label: "Payslips",
+    path: "/Payslips",
+    icon: (<CircleDollarSign style={{ color: "#000" }} />)
+  },
+  {
+    label: "Invoices",
+    path: "/Invoices",
+    icon: (<FileText style={{ color: "#000" }} />)
   },
   {
     label: "Jobs",
     path: "/JobMgt",
-    icon: (<BriefcaseBusiness style={{ color: "#000"}} />)
+    icon: (<BriefcaseBusiness style={{ color: "#000" }} />)
   },
   {
     label: "Packages",
     path: "/Packages",
-    icon: (<Blocks style={{ color: "#000"}} />)
+    icon: (<Blocks style={{ color: "#000" }} />)
   },
   {
     label: "Contracts",
     path: "/Contracts",
-    icon: (<ReceiptText style={{ color: "#000"}} />)
+    icon: (<ReceiptText style={{ color: "#000" }} />)
   },
   {
     label: "Revenue",
     path: "/RevenueMgt",
-    icon: (<CreditCard style={{ color: "#000"}} />)
+    icon: (<CreditCard style={{ color: "#000" }} />)
   },
   {
     label: "Complaints",
     path: "/Complaints",
-    icon: (<BadgeAlert style={{ color: "#000"}} />)
+    icon: (<BadgeAlert style={{ color: "#000" }} />)
   },
   {
     label: "Control Panel",
     path: "/ControlPanel",
-    icon: (<Cog style={{ color: "#000"}} />)
+    icon: (<Cog style={{ color: "#000" }} />)
   },
 ];
 
@@ -122,9 +135,8 @@ function AdminDashboard() {
     <div className="page">
       {/* <!-- Start app-sidebar --> */}
       <aside
-        className={`app-sidebar sticky bg-white border-end shadow-sm ${
-          isCollapsed ? "sidebar-mini" : "sidebar-full"
-        } ${isMobileOpen ? "mobile-open" : ""}`}
+        className={`app-sidebar sticky bg-white border-end shadow-sm ${isCollapsed ? "sidebar-mini" : "sidebar-full"
+          } ${isMobileOpen ? "mobile-open" : ""}`}
         id="sidebar"
         style={{ transition: "all 0.3s ease" }}
       >
@@ -139,7 +151,7 @@ function AdminDashboard() {
             }}
           />
           {isMobileOpen && (
-            <a onClick={() => setIsMobileOpen(!isMobileOpen)} style={{cursor: "pointer"}}>
+            <a onClick={() => setIsMobileOpen(!isMobileOpen)} style={{ cursor: "pointer" }}>
               <ChevronLeft size={20} />
             </a>
           )}
@@ -163,9 +175,8 @@ function AdminDashboard() {
 
         {/* Menu */}
         <ul
-          className={`list-unstyled mt-3 ${
-            isCollapsed ? "text-center" : "px-3"
-          }`}
+          className={`list-unstyled mt-3 ${isCollapsed ? "text-center" : "px-3"
+            }`}
         >
           {sidebarMenus.map((item, index) => {
             const itemIsActive = isActive(item.path);
@@ -180,9 +191,8 @@ function AdminDashboard() {
                 {(
                   <NavLink
                     to={`${item.path}`}
-                    className={`sidebar-menu-item d-flex align-items-center text-decoration-none text-dark p-2 rounded ${
-                      isCollapsed ? "justify-content-center" : ""
-                    } ${itemIsActive ? "active" : ""}`}
+                    className={`sidebar-menu-item d-flex align-items-center text-decoration-none text-dark p-2 rounded ${isCollapsed ? "justify-content-center" : ""
+                      } ${itemIsActive ? "active" : ""}`}
                     title={isCollapsed ? item.label : ""}
                   >
                     <div className="me-2" style={{ paddingRight: "10px" }}>
@@ -209,7 +219,7 @@ function AdminDashboard() {
                   <a
                     className="sidebar-toggle-bar"
                     id="sidebarToggle2"
-                    style={{cursor: "pointer"}}
+                    style={{ cursor: "pointer" }}
                     onClick={() => setIsMobileOpen(!isMobileOpen)}
                   >
                     <Menu />
@@ -265,7 +275,7 @@ function AdminDashboard() {
                   data-bs-toggle="modal"
                   data-bs-target="#searchModal"
                 >
-                  <Search size={18} className="ri-search-line"/>
+                  <Search size={18} className="ri-search-line" />
                 </button>
               </div>
 
@@ -400,14 +410,14 @@ function AdminDashboard() {
         </header>
         <div className="body__overlay"></div>
       </div>
-      
+
       <div
         className={`${isCollapsed ? "app-content-area2" : "app-content-area"}`}
         id='lattice-full-body'
       >
         <Outlet />
       </div>
-      
+
       <footer className="app-footer-area">
         <div className="row">
           <div className="col-xl-12">

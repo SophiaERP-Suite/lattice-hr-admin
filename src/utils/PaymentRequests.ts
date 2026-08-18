@@ -1,4 +1,4 @@
-const BaseURL = "http://localhost:5127";
+const BaseURL = import.meta.env.VITE_API_URL ?? "http://localhost:5127";
 
 export const fetchAllPayments = async (filterData: object) => {
   const token = localStorage.getItem('accessToken');
