@@ -145,7 +145,7 @@ export default function PaymentDetails() {
                             }}>
                                 <div
                                     style={{
-                                        backgroundImage: "url('http://localhost:5173/one/lhr_adm/src/assets/images/latty_mini.png')",
+                                        backgroundImage: "url('http://192.168.1.178:5175/one/lhr_adm/src/assets/images/latty_mini.png')",
                                         position: 'absolute', backgroundPosition: 'center',
                                         top: '0', bottom: '0', right: '0', left: '0',
                                         backgroundRepeat: 'no-repeat', backgroundSize: 'contain',
@@ -169,7 +169,7 @@ export default function PaymentDetails() {
                                             paddingLeft: '1rem', paddingTop: '0.5rem'
                                         }}>
                                             <img
-                                                src="http://localhost:5173/one/lhr_adm/src/assets/images/latty_mini.png"
+                                                src="http://192.168.1.178:5175/one/lhr_adm/src/assets/images/latty_mini.png"
                                                 style={{
                                                     width: 'auto', height: '3rem', borderWidth: '4px',
                                                     borderColor: '#fff', marginRight: '1rem'
